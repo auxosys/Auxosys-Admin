@@ -1,0 +1,15 @@
+{
+  "short_name": "Auxosys Admin",
+  "name": "Auxosys Admin Panel",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#071b3a",
+  "background_color": "#ffffff"
+}

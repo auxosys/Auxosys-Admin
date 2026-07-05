@@ -1,0 +1,10 @@
+// Polyfill TextEncoder/TextDecoder for react-router v7 under JSDOM 16 (react-scripts 5).
+const { TextEncoder, TextDecoder } = require('util');
+global.TextEncoder = global.TextEncoder || TextEncoder;
+global.TextDecoder = global.TextDecoder || TextDecoder;
+
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+// learn more: https://github.com/testing-library/jest-dom
+import '@testing-library/jest-dom';
