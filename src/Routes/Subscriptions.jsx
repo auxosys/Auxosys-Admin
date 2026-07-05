@@ -186,13 +186,13 @@ export default function Subscriptions() {
               </tr>
             ) : (
               subs.map((s) => (
-                <tr key={s._id} className="border-t">
+                <tr key={s.id} className="border-t">
                   <td className="px-6 py-4">{s.email}</td>
                   <td className="px-6 py-4">
                     {canWrite ? (
                       <select
                         value={s.status}
-                        onChange={(e) => updateStatus(s._id, e.target.value)}
+                        onChange={(e) => updateStatus(s.id, e.target.value)}
                         className="border rounded px-2 py-1"
                       >
                         {STATUS_OPTIONS.map((o) => (
@@ -209,7 +209,7 @@ export default function Subscriptions() {
                   <td className="px-6 py-4 text-right">
                     {canWrite && (
                       <button
-                        onClick={() => remove(s._id)}
+                        onClick={() => remove(s.id)}
                         className="text-red-600 text-sm"
                       >
                         Delete
