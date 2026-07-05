@@ -38,15 +38,15 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* LEFT PANEL */}
-      <div className="hidden lg:block lg:w-[38%] relative bg-black">
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-10">
+      <div className="hidden lg:block lg:w-[38%] relative bg-[#021326] overflow-hidden">
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-20">
           <img src="/icon.svg" alt="AUXOSYS Logo" className="h-16 w-auto" />
         </div>
 
         <img
           src="/background.jpg"
           alt="AUXOSYS Background"
-          className="w-full h-full object-cover"
+          className="absolute top-0 left-0 w-full h-[110%] object-cover object-top z-10"
         />
       </div>
 
