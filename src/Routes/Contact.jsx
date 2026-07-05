@@ -49,6 +49,7 @@ function formatDate(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 }
+// eslint-disable-next-line no-unused-vars
 function formatDateLong(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-GB", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });

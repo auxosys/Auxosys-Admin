@@ -204,7 +204,7 @@ export default function Subscriptions() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(s.createdAt).toLocaleDateString()}
+                    {new Date(s.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-right">
                     {canWrite && (
