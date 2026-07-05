@@ -29,7 +29,7 @@ const Layout = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto">
-        <div className="p-8">
+        <div className="px-8 pb-8 pt-2">
           {/* This acts as a placeholder for whichever page is active */}
           <Outlet />
         </div>

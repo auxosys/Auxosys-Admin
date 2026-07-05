@@ -220,7 +220,7 @@ function ReadingPane({ contact, onDelete, onStatusChange, onStarToggle, canWrite
         <div className="grid grid-cols-3 gap-0 mb-8 rounded-2xl border border-slate-100 bg-slate-50/60 overflow-hidden">
           {[
             { icon: <Tag size={15} className="text-blue-500" />, label: "Subject", value: contact.subject || "No Subject" },
-            { icon: <Calendar size={15} className="text-blue-500" />, label: "Date",    value: formatDateLong(contact.createdAt) },
+            { icon: <Calendar size={15} className="text-blue-500" />, label: "Date",    value: formatDate(contact.createdAt) },
             { icon: <Clock size={15} className="text-blue-500" />,    label: "Time",    value: formatTime(contact.createdAt) },
           ].map((item, i) => (
             <div key={i} className={`px-5 py-4 ${i > 0 ? "border-l border-slate-100" : ""}`}>
