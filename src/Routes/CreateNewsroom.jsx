@@ -128,7 +128,7 @@ const CreateNewsroom = () => {
     <div className="min-h-screen bg-gray-50/50 pb-8">
       {/* Header */}
       <div className="pt-6 mb-4 relative">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#0c55cc] hover:text-blue-800 transition font-semibold mb-3 w-fit">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#132242] hover:text-blue-800 transition font-semibold mb-3 w-fit">
           <ArrowLeft size={16} /> Back
         </button>
         <h1 className="text-3xl font-bold text-gray-800">Create Newsroom Post</h1>

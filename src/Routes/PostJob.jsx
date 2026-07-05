@@ -184,7 +184,7 @@ const PostJob = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-12 px-6">
       <div className="pt-6 mb-4">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#0c55cc] hover:text-blue-800 transition font-semibold w-fit">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#132242] hover:text-blue-800 transition font-semibold w-fit">
           <ArrowLeft size={16} /> Back
         </button>
       </div>
@@ -205,7 +205,7 @@ const PostJob = () => {
           <button
             onClick={() => handleSubmit("Published")}
             disabled={submitting}
-            className="flex items-center gap-2 px-4 py-2 bg-[#0c55cc] text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-[#132242] text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm"
           >
             <Send size={16} /> Publish Job
           </button>
@@ -218,7 +218,7 @@ const PostJob = () => {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-4 text-sm font-medium whitespace-nowrap ${activeTab === tab ? "text-[#0c55cc] border-b-2 border-[#0c55cc]" : "text-gray-500 hover:text-gray-700"}`}
+            className={`px-6 py-4 text-sm font-medium whitespace-nowrap ${activeTab === tab ? "text-[#132242] border-b-2 border-[#132242]" : "text-gray-500 hover:text-gray-700"}`}
           >
             {tab}
           </button>
@@ -320,7 +320,7 @@ const PostJob = () => {
 
             <div className="col-span-full flex gap-6 mt-2 mb-2">
               <label className="flex items-center gap-2 text-sm text-gray-700 font-medium">
-                <input type="checkbox" name="relocation_support" checked={form.relocation_support} onChange={handleChange} className="w-4 h-4 text-[#0c55cc] rounded" />
+                <input type="checkbox" name="relocation_support" checked={form.relocation_support} onChange={handleChange} className="w-4 h-4 text-[#132242] rounded" />
                 Relocation Support Provided
               </label>
             </div>

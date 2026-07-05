@@ -90,7 +90,7 @@ const DashboardHome = () => {
       <div className="bg-white rounded-xl p-6 flex flex-col gap-4 relative group transition-shadow hover:shadow-md border border-slate-200 shadow-sm">
         <div className="flex justify-between items-start">
           <span className="text-sm font-medium text-slate-500">{title}</span>
-          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0c55cc] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#132242] flex items-center justify-center">
             <Icon size={20} />
           </div>
         </div>
@@ -109,7 +109,7 @@ const DashboardHome = () => {
     <div className="bg-slate-50 text-slate-600 min-h-screen pb-10 flex-1 flex flex-col h-full overflow-hidden relative px-6">
       
       <div className="pt-6 mb-4 shrink-0">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#0c55cc] hover:text-blue-800 transition font-semibold w-fit">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#132242] hover:text-blue-800 transition font-semibold w-fit">
           <ArrowLeft size={16} /> Back
         </button>
       </div>
@@ -248,7 +248,7 @@ const DashboardHome = () => {
                       {c.timestamp ? new Date(c.timestamp).toLocaleDateString() : "—"}
                     </div>
                     <div className="col-span-3 flex justify-end">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${c.status === "Pending" ? "bg-red-100 text-red-600" : "bg-blue-100 text-[#0c55cc]"}`}>
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${c.status === "Pending" ? "bg-red-100 text-red-600" : "bg-blue-100 text-[#132242]"}`}>
                         {c.status || "Unknown"}
                       </span>
                     </div>

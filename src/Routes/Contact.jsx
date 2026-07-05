@@ -29,14 +29,14 @@ const safeStr = (v) => (v === null || v === undefined ? "" : String(v));
 const STATUS_OPTIONS = ["New", "Reviewed", "Resolved", "Closed"];
 
 const STATUS_STYLE = {
-  New:      { pill: "bg-blue-100 text-blue-700 border border-blue-200",      dot: "bg-[#0c55cc]"    },
+  New:      { pill: "bg-blue-100 text-blue-700 border border-blue-200",      dot: "bg-[#132242]"    },
   Reviewed: { pill: "bg-violet-100 text-violet-700 border border-violet-200", dot: "bg-violet-500"  },
   Resolved: { pill: "bg-emerald-100 text-emerald-700 border border-emerald-200", dot: "bg-emerald-500" },
   Closed:   { pill: "bg-slate-100 text-slate-600 border border-slate-200",    dot: "bg-slate-400"   },
 };
 
 const AVATAR_COLORS = [
-  "bg-[#0c55cc]", "bg-violet-500", "bg-emerald-500",
+  "bg-[#132242]", "bg-violet-500", "bg-emerald-500",
   "bg-amber-500", "bg-rose-500", "bg-cyan-500", "bg-fuchsia-500",
 ];
 
@@ -64,17 +64,17 @@ function TabBtn({ label, count, active, onClick }) {
     <button
       onClick={onClick}
       className={`relative pb-3 text-sm font-semibold flex items-center gap-2 transition-colors ${
-        active ? "text-[#0c55cc]" : "text-slate-500 hover:text-slate-700"
+        active ? "text-[#132242]" : "text-slate-500 hover:text-slate-700"
       }`}
     >
       {label}
       <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-        active ? "bg-[#0c55cc] text-white" : "bg-slate-200 text-slate-600"
+        active ? "bg-[#132242] text-white" : "bg-slate-200 text-slate-600"
       }`}>
         {count}
       </span>
       {active && (
-        <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#0c55cc] rounded-t-full" />
+        <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#132242] rounded-t-full" />
       )}
     </button>
   );
@@ -83,7 +83,7 @@ function TabBtn({ label, count, active, onClick }) {
 // ─── Message Card ─────────────────────────────────────────────────────────────
 function MessageCard({ c, active, onClick }) {
   const isNew = c.status === "New";
-  const avatarBg = active ? "bg-[#0c55cc]" : getAvatarColor(c.name);
+  const avatarBg = active ? "bg-[#132242]" : getAvatarColor(c.name);
   const initial = (c.name || "?").charAt(0).toUpperCase();
 
   return (
@@ -114,11 +114,11 @@ function MessageCard({ c, active, onClick }) {
           <div className="flex items-center justify-between mt-0.5 mb-1.5">
             <div className="flex items-center gap-1.5 min-w-0 pr-2">
               {c.isStarred && <Star size={12} className="text-amber-400 fill-amber-400 shrink-0" />}
-              <p className={`text-xs font-semibold truncate ${active ? "text-[#0c55cc]" : "text-slate-700"}`}>
+              <p className={`text-xs font-semibold truncate ${active ? "text-[#132242]" : "text-slate-700"}`}>
                 {c.subject || "No Subject"}
               </p>
             </div>
-            {isNew && <span className="w-2 h-2 rounded-full bg-[#0c55cc] shrink-0" />}
+            {isNew && <span className="w-2 h-2 rounded-full bg-[#132242] shrink-0" />}
           </div>
 
           {/* Row 3: message preview + status badge */}
@@ -202,7 +202,7 @@ function ReadingPane({ contact, onDelete, onStatusChange, onStarToggle, canWrite
               <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
                 <span className="flex items-center gap-1.5 break-all">
                   <Mail size={13} className="text-slate-400 shrink-0" />
-                  <a href={`mailto:${contact.email}`} className="hover:text-[#0c55cc] transition-colors">
+                  <a href={`mailto:${contact.email}`} className="hover:text-[#132242] transition-colors">
                     {contact.email || "—"}
                   </a>
                 </span>
@@ -246,7 +246,7 @@ function ReadingPane({ contact, onDelete, onStatusChange, onStarToggle, canWrite
         {contact.email && (
           <button 
             onClick={() => window.location.href = `mailto:${contact.email}?subject=Re: ${encodeURIComponent(contact.subject || 'Your Enquiry')}`}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#0c55cc] hover:bg-[#0c55cc] active:scale-95 text-white rounded-xl font-semibold text-sm transition-all shadow-sm shadow-blue-500/20"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#132242] hover:bg-[#132242] active:scale-95 text-white rounded-xl font-semibold text-sm transition-all shadow-sm shadow-blue-500/20"
           >
             <Reply size={15} /> Reply
           </button>
@@ -450,7 +450,7 @@ export default function Contact() {
       style={{ background: "#F4F6FB", fontFamily: "'DM Sans', system-ui, sans-serif" }}
     >
       <div className="pt-6 mb-4 shrink-0">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#0c55cc] hover:text-blue-800 transition font-semibold w-fit">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#132242] hover:text-blue-800 transition font-semibold w-fit">
           <ArrowLeft size={16} /> Back
         </button>
       </div>
@@ -483,7 +483,7 @@ export default function Contact() {
           {/* Filter toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`p-2.5 border rounded-xl text-slate-500 shadow-sm transition-colors ${showFilters ? "bg-blue-50 border-blue-200 text-[#0c55cc]" : "bg-white border-slate-200 hover:bg-slate-50"}`}
+            className={`p-2.5 border rounded-xl text-slate-500 shadow-sm transition-colors ${showFilters ? "bg-blue-50 border-blue-200 text-[#132242]" : "bg-white border-slate-200 hover:bg-slate-50"}`}
           >
             <Filter size={17} />
           </button>
@@ -600,7 +600,7 @@ export default function Contact() {
                   onClick={() => setCurrentPage(p)}
                   className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors ${
                     currentPage === p
-                      ? "bg-[#0c55cc] text-white shadow-sm"
+                      ? "bg-[#132242] text-white shadow-sm"
                       : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                   }`}
                 >

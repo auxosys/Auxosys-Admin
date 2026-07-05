@@ -124,7 +124,7 @@ const AdminLogin = () => {
               className="w-full text-white py-2.5 rounded-lg font-semibold transition shadow-md"
               style={{
                 background:
-                  "linear-gradient(135deg, #071b3a 0%, #0c55cc 65%, #0c55cc 100%)",
+                  "linear-gradient(135deg, #071b3a 0%, #132242 65%, #132242 100%)",
               }}
             >
               {loading ? "Signing in..." : "Sign In"}

@@ -146,7 +146,7 @@ const Careers = () => {
   return (
     <div className="min-h-screen bg-gray-50/50 pb-8 px-6">
       <div className="pt-6 mb-4 shrink-0">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#0c55cc] hover:text-blue-800 transition font-semibold w-fit">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#132242] hover:text-blue-800 transition font-semibold w-fit">
           <ArrowLeft size={16} /> Back
         </button>
       </div>
@@ -160,7 +160,7 @@ const Careers = () => {
         {canWrite && (
           <button
             onClick={() => navigate("/careers/new")}
-            className="flex items-center gap-2 bg-[#0c55cc] hover:bg-[#0c55cc] text-white px-4 py-2 rounded-lg font-medium shadow-sm text-sm"
+            className="flex items-center gap-2 bg-[#132242] hover:bg-[#132242] text-white px-4 py-2 rounded-lg font-medium shadow-sm text-sm"
           >
             <Plus size={16} strokeWidth={3} />
             New Job
@@ -246,7 +246,7 @@ const Careers = () => {
               <p className="text-sm font-medium text-gray-500">Total Jobs</p>
               <h3 className="text-2xl font-bold text-gray-800">{meta.total}</h3>
             </div>
-            <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center text-[#0c55cc]">
+            <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center text-[#132242]">
               <BriefcaseIcon size={24} />
             </div>
           </div>
@@ -344,7 +344,7 @@ const Careers = () => {
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
                     {isNewJob(job.createdAt) && (
-                      <span className="bg-[#0c55cc] text-white text-[10px] px-2 py-1 rounded">New</span>
+                      <span className="bg-[#132242] text-white text-[10px] px-2 py-1 rounded">New</span>
                     )}
                     <span
                       className={`text-[10px] px-2 py-1 rounded ${job.status === "Active"
@@ -394,7 +394,7 @@ const Careers = () => {
                   onClick={() => navigate(`/careers/applications/${job._id}`)}
                   className="border-t pt-3 flex justify-between cursor-pointer"
                 >
-                  <span className="text-2xl font-black text-[#0c55cc]">{job.applicantCount ?? 0}</span>
+                  <span className="text-2xl font-black text-[#132242]">{job.applicantCount ?? 0}</span>
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Applications</span>
                 </div>
               </div>
@@ -437,7 +437,7 @@ const Careers = () => {
                         {job.status === "Active" ? "Active" : "Closed"}
                       </span>
                     </td>
-                    <td className="p-4 font-bold text-[#0c55cc]">{job.applicantCount ?? 0}</td>
+                    <td className="p-4 font-bold text-[#132242]">{job.applicantCount ?? 0}</td>
                     <td className="p-4">
                       <div className="flex justify-end gap-3 text-gray-400 items-center">
                         <button

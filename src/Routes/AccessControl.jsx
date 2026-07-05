@@ -128,7 +128,7 @@ const AccessControl = () => {
         </div>
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 bg-[#0c55cc] hover:bg-[#0c55cc] text-white px-4 py-2 rounded-lg font-medium shadow-sm text-sm"
+          className="flex items-center gap-2 bg-[#132242] hover:bg-[#132242] text-white px-4 py-2 rounded-lg font-medium shadow-sm text-sm"
         >
           <Plus size={16} strokeWidth={3} />
           Add User
@@ -155,7 +155,7 @@ const AccessControl = () => {
                 <tr key={u._id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-[#0c55cc] font-bold uppercase">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-[#132242] font-bold uppercase">
                         {u.firstName?.[0] || 'O'}{u.lastName?.[0] || 'C'}
                       </div>
                       <div>
@@ -296,7 +296,7 @@ const AccessControl = () => {
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-100 rounded-lg transition-colors">
                   Cancel
                 </button>
-                <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-[#0c55cc] hover:bg-[#0c55cc] rounded-lg shadow-sm transition-colors">
+                <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-[#132242] hover:bg-[#132242] rounded-lg shadow-sm transition-colors">
                   {formData.id ? "Save Permissions" : "Create User"}
                 </button>
               </div>

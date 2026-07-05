@@ -129,7 +129,7 @@ const LegalPages = () => {
   return (
     <div className="flex-1 flex flex-col p-4 lg:p-8 bg-gray-50 min-h-screen overflow-hidden relative">
       <div className="pt-2 mb-4 shrink-0">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#0c55cc] hover:text-blue-800 transition font-semibold w-fit">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#132242] hover:text-blue-800 transition font-semibold w-fit">
           <ArrowLeft size={16} /> Back
         </button>
       </div>
@@ -146,7 +146,7 @@ const LegalPages = () => {
               if (!canPublish) return toast.error("You don't have permission to create pages");
               navigate("/legal/new");
             }}
-            className="flex items-center gap-2 bg-[#0c55cc] hover:bg-[#0a45a6] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+            className="flex items-center gap-2 bg-[#132242] hover:bg-[#0b1327] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
           >
             <Plus className="w-5 h-5" />
             Add New Page
@@ -193,7 +193,7 @@ const LegalPages = () => {
                       onDragOver={(e) => e.preventDefault()}
                     >
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-gray-400 group-hover:text-[#0c55cc] transition-colors">
+                        <div className="flex items-center gap-2 text-gray-400 group-hover:text-[#132242] transition-colors">
                           <GripVertical className="w-5 h-5" />
                           <span className="text-sm font-medium">{index + 1}</span>
                         </div>

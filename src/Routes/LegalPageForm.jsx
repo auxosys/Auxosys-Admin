@@ -184,7 +184,7 @@ const LegalPageForm = () => {
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="flex items-center gap-2 bg-[#0c55cc] hover:bg-[#0a45a6] text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-sm disabled:opacity-70"
+            className="flex items-center gap-2 bg-[#132242] hover:bg-[#0b1327] text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-sm disabled:opacity-70"
           >
             <Save className="w-4 h-4" />
             {loading ? "Saving..." : "Save Page"}
@@ -206,7 +206,7 @@ const LegalPageForm = () => {
                   value={formData.title}
                   onChange={handleBasicChange}
                   placeholder="e.g. Privacy Policy"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 focus:border-[#0c55cc] outline-none transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 focus:border-[#132242] outline-none transition-all"
                   required
                 />
               </div>
@@ -217,7 +217,7 @@ const LegalPageForm = () => {
                   name="status"
                   value={formData.status}
                   onChange={handleBasicChange}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 focus:border-[#0c55cc] outline-none transition-all bg-white"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 focus:border-[#132242] outline-none transition-all bg-white"
                 >
                   <option value="Draft">Draft</option>
                   <option value="Published">Published</option>
@@ -235,7 +235,7 @@ const LegalPageForm = () => {
                   value={formData.seo.metaTitle}
                   onChange={handleSeoChange}
                   placeholder="SEO Title Override"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#0c55cc] outline-none"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#132242] outline-none"
                 />
                 <textarea
                   name="metaDescription"
@@ -243,7 +243,7 @@ const LegalPageForm = () => {
                   onChange={handleSeoChange}
                   placeholder="SEO Meta Description"
                   rows="2"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#0c55cc] outline-none resize-none"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm focus:border-[#132242] outline-none resize-none"
                 />
               </div>
             </div>
@@ -261,7 +261,7 @@ const LegalPageForm = () => {
                 <button
                   type="button"
                   onClick={addSection}
-                  className="mx-auto flex items-center gap-2 bg-[#0c55cc] hover:bg-[#0a45a6] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-sm"
+                  className="mx-auto flex items-center gap-2 bg-[#132242] hover:bg-[#0b1327] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-sm"
                 >
                   <Plus className="w-5 h-5" />
                   Add First Section
@@ -292,7 +292,7 @@ const LegalPageForm = () => {
                           value={section.heading}
                           onChange={(e) => handleSectionChange(index, "heading", e.target.value)}
                           placeholder={`Section ${index + 1} Heading (e.g. Data Collection)`}
-                          className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 font-medium text-gray-900 focus:border-[#0c55cc] outline-none"
+                          className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 font-medium text-gray-900 focus:border-[#132242] outline-none"
                         />
                         <button
                           type="button"
@@ -309,7 +309,7 @@ const LegalPageForm = () => {
                         onChange={(e) => handleSectionChange(index, "content", e.target.value)}
                         placeholder="Enter the detailed legal text for this section here..."
                         rows="5"
-                        className="w-full px-3 py-2 bg-white rounded-lg border border-gray-200 text-sm focus:border-[#0c55cc] outline-none resize-y min-h-[100px]"
+                        className="w-full px-3 py-2 bg-white rounded-lg border border-gray-200 text-sm focus:border-[#132242] outline-none resize-y min-h-[100px]"
                       />
                     </div>
                   </div>
@@ -318,7 +318,7 @@ const LegalPageForm = () => {
                 <button
                   type="button"
                   onClick={addSection}
-                  className="w-full py-4 mt-2 border-2 border-dashed border-blue-200 hover:border-[#0c55cc] bg-blue-50/50 hover:bg-blue-50 text-[#0c55cc] font-medium rounded-xl flex items-center justify-center gap-2 transition-all"
+                  className="w-full py-4 mt-2 border-2 border-dashed border-blue-200 hover:border-[#132242] bg-blue-50/50 hover:bg-blue-50 text-[#132242] font-medium rounded-xl flex items-center justify-center gap-2 transition-all"
                 >
                   <Plus className="w-5 h-5" />
                   Add Another Section

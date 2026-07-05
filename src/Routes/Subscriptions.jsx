@@ -129,7 +129,7 @@ export default function Subscriptions() {
   return (
     <div className="min-h-screen bg-gray-50/50 pb-8 px-6">
       <div className="pt-6 mb-4 shrink-0">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#0c55cc] hover:text-blue-800 transition font-semibold w-fit">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#132242] hover:text-blue-800 transition font-semibold w-fit">
           <ArrowLeft size={16} /> Back
         </button>
       </div>

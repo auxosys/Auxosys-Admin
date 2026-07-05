@@ -39,7 +39,7 @@ const ToolbarButton = ({ onClick, active, children }) => (
     }}
     className={`p-2 rounded-md border transition flex items-center justify-center ${
       active
-        ? "bg-[#0c55cc] text-white border-[#0c55cc]"
+        ? "bg-[#132242] text-white border-[#132242]"
         : "bg-white text-gray-700 hover:bg-gray-100 border-gray-300"
     }`}
   >

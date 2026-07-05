@@ -169,7 +169,7 @@ const SEO = () => {
                 key={id}
                 onClick={() => setActiveTab(id)}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${activeTab === id
-                    ? "border-[#0c55cc] text-[#0c55cc]"
+                    ? "border-[#132242] text-[#132242]"
                     : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
               >

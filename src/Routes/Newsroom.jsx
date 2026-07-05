@@ -87,7 +87,7 @@ const Newsroom = () => {
           {canPublish && (
             <button
               onClick={() => navigate("/newsroom/new")}
-              className="flex items-center gap-2 bg-[#0c55cc] hover:bg-[#0c55cc] text-white px-4 py-2 rounded-lg font-medium shadow-sm text-sm"
+              className="flex items-center gap-2 bg-[#132242] hover:bg-[#132242] text-white px-4 py-2 rounded-lg font-medium shadow-sm text-sm"
             >
               <Plus size={14} strokeWidth={3} />
               Create your first post
@@ -105,7 +105,7 @@ const Newsroom = () => {
             className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] hover:shadow-md transition-shadow flex flex-col"
           >
             <div className="p-4 flex flex-col flex-1">
-              <span className="inline-block w-fit px-2 py-0.5 rounded border border-blue-200 text-[#0c55cc] text-[10px] font-semibold uppercase mb-2">
+              <span className="inline-block w-fit px-2 py-0.5 rounded border border-blue-200 text-[#132242] text-[10px] font-semibold uppercase mb-2">
                 {item.category}
               </span>
 
@@ -126,7 +126,7 @@ const Newsroom = () => {
               </p>
 
               <div className="pt-3 border-t border-gray-100 flex justify-between items-center mt-auto">
-                <span className="bg-[#0c55cc] text-white text-[10px] font-bold px-2 py-1 rounded">
+                <span className="bg-[#132242] text-white text-[10px] font-bold px-2 py-1 rounded">
                   {item.status}
                 </span>
                 <div className="flex items-center text-gray-400 text-[11px] font-medium">
@@ -165,7 +165,7 @@ const Newsroom = () => {
   return (
     <div className="min-h-screen bg-gray-50/50 pb-8 px-6">
       <div className="pt-6 mb-4 shrink-0">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#0c55cc] hover:text-blue-800 transition font-semibold w-fit">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-[#132242] hover:text-blue-800 transition font-semibold w-fit">
           <ArrowLeft size={16} /> Back
         </button>
       </div>
@@ -180,7 +180,7 @@ const Newsroom = () => {
         {canPublish && (
           <button
             onClick={() => navigate("/newsroom/new")}
-            className="flex items-center gap-2 bg-[#0c55cc] hover:bg-[#0c55cc] text-white px-4 py-2 rounded-lg font-medium shadow-sm text-sm"
+            className="flex items-center gap-2 bg-[#132242] hover:bg-[#132242] text-white px-4 py-2 rounded-lg font-medium shadow-sm text-sm"
           >
             <Plus size={16} strokeWidth={3} />
             Post News
