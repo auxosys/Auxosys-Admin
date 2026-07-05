@@ -11,7 +11,7 @@ const Newsroom = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newsError, setNewsError] = useState(false);
-  const { hasPermission, isLoading: authLoading } = useAuth();
+  const { hasPermission } = useAuth();
   const canPublish = hasPermission("newsroom", "Read & Write");
 
   // Prevents stale async callbacks from updating state / showing toasts

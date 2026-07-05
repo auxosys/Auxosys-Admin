@@ -4,7 +4,7 @@ import { apiClient } from "../helper/apiClient";
 import { toast } from "react-toastify";
 import RichTextEditor from "../Components/RichTextEditor";
 import { usePermissions } from "../hooks/usePermissions";
-import { ArrowLeft, Save, Send, Plus, X } from "lucide-react";
+import { ArrowLeft, Save, Send, X } from "lucide-react";
 
 const TABS = ["Basic Info", "Location & Comp", "Role Details", "Candidate Req", "Settings & SEO"];
 

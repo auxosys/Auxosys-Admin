@@ -4,7 +4,6 @@ import {
   ZoomIn, ZoomOut, Maximize, Minimize, 
   ChevronLeft, ChevronRight, Download, ExternalLink, File
 } from "lucide-react";
-import { apiClient } from "../helper/apiClient";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 

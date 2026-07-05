@@ -17,15 +17,12 @@ import {
 import { apiClient } from "../helper/apiClient";
 import { useAuth } from "../context/AuthContext";
 
-const DEFAULT_AVATAR =
-  "https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff&size=128";
-
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const { profile, hasAccess, isLoading } = useAuth();
+  const { profile, hasAccess } = useAuth();
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
