@@ -22,6 +22,7 @@ import SEO from './Routes/SEO';
 import AccessControl from './Routes/AccessControl';
 import LegalPages from './Routes/LegalPages';
 import LegalPageForm from './Routes/LegalPageForm';
+import IconStudio from './Routes/IconStudio';
 
 /* CAREERS */
 import PostJob from './Routes/PostJob';
@@ -99,6 +100,7 @@ function App() {
             <Route path="legal/edit/:id" element={<SuperAdminRoute><LegalPageForm /></SuperAdminRoute>} />
             <Route path="settings" element={<SuperAdminRoute><Settings /></SuperAdminRoute>} />
             <Route path="access-control" element={<SuperAdminRoute><AccessControl /></SuperAdminRoute>} />
+            <Route path="icon-studio" element={<SuperAdminRoute><IconStudio /></SuperAdminRoute>} />
             
             <Route path="profile" element={<Profile />} />
           </Route>

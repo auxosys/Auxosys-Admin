@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   LogOut,
   FileText,
+  Palette,
 } from "lucide-react";
 import { apiClient } from "../helper/apiClient";
 import { useAuth } from "../context/AuthContext";
@@ -169,6 +170,13 @@ const Sidebar = () => {
             <Link to="/legal-pages" className={getLinkClass("/legal-pages")}>
               <FileText size={20} />
               <span className="font-medium">Legal Pages</span>
+            </Link>
+          )}
+
+          {hasAccess("settings") && (
+            <Link to="/icon-studio" className={getLinkClass("/icon-studio")}>
+              <Palette size={20} />
+              <span className="font-medium">Icon Studio</span>
             </Link>
           )}
         </div>
