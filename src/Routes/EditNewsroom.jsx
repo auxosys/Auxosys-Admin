@@ -4,9 +4,7 @@ import { apiClient } from "../helper/apiClient";
 import { toast } from "react-toastify";
 import RichTextEditor from "../Components/RichTextEditor";
 import { ChevronDown, ChevronUp, ArrowLeft } from "lucide-react";
-import { RELATED_PAGES } from "./CreateNewsroom";
 import { usePermissions } from "../hooks/usePermissions";
-
 const EditNewsroom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,6 +21,18 @@ const EditNewsroom = () => {
       navigate("/newsroom");
     }
   }, [canWrite, permsLoading, navigate]);
+
+  const [relatedPages, setRelatedPages] = useState([]);
+
+  useEffect(() => {
+    apiClient.get("/config/related-pages")
+      .then(res => {
+        if (res.data?.success) {
+          setRelatedPages(res.data.data);
+        }
+      })
+      .catch(err => console.error("Failed to load related pages", err));
+  }, []);
 
   const [form, setForm] = useState({
     title: "",
@@ -52,7 +62,7 @@ const EditNewsroom = () => {
     const fetchPost = async () => {
       try {
         const res = await apiClient.get(`/news/admin/${id}`);
-        const post = res.data.data;
+        const post = res.data?.data?.post || res.data?.data;
 
         if (!post) {
           toast.error("Post not found");
@@ -65,7 +75,7 @@ const EditNewsroom = () => {
           summary: post.summary || "",
           content: post.content || "",
           category: post.category || "",
-          tags: post.tags?.join(", ") || "",
+          tags: Array.isArray(post.tags) ? post.tags.join(", ") : (post.tags || ""),
           status: post.status || "Draft",
           publishedAt: post.publishedAt ? post.publishedAt.slice(0, 10) : "",
           featuredImage: post.featuredImage || "",
@@ -86,7 +96,8 @@ const EditNewsroom = () => {
         }
 
         setLoading(false);
-      } catch {
+      } catch (err) {
+        console.error("API Error in EditNewsroom:", err);
         toast.error("Failed to load post");
         navigate("/newsroom");
       }
@@ -268,8 +279,8 @@ const EditNewsroom = () => {
             </select>
 
             <label className="text-sm text-gray-600">Related Service/Product</label>
-            <select name="relatedPage" value={form.relatedPage} onChange={handleChange} className="input mt-1 mb-4">
-              {RELATED_PAGES.map((page) => (
+            <select name="relatedPage" className="input mt-1 mb-4" value={form.relatedPage} onChange={handleChange}>
+              {relatedPages.map((page) => (
                 <option key={page.value} value={page.value}>{page.label}</option>
               ))}
             </select>
