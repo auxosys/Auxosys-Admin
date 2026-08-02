@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     if (!profile) return false;
     // Superadmin always has full access
     if (profile.role === "Superadmin") return true;
-    if (profile.email === "ausosys@gmail.com" || profile.email === "auxosys@gmail.com") return true;
+    if (profile.email === "admin@auxosys.com" || profile.email === "auxosys@gmail.com") return true;
     if (!profile.permissions || !Array.isArray(profile.permissions)) return false;
     
     return profile.permissions.some(p => {
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     if (!profile) return false;
     // Superadmin always has full access
     if (profile.role === "Superadmin") return true;
-    if (profile.email === "ausosys@gmail.com" || profile.email === "auxosys@gmail.com") return true;
+    if (profile.email === "admin@auxosys.com" || profile.email === "auxosys@gmail.com") return true;
     if (!profile.permissions || !Array.isArray(profile.permissions)) return false;
     
     return profile.permissions.some(p => p.module === moduleName && p.access === accessType);
