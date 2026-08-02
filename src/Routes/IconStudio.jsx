@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { icons } from 'lucide-react';
 import { listIcons, buildIcon, buildLucideIcon, PALETTES } from '../helper/iconEngine';

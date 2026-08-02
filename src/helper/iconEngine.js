@@ -276,4 +276,5 @@ export function buildLucideIcon(iconContents, options = {}) {
 }
 
 /* Node/browser dual export */
-export default { PALETTES, listIcons, buildIcon, buildLucideIcon };
+const iconEngine = { PALETTES, listIcons, buildIcon, buildLucideIcon };
+export default iconEngine;
