@@ -374,7 +374,14 @@ const Careers = () => {
                   </div>
                 </div>
 
-                <h3 className="font-bold mb-2">{job.title}</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-bold">{job.title}</h3>
+                  {job.public_id && (
+                    <span className="text-[10px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
+                      {job.public_id}
+                    </span>
+                  )}
+                </div>
 
                 <div className="text-xs text-gray-500 space-y-1 mb-4">
                   <div className="flex items-center">
