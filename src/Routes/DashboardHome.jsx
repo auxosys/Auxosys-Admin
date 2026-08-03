@@ -71,6 +71,13 @@ const DashboardHome = () => {
       weeklySeries.find((s) => s.name === "Applications")?.data[i] ?? 0,
   }));
 
+  const contactHistory = weeklySeries.find((s) => s.name === "Contacts")?.data || [0,0,0,0,0,0,0];
+  const appHistory = weeklySeries.find((s) => s.name === "Applications")?.data || [0,0,0,0,0,0,0];
+  const jobHistory = weeklySeries.find((s) => s.name === "Jobs")?.data || [0,0,0,0,0,0,0];
+  const newsHistory = weeklySeries.find((s) => s.name === "News")?.data || [0,0,0,0,0,0,0];
+
+  const mapToChartData = (arr) => arr.map(val => ({ y: val }));
+
   const contactLabels = charts.contactStatus?.labels ?? [];
   const contactCounts = charts.contactStatus?.data ?? [];
   const pieData = contactLabels.map((l, i) => ({
@@ -78,32 +85,38 @@ const DashboardHome = () => {
     value: contactCounts[i] ?? 0,
   }));
 
-  // Reusable KPI Card
-  const KpiCard = ({ title, value, icon: Icon, trend, trendValue, trendLabel }) => {
-    const isUp = trend === "up";
-    const isNeutral = trend === "neutral";
-    const trendColor = isUp ? "text-green-600" : isNeutral ? "text-slate-500" : "text-red-600";
-    const trendBg = isUp ? "bg-green-100" : isNeutral ? "bg-slate-100" : "bg-red-100";
-    const TrendIcon = isUp ? TrendingUp : isNeutral ? null : TrendingDown;
-
-    return (
-      <div className="bg-white rounded-xl p-6 flex flex-col gap-4 relative group transition-shadow hover:shadow-md border border-slate-200 shadow-sm">
-        <div className="flex justify-between items-start">
-          <span className="text-sm font-medium text-slate-500">{title}</span>
-          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#132242] flex items-center justify-center">
-            <Icon size={20} />
-          </div>
-        </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-4xl font-bold text-slate-900">{value}</span>
-        </div>
-        <div className={`flex items-center gap-1 w-fit px-2 py-1 rounded-md mt-auto ${trendColor} ${trendBg}`}>
-          {TrendIcon && <TrendIcon size={14} />}
-          <span className="text-xs font-semibold">{trendValue} {trendLabel}</span>
-        </div>
+  const StatBlock = ({ label, value, color, data, icon: Icon }) => (
+    <div className="flex flex-col items-center p-6 group">
+      <span className="text-[32px] leading-tight font-semibold text-[#1a1a1a] mb-1">{value}</span>
+      <span className="text-[13px] text-gray-700 font-medium mb-6 flex items-center justify-center gap-1.5">
+        {label}
+        {Icon && <Icon size={14} className="text-gray-400 group-hover:text-gray-600 transition-colors" />}
+      </span>
+      <div className="h-10 w-full mt-auto relative border-b" style={{ borderColor: (!data || !data.some(d => d.y > 0)) ? color : 'transparent' }}>
+        {data && data.some(d => d.y > 0) && (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id={`color-${label.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={color} stopOpacity={0.15} />
+                  <stop offset="95%" stopColor={color} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area
+                type="linear"
+                dataKey="y"
+                stroke={color}
+                fillOpacity={1}
+                fill={`url(#color-${label.replace(/\s+/g, '')})`}
+                strokeWidth={1.5}
+                isAnimationActive={false}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <div className="bg-slate-50 text-slate-600 min-h-screen pb-10 flex-1 flex flex-col h-full overflow-hidden relative px-6">
@@ -125,40 +138,14 @@ const DashboardHome = () => {
       <div className="flex-1 overflow-y-auto relative z-10">
         <div className="max-w-[1280px] mx-auto flex flex-col gap-6">
           
-          {/* 1. KPI Grid */}
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <KpiCard
-              title="Total Enquiries"
-              value={kpi?.totalContacts?.value ?? 0}
-              icon={MessageSquare}
-              trend={kpi?.totalContacts?.trendDirection ?? "neutral"}
-              trendValue={`${kpi?.totalContacts?.trend ?? 0}%`}
-              trendLabel="vs last month"
-            />
-            <KpiCard
-              title="Active Jobs"
-              value={kpi?.activeJobs?.value ?? 0}
-              icon={Briefcase}
-              trend="neutral"
-              trendValue="—"
-              trendLabel={kpi?.activeJobs?.label ?? "Currently active"}
-            />
-            <KpiCard
-              title="Open Job Apps"
-              value={kpi?.jobApplications?.value ?? 0}
-              icon={Briefcase}
-              trend={kpi?.jobApplications?.trendDirection ?? "neutral"}
-              trendValue={`${kpi?.jobApplications?.trend ?? 0}%`}
-              trendLabel="vs last month"
-            />
-            <KpiCard
-              title="Case Studies"
-              value={kpi?.caseStudies?.value ?? 0}
-              icon={FileText}
-              trend={kpi?.caseStudies?.trendDirection ?? "neutral"}
-              trendValue={`${kpi?.caseStudies?.trend ?? 0}%`}
-              trendLabel="vs last month"
-            />
+          {/* 1. Unified KPI Grid */}
+          <section className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-2">
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
+              <StatBlock label="Total Enquiries" value={kpi?.totalContacts?.value ?? 0} color="#94a3b8" data={mapToChartData(contactHistory)} icon={MessageSquare} />
+              <StatBlock label="Active Jobs" value={kpi?.activeJobs?.value ?? 0} color="#38bdf8" data={mapToChartData(jobHistory)} icon={Briefcase} />
+              <StatBlock label="Open Job Apps" value={kpi?.jobApplications?.value ?? 0} color="#10b981" data={mapToChartData(appHistory)} icon={Briefcase} />
+              <StatBlock label="Case Studies" value={kpi?.caseStudies?.value ?? 0} color="#f87171" data={mapToChartData(newsHistory)} icon={FileText} />
+            </div>
           </section>
 
           {/* 2. Chart Row */}

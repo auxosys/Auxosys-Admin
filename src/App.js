@@ -39,7 +39,15 @@ const RoleRoute = ({ moduleName, children }) => {
 const SuperAdminRoute = ({ children }) => {
   const { profile, isLoading } = useAuth();
   if (isLoading) return <div className="p-8 text-center text-gray-500">Verifying permissions...</div>;
-  if (!profile || (profile.email !== "ausosys@gmail.com" && profile.email !== "auxosys@gmail.com")) {
+  
+  const isSuper = profile && (
+    profile.role === "Superadmin" || 
+    profile.email === "admin@auxosys.com" || 
+    profile.email === "auxosys@gmail.com" ||
+    profile.email === "ausosys@gmail.com"
+  );
+  
+  if (!isSuper) {
     return <Navigate to="/" replace />;
   }
   return children;
