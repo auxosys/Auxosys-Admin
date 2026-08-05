@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Settings, Save, Server, Eye, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Save, Server, Eye, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CookieManagement = () => {
