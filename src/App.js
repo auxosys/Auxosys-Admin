@@ -24,6 +24,10 @@ import LegalPages from './Routes/LegalPages';
 import LegalPageForm from './Routes/LegalPageForm';
 import IconStudio from './Routes/IconStudio';
 
+import CookieConsentLogs from './Routes/CookieConsentLogs';
+import CookieConsentDetails from './Routes/CookieConsentDetails';
+import CookieManagement from './Routes/CookieManagement';
+
 /* CAREERS */
 import PostJob from './Routes/PostJob';
 import EditJob from './Routes/EditJob';
@@ -109,6 +113,9 @@ function App() {
             <Route path="settings" element={<SuperAdminRoute><Settings /></SuperAdminRoute>} />
             <Route path="access-control" element={<SuperAdminRoute><AccessControl /></SuperAdminRoute>} />
             <Route path="icon-studio" element={<SuperAdminRoute><IconStudio /></SuperAdminRoute>} />
+            <Route path="consent-logs" element={<SuperAdminRoute><CookieConsentLogs /></SuperAdminRoute>} />
+            <Route path="consent-details/:id" element={<SuperAdminRoute><CookieConsentDetails /></SuperAdminRoute>} />
+            <Route path="cookie-management" element={<SuperAdminRoute><CookieManagement /></SuperAdminRoute>} />
             
             <Route path="profile" element={<Profile />} />
           </Route>

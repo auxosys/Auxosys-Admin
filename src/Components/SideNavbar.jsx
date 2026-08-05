@@ -174,6 +174,19 @@ const Sidebar = () => {
           )}
 
           {hasAccess("settings") && (
+            <>
+              <Link to="/consent-logs" className={getLinkClass("/consent-logs")}>
+                <ShieldCheck size={20} />
+                <span className="font-medium">Cookie Consent Logs</span>
+              </Link>
+              <Link to="/cookie-management" className={getLinkClass("/cookie-management")}>
+                <Settings size={20} />
+                <span className="font-medium">Cookie Management</span>
+              </Link>
+            </>
+          )}
+
+          {hasAccess("settings") && (
             <Link to="/icon-studio" className={getLinkClass("/icon-studio")}>
               <Palette size={20} />
               <span className="font-medium">Icon Studio</span>
