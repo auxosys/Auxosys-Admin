@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Settings, Save, Server, Eye, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { Settings, Save, Server, Eye, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const CookieManagement = () => {
   const [activeTab, setActiveTab] = useState('scripts');
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
   // Mock state for the UI (In a real app, this would be fetched from API/Supabase)
   const [scripts, setScripts] = useState([
@@ -21,12 +25,36 @@ const CookieManagement = () => {
     status: 'Publish'
   });
 
-  const handleSave = () => {
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const res = await axios.get('http://localhost:5002/cookies/config');
+        if (res.data && res.data.data && res.data.data.config) {
+          setBannerConfig({
+            theme: res.data.data.config.theme || 'light',
+            position: res.data.data.config.position || 'bottom-right',
+            expiry: res.data.data.config.expiry || 180,
+            status: res.data.data.status || 'Publish'
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching config', err);
+      }
+    };
+    fetchConfig();
+  }, []);
+
+  const handleSave = async () => {
     setSaving(true);
-    setTimeout(() => {
+    try {
+      await axios.post('http://localhost:5002/cookies/config', bannerConfig);
+      toast.success('Settings saved successfully!');
+    } catch (err) {
+      console.error('Error saving settings', err);
+      toast.error('Failed to save settings.');
+    } finally {
       setSaving(false);
-      alert('Settings saved successfully!');
-    }, 800);
+    }
   };
 
   const toggleScript = (id) => {
@@ -35,12 +63,20 @@ const CookieManagement = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
+      <div className="mb-4">
+        <button 
+          onClick={() => navigate('/consent-logs')}
+          className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium"
+        >
+          <ArrowLeft size={16} /> Back to Consent Logs
+        </button>
+      </div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Cookie Management</h1>
-          <p className="text-gray-500">Configure banner settings, script injection, and cookie inventory.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Cookie Settings</h1>
+          <p className="text-gray-500">Configure banner settings and script injection.</p>
         </div>
-        <button 
+        <button
           onClick={handleSave}
           disabled={saving}
           className="px-4 py-2 bg-[#0fb5a6] text-white rounded-lg hover:bg-teal-600 transition-colors shadow-sm font-medium flex items-center gap-2"
@@ -51,23 +87,17 @@ const CookieManagement = () => {
 
       {/* Tabs */}
       <div className="flex gap-6 border-b border-gray-200 mb-6">
-        <button 
+        <button
           onClick={() => setActiveTab('scripts')}
           className={`pb-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'scripts' ? 'border-[#0fb5a6] text-[#0fb5a6]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
         >
-          <Server size={18}/> Script Manager
+          <Server size={18} /> Script Manager
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab('banner')}
           className={`pb-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'banner' ? 'border-[#0fb5a6] text-[#0fb5a6]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
         >
-          <Eye size={18}/> Banner Display Rules
-        </button>
-        <button 
-          onClick={() => setActiveTab('inventory')}
-          className={`pb-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'inventory' ? 'border-[#0fb5a6] text-[#0fb5a6]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-        >
-          <Settings size={18}/> Manual Inventory
+          <Eye size={18} /> Banner Display Rules
         </button>
       </div>
 
@@ -76,7 +106,7 @@ const CookieManagement = () => {
         <div className="bg-white rounded-xl border shadow-sm p-6">
           <h2 className="text-lg font-bold text-gray-800 mb-2">3rd-Party Scripts</h2>
           <p className="text-gray-500 text-sm mb-6">These scripts will be automatically injected into the website frontend only if the visitor consents to the corresponding category.</p>
-          
+
           <div className="space-y-4">
             {scripts.map(script => (
               <div key={script.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
@@ -88,7 +118,7 @@ const CookieManagement = () => {
                     <span className="text-gray-500">Category: <span className="font-medium text-gray-700">{script.category}</span></span>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => toggleScript(script.id)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${script.enabled ? 'bg-[#0fb5a6]' : 'bg-gray-300'}`}
                 >
@@ -105,40 +135,34 @@ const CookieManagement = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5">
             <h2 className="text-lg font-bold text-gray-800 mb-4">Configuration</h2>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Banner Position</label>
-              <select 
-                value={bannerConfig.position}
-                onChange={(e) => setBannerConfig({...bannerConfig, position: e.target.value})}
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:border-[#0fb5a6] focus:ring-[#0fb5a6] p-2 border"
-              >
-                <option value="bottom">Bottom Full Width</option>
-                <option value="bottom-left">Bottom Left Floating</option>
-                <option value="bottom-right">Bottom Right Floating</option>
-                <option value="center">Center Modal</option>
-              </select>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Banner Design</label>
+              <div className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-between">
+                <span>Premium Horizontal Floating (Locked)</span>
+                <span className="bg-teal-100 text-[#0fb5a6] px-2 py-1 rounded text-xs font-semibold">Active</span>
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Theme</label>
-              <select 
+              <select
                 value={bannerConfig.theme}
-                onChange={(e) => setBannerConfig({...bannerConfig, theme: e.target.value})}
+                onChange={(e) => setBannerConfig({ ...bannerConfig, theme: e.target.value })}
                 className="w-full border-gray-300 rounded-lg shadow-sm focus:border-[#0fb5a6] focus:ring-[#0fb5a6] p-2 border"
               >
                 <option value="light">Light Mode</option>
                 <option value="dark">Dark Mode</option>
-                <option value="auto">Auto (System Default)</option>
+                <option value="auto">System Auto</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Consent Expiry (Days)</label>
-              <input 
+              <input
                 type="number"
                 value={bannerConfig.expiry}
-                onChange={(e) => setBannerConfig({...bannerConfig, expiry: e.target.value})}
+                onChange={(e) => setBannerConfig({ ...bannerConfig, expiry: e.target.value })}
                 className="w-full border-gray-300 rounded-lg shadow-sm focus:border-[#0fb5a6] focus:ring-[#0fb5a6] p-2 border"
               />
               <p className="text-xs text-gray-500 mt-1">Visitors will be asked to consent again after this period.</p>
@@ -148,50 +172,58 @@ const CookieManagement = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Publish Status</label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="radio" name="status" value="Draft" checked={bannerConfig.status === 'Draft'} onChange={(e) => setBannerConfig({...bannerConfig, status: e.target.value})} /> Draft
+                  <input type="radio" name="status" value="Draft" checked={bannerConfig.status === 'Draft'} onChange={(e) => setBannerConfig({ ...bannerConfig, status: e.target.value })} /> Draft
                 </label>
                 <label className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="radio" name="status" value="Publish" checked={bannerConfig.status === 'Publish'} onChange={(e) => setBannerConfig({...bannerConfig, status: e.target.value})} /> Publish Live
+                  <input type="radio" name="status" value="Publish" checked={bannerConfig.status === 'Publish'} onChange={(e) => setBannerConfig({ ...bannerConfig, status: e.target.value })} /> Publish Live
                 </label>
               </div>
             </div>
           </div>
 
           {/* Live Preview */}
-          <div className="bg-gray-100 rounded-xl border p-6 flex flex-col justify-between">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center justify-between">
-              Live Preview 
+          <div className="bg-gray-100/50 rounded-xl border p-6 flex flex-col justify-between overflow-hidden relative min-h-[300px]">
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center justify-between relative z-10">
+              Live Preview
               <span className="text-xs font-normal text-[#0fb5a6] bg-teal-50 px-2 py-1 rounded">Desktop View</span>
             </h3>
-            
-            <div className="flex-grow flex items-end justify-center">
-              {/* Mock Banner */}
-              <div className={`w-full max-w-md bg-white border shadow-xl rounded-xl p-5 ${bannerConfig.theme === 'dark' ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-gray-900'}`}>
-                <h4 className="font-bold text-lg mb-2">We value your privacy</h4>
-                <p className={`text-sm mb-4 ${bannerConfig.theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic.
-                </p>
-                <div className="flex flex-col gap-2">
-                  <button className="w-full bg-[#0fb5a6] text-white py-2 rounded-lg font-medium text-sm">Accept All</button>
-                  <button className={`w-full py-2 rounded-lg font-medium text-sm border ${bannerConfig.theme === 'dark' ? 'border-gray-600 text-gray-300' : 'border-gray-300 text-gray-700'}`}>Customize Preferences</button>
+
+            <div className="flex-grow flex items-end justify-end pt-8">
+              {/* Mock Banner matching Frontend */}
+              <div
+                className="w-full max-w-[700px] backdrop-blur-md rounded-[16px] p-4 flex items-center justify-between gap-6"
+                style={{
+                  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                  backgroundColor: bannerConfig.theme === 'dark' ? 'rgba(14, 27, 33, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                  borderColor: bannerConfig.theme === 'dark' ? '#2A3A41' : '#E7ECEC',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  boxShadow: '0 24px 60px -18px rgba(14,27,33,0.25)'
+                }}>
+
+                <div className="flex-1">
+                  <div className="flex items-center gap-2.5 mb-1.5">
+                    <div className="w-7 h-7 rounded-lg bg-[#0fb5a6]/10 text-[#0fb5a6] flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-extrabold text-[15px] m-0 tracking-tight" style={{ color: bannerConfig.theme === 'dark' ? '#FFFFFF' : '#0E1B21' }}>Your privacy matters</h4>
+                  </div>
+                  <p className="text-[13px] leading-relaxed m-0" style={{ color: bannerConfig.theme === 'dark' ? '#A0ABB0' : '#56656B' }}>
+                    We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking <strong className="font-bold whitespace-nowrap" style={{ color: bannerConfig.theme === 'dark' ? '#FFFFFF' : '#0E1B21' }}>"Accept All"</strong>, you consent to our use of cookies.
+                    <span className="inline-block ml-1.5 text-[#0FB5A6] font-bold cursor-pointer hover:underline">Read our Cookie Policy</span>
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2.5 shrink-0">
+                  <button className="px-3.5 py-2.5 rounded-[10px] font-semibold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#1A2E35' : '#F5F8F8', borderColor: bannerConfig.theme === 'dark' ? '#2A3A41' : '#E7ECEC', borderWidth: '1px', borderStyle: 'solid', color: bannerConfig.theme === 'dark' ? '#E7ECEC' : '#10201F' }}>Reject All</button>
+                  <button className="px-3.5 py-2.5 rounded-[10px] font-semibold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#0E1B21' : '#FFFFFF', borderColor: bannerConfig.theme === 'dark' ? '#3B4E56' : '#D8E0E0', borderWidth: '1px', borderStyle: 'solid', color: bannerConfig.theme === 'dark' ? '#FFFFFF' : '#10201F' }}>Customize</button>
+                  <button className="px-5 py-2.5 rounded-[10px] font-bold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#0FB5A6' : '#0E1B21', color: '#FFFFFF' }}>Accept All</button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Inventory Tab */}
-      {activeTab === 'inventory' && (
-        <div className="bg-white rounded-xl border shadow-sm p-6 text-center py-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-50 text-[#0fb5a6] rounded-full mb-4">
-            <CheckCircle2 size={32} />
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Manual Cookie Inventory</h2>
-          <p className="text-gray-500 max-w-md mx-auto mb-6">Database connected. The inventory is currently managed directly via the Supabase <code>cookie_inventory</code> table to ensure high structural integrity.</p>
-          <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">
-            Open Supabase Dashboard
-          </button>
         </div>
       )}
     </div>

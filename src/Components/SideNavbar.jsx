@@ -179,10 +179,6 @@ const Sidebar = () => {
                 <ShieldCheck size={20} />
                 <span className="font-medium">Cookie Consent Logs</span>
               </Link>
-              <Link to="/cookie-management" className={getLinkClass("/cookie-management")}>
-                <Settings size={20} />
-                <span className="font-medium">Cookie Management</span>
-              </Link>
             </>
           )}
 

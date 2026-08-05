@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../helper/apiClient';
-import { Users, FileText, CheckCircle, XCircle, Sliders, Calendar } from 'lucide-react';
+import { Users, FileText, CheckCircle, XCircle, Sliders, Calendar, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CookieConsentLogs = () => {
   const [stats, setStats] = useState({ total: 0, acceptedAll: 0, rejectedAll: 0, customized: 0 });
+  const navigate = useNavigate();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const navigate = useNavigate();
-
   const fetchStats = async () => {
     try {
       const res = await apiClient.get('/cookies/admin/dashboard');
@@ -71,10 +70,10 @@ const CookieConsentLogs = () => {
           <p className="text-gray-500">Audit trail of visitor cookie consent choices, kept for DPDP Act & GDPR compliance.</p>
         </div>
         <button 
-          onClick={exportData}
-          className="px-4 py-2 bg-[#0fb5a6] text-white rounded-lg hover:bg-teal-600 transition-colors shadow-sm font-medium flex items-center gap-2"
+          onClick={() => navigate('/cookie-management')}
+          className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-colors shadow-sm font-medium flex items-center gap-2"
         >
-          <FileText size={18} /> Export CSV
+          <Settings size={18} /> Cookie Settings
         </button>
       </div>
 
@@ -114,8 +113,14 @@ const CookieConsentLogs = () => {
       <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
         <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
           <h2 className="font-semibold text-gray-800">Recent Consent Activity</h2>
-          <div className="flex gap-2">
-            <input type="text" placeholder="Search by Consent ID..." className="input py-1 px-3 text-sm h-8 w-64" />
+          <div className="flex gap-3">
+            <input type="text" placeholder="Search by Consent ID..." className="input py-1.5 px-3 text-sm h-9 w-64 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0fb5a6] focus:border-[#0fb5a6]" />
+            <button 
+              onClick={exportData}
+              className="px-3 py-1.5 bg-[#0fb5a6] text-white rounded-lg hover:bg-teal-600 transition-colors shadow-sm text-sm font-medium flex items-center gap-2 h-9 whitespace-nowrap"
+            >
+              <FileText size={16} /> Export CSV
+            </button>
           </div>
         </div>
         <div className="overflow-x-auto">
