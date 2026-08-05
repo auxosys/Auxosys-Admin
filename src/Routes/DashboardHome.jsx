@@ -4,8 +4,6 @@ import {
   MessageSquare,
   Briefcase,
   FileText,
-  TrendingUp,
-  TrendingDown,
   ArrowLeft,
 } from "lucide-react";
 import {

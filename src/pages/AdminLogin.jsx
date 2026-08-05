@@ -26,7 +26,7 @@ const AdminLogin = () => {
       setCurrentBg((prev) => (prev + 1) % backgroundImages.length);
     }, 6000); // Change image every 6 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [backgroundImages.length]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
