@@ -182,12 +182,12 @@ const Sidebar = () => {
             </>
           )}
 
-          {hasAccess("settings") && (
+          {/* hasAccess("settings") && (
             <Link to="/icon-studio" className={getLinkClass("/icon-studio")}>
               <Palette size={20} />
               <span className="font-medium">Icon Studio</span>
             </Link>
-          )}
+          ) */}
         </div>
 
         {/* Footer */}
