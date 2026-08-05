@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { apiClient } from '../helper/apiClient';
 import { toast } from 'react-toastify';
 import { Save, Server, Eye, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
