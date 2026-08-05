@@ -1,7 +1,8 @@
 import axios from "axios";
 
+const isLocal = typeof window !== 'undefined' && window.location.hostname === 'localhost';
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5001";
+  process.env.REACT_APP_API_BASE_URL || (isLocal ? "http://localhost:5002" : "https://auxosys-backend.vercel.app");
 
 // Cache for deduplicating identical GET requests occurring simultaneously
 const pendingRequests = new Map();

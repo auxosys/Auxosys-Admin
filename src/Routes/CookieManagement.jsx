@@ -28,8 +28,8 @@ const CookieManagement = () => {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const res = await axios.get('http://localhost:5002/cookies/config');
-        if (res.data && res.data.data && res.data.data.config) {
+        const res = await apiClient.get('/cookies/config');
+        if (res.data.success && res.data.data && res.data.data.config) {
           setBannerConfig({
             theme: res.data.data.config.theme || 'light',
             position: res.data.data.config.position || 'bottom-right',
@@ -47,8 +47,8 @@ const CookieManagement = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await axios.post('http://localhost:5002/cookies/config', bannerConfig);
-      toast.success('Settings saved successfully!');
+      await apiClient.post('/cookies/config', bannerConfig);
+      toast.success('Cookie consent banner updated successfully!');
     } catch (err) {
       console.error('Error saving settings', err);
       toast.error('Failed to save settings.');
@@ -204,9 +204,14 @@ const CookieManagement = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2.5 mb-1.5">
                     <div className="w-7 h-7 rounded-lg bg-[#0fb5a6]/10 text-[#0fb5a6] flex items-center justify-center shrink-0">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+                      <path d="M8.5 8.5v.01" />
+                      <path d="M16 15.5v.01" />
+                      <path d="M12 12v.01" />
+                      <path d="M11 17v.01" />
+                      <path d="M7 14v.01" />
+                    </svg>
                     </div>
                     <h4 className="font-extrabold text-[15px] m-0 tracking-tight" style={{ color: bannerConfig.theme === 'dark' ? '#FFFFFF' : '#0E1B21' }}>Your privacy matters</h4>
                   </div>
@@ -218,7 +223,7 @@ const CookieManagement = () => {
 
                 <div className="flex items-center gap-2.5 shrink-0">
                   <button className="px-3.5 py-2.5 rounded-[10px] font-semibold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#1A2E35' : '#F5F8F8', borderColor: bannerConfig.theme === 'dark' ? '#2A3A41' : '#E7ECEC', borderWidth: '1px', borderStyle: 'solid', color: bannerConfig.theme === 'dark' ? '#E7ECEC' : '#10201F' }}>Reject All</button>
-                  <button className="px-3.5 py-2.5 rounded-[10px] font-semibold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#0E1B21' : '#FFFFFF', borderColor: bannerConfig.theme === 'dark' ? '#3B4E56' : '#D8E0E0', borderWidth: '1px', borderStyle: 'solid', color: bannerConfig.theme === 'dark' ? '#FFFFFF' : '#10201F' }}>Customize</button>
+                  <button className="px-3.5 py-2.5 rounded-[10px] font-semibold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#1A2E35' : '#FFFFFF', borderColor: bannerConfig.theme === 'dark' ? '#2A3A41' : '#D8E0E0', borderWidth: '1px', borderStyle: 'solid', color: bannerConfig.theme === 'dark' ? '#E7ECEC' : '#10201F' }}>Customize</button>
                   <button className="px-5 py-2.5 rounded-[10px] font-bold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#0FB5A6' : '#0E1B21', color: '#FFFFFF' }}>Accept All</button>
                 </div>
               </div>
