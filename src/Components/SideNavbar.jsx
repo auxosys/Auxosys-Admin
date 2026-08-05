@@ -199,13 +199,19 @@ const Sidebar = () => {
             </Link>
           )}
 
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-red-300 hover:bg-red-500/10 hover:text-red-200 transition-colors cursor-pointer w-full text-left"
-          >
-            <LogOut size={20} />
-            <span className="font-medium">Log out</span>
-          </button>
+          <div className="flex items-center justify-between mt-1 px-2 py-2 bg-white/5 rounded-lg">
+            <div className="flex flex-col overflow-hidden flex-1 mr-2">
+              <span className="text-sm font-semibold text-white truncate">{profile?.name || profile?.firstName || "Admin User"}</span>
+              <span className="text-[11px] text-blue-200/70 truncate">{profile?.email || ""}</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="p-1.5 rounded-md text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-colors flex-shrink-0"
+              title="Log out"
+            >
+              <LogOut size={18} />
+            </button>
+          </div>
         </div>
       </aside>
     </>

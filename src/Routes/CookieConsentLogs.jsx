@@ -82,28 +82,28 @@ const CookieConsentLogs = () => {
         <div className="bg-white p-5 rounded-xl border shadow-sm flex items-center gap-4">
           <div className="p-3 bg-blue-100 text-blue-600 rounded-lg"><Users size={24} /></div>
           <div>
-            <div className="text-sm text-gray-500 font-medium">Total Consents</div>
+            <div className="text-sm text-gray-500 font-medium whitespace-nowrap">Total Consents</div>
             <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
           </div>
         </div>
         <div className="bg-white p-5 rounded-xl border shadow-sm flex items-center gap-4">
           <div className="p-3 bg-green-100 text-green-600 rounded-lg"><CheckCircle size={24} /></div>
           <div>
-            <div className="text-sm text-gray-500 font-medium">Accepted All</div>
+            <div className="text-sm text-gray-500 font-medium whitespace-nowrap">Accepted All</div>
             <div className="text-2xl font-bold text-gray-900">{stats.acceptedAll}</div>
           </div>
         </div>
         <div className="bg-white p-5 rounded-xl border shadow-sm flex items-center gap-4">
           <div className="p-3 bg-red-100 text-red-600 rounded-lg"><XCircle size={24} /></div>
           <div>
-            <div className="text-sm text-gray-500 font-medium">Rejected Optional</div>
+            <div className="text-sm text-gray-500 font-medium whitespace-nowrap">Rejected Optional</div>
             <div className="text-2xl font-bold text-gray-900">{stats.rejectedAll}</div>
           </div>
         </div>
         <div className="bg-white p-5 rounded-xl border shadow-sm flex items-center gap-4">
           <div className="p-3 bg-orange-100 text-orange-600 rounded-lg"><Sliders size={24} /></div>
           <div>
-            <div className="text-sm text-gray-500 font-medium">Customised</div>
+            <div className="text-sm text-gray-500 font-medium whitespace-nowrap">Customised</div>
             <div className="text-2xl font-bold text-gray-900">{stats.customized}</div>
           </div>
         </div>
