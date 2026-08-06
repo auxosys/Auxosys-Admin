@@ -13,7 +13,6 @@ import {
   ShieldCheck,
   LogOut,
   FileText,
-  Palette,
 } from "lucide-react";
 import { apiClient } from "../helper/apiClient";
 import { useAuth } from "../context/AuthContext";
