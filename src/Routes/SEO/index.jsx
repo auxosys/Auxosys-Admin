@@ -4,12 +4,9 @@ import { toast } from "react-toastify";
 import {
   Search,
   Share2,
-  Twitter,
   BarChart2,
   Building2,
   Shield,
-  Upload,
-  X,
   Map,
   FileText,
   Link as LinkIcon,
@@ -17,8 +14,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Plus,
-  Trash2,
   ExternalLink,
   Construction,
 } from "lucide-react";
@@ -208,28 +203,6 @@ const SEO = () => {
       toast.error("Failed to save sitemap settings");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const addRedirect = async () => {
-    try {
-      if (!newRedirect.old_path || !newRedirect.new_path) return toast.error("Both paths are required");
-      const res = await apiClient.post("/api/v1/seo/redirects", newRedirect);
-      setRedirects([res.data.data, ...redirects]);
-      setNewRedirect({ old_path: "", new_path: "", redirect_type: 301 });
-      toast.success("Redirect added");
-    } catch {
-      toast.error("Failed to add redirect");
-    }
-  };
-
-  const removeRedirect = async (id) => {
-    try {
-      await apiClient.delete(`/seo/redirects/${id}`);
-      setRedirects(redirects.filter((r) => r.id !== id));
-      toast.success("Redirect removed");
-    } catch {
-      toast.error("Failed to remove redirect");
     }
   };
 

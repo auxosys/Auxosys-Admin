@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Globe, Search } from "lucide-react";
+import { Plus, Edit2, Trash2, Globe } from "lucide-react";
 import { apiClient } from "../../../helper/apiClient";
 import { toast } from "react-toastify";
 import PageSEOForm from "./PageSEOForm";

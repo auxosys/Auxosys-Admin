@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Save, Upload, Info } from "lucide-react";
+import { ArrowLeft, Save, Upload } from "lucide-react";
 import { apiClient } from "../../../helper/apiClient";
 import { toast } from "react-toastify";
 
@@ -37,21 +37,21 @@ export default function PageSEOForm({ pageId, onBack, canWrite }) {
   });
 
   useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const res = await apiClient.get(`/api/v1/seo/pages/${pageId}`);
+        if (res.data.data) {
+          setForm(res.data.data);
+        }
+      } catch (err) {
+        toast.error("Failed to fetch page data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (pageId) fetchPage();
   }, [pageId]);
-
-  const fetchPage = async () => {
-    try {
-      const res = await apiClient.get(`/api/v1/seo/pages/${pageId}`);
-      if (res.data.data) {
-        setForm(res.data.data);
-      }
-    } catch (err) {
-      toast.error("Failed to fetch page data");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleUpload = async (e, field) => {
     const file = e.target.files[0];

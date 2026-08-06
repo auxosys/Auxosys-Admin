@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Activity, FileText, CheckCircle2, AlertTriangle, Link as LinkIcon, BarChart3 } from "lucide-react";
+import { Activity, FileText, AlertTriangle, Link as LinkIcon } from "lucide-react";
 import { apiClient } from "../../../helper/apiClient";
 
 export default function HealthDashboard() {

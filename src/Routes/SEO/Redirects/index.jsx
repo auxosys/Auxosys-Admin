@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LinkIcon, Plus, Trash2, Edit2, AlertCircle } from "lucide-react";
+import { Plus, Trash2, Edit2 } from "lucide-react";
 import { apiClient } from "../../../helper/apiClient";
 import { toast } from "react-toastify";
 
