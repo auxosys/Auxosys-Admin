@@ -147,24 +147,20 @@ const SEO = () => {
 
   const [settings, setSettings] = useState({});
   const [sitemap, setSitemap] = useState({});
-  const [redirects, setRedirects] = useState([]);
-  const [newRedirect, setNewRedirect] = useState({ old_path: "", new_path: "", redirect_type: 301 });
   const [llmsTxt, setLlmsTxt] = useState("");
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [settingsRes, sitemapRes, redirectsRes, filesRes] = await Promise.all([
+      const [settingsRes, sitemapRes, filesRes] = await Promise.all([
         apiClient.get("/api/v1/seo/settings"),
         apiClient.get("/api/v1/seo/sitemap"),
-        apiClient.get("/api/v1/seo/redirects"),
         apiClient.get("/api/v1/seo/files"),
       ]);
 
       setSettings(settingsRes.data.data || {});
       setSitemap(sitemapRes.data.data || {});
-      setRedirects(redirectsRes.data.data || []);
-
+      
       const files = filesRes.data.data || [];
       const llmsFile = files.find((f) => f.filename === "llms.txt");
       if (llmsFile) setLlmsTxt(llmsFile.content);
