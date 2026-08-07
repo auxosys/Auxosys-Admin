@@ -62,7 +62,7 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
       signature_ids: selectedSignatureIds,
       issue_date: issueDate || undefined,
     };
-  }, [certType, customType, recipientName, recipientEmail, eyebrow, title, presentedLine, bodyHtml, employeeId, colorConfig, signatures, selectedSignatureIds]);
+  }, [certType, customType, recipientName, recipientEmail, eyebrow, title, presentedLine, bodyHtml, employeeId, colorConfig, signatures, selectedSignatureIds, issueDate]);
 
 
 
