@@ -32,12 +32,14 @@ const PRESETS = [
   { label: 'Midnight', config: { type: 'gradient', mode: 'radial', colors: ['#1E293B', '#0F172A', '#020617', '#14B8A6'] } },
 ];
 
+const DEFAULT_CONFIG = { type: 'solid', colors: ['#14B8A6'] };
+
 /**
  * <ColorEngine value={colorConfig} onChange={setColorConfig} />
  * value shape: { type: 'solid'|'gradient', mode?: 'linear'|'radial', angle?: number, colors: string[] }
  */
 export default function ColorEngine({ value, onChange }) {
-  const config = value || { type: 'solid', colors: ['#14B8A6'] };
+  const config = value || DEFAULT_CONFIG;
   const isGradient = config.type === 'gradient';
   const preview = useMemo(() => toCssBackground(config), [config]);
 
