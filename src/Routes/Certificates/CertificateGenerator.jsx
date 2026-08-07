@@ -23,6 +23,7 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
   const [presentedLine, setPresentedLine] = useState('This is proudly presented to');
   const [bodyHtml, setBodyHtml] = useState('');
   const [employeeId, setEmployeeId] = useState('');
+  const [issueDate, setIssueDate] = useState('');
   const [colorConfig, setColorConfig] = useState(DEFAULT_COLOR);
 
   const [signatures, setSignatures] = useState([]);
@@ -59,6 +60,7 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
       color_config: colorConfig,
       signatures: chosenSignatures,
       signature_ids: selectedSignatureIds,
+      issue_date: issueDate || undefined,
     };
   }, [certType, customType, recipientName, recipientEmail, eyebrow, title, presentedLine, bodyHtml, employeeId, colorConfig, signatures, selectedSignatureIds]);
 
@@ -167,6 +169,10 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
           <div className="cg-field">
             <label>Employee ID (optional)</label>
             <input type="text" value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} placeholder="e.g. EMP-204" />
+          </div>
+          <div className="cg-field">
+            <label>Issue Date (optional, defaults to today)</label>
+            <input type="date" value={issueDate} onChange={(e) => setIssueDate(e.target.value)} />
           </div>
           <div className="cg-field">
             <label>Body text</label>
