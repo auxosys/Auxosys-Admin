@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ColorEngine from './ColorEngine';
 import RichTextEditor from '../../Components/RichTextEditor';
-import { listSignatures, createCertificate, previewCertificate } from '../../helper/certificatesApi';
+import { listSignatures, createCertificate } from '../../helper/certificatesApi';
+import LiveCertificatePreview from './LiveCertificatePreview';
 
 const CERT_TYPES = [
   { value: 'internship', label: 'Internship', defaultTitle: 'Certificate of Completion', defaultEyebrow: 'Certificate of Internship' },
@@ -27,8 +28,6 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
   const [signatures, setSignatures] = useState([]);
   const [selectedSignatureIds, setSelectedSignatureIds] = useState([]);
 
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [previewLoading, setPreviewLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -63,23 +62,7 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
     };
   }, [certType, customType, recipientName, recipientEmail, eyebrow, title, presentedLine, bodyHtml, employeeId, colorConfig, signatures, selectedSignatureIds]);
 
-  // Debounced live preview whenever meaningful fields change.
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(async () => {
-      setPreviewLoading(true);
-      try {
-        const url = await previewCertificate(buildPayload());
-        setPreviewUrl((old) => { if (old) URL.revokeObjectURL(old); return url; });
-      } catch (_) {
-        // preview errors are non-fatal, just leave the last good preview showing
-      } finally {
-        setPreviewLoading(false);
-      }
-    }, 500);
-    return () => clearTimeout(debounceRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [certType, customType, recipientName, eyebrow, title, presentedLine, bodyHtml, employeeId, colorConfig, selectedSignatureIds]);
+
 
   const toggleSignature = (id) => {
     setSelectedSignatureIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -245,9 +228,14 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
           </div>
         )}
         <div className="cg-preview-frame" style={{ width: '100%', maxWidth: canWrite ? '100%' : '800px' }}>
-          {previewUrl
-            ? <img src={previewUrl} alt="Certificate preview" />
-            : <span style={{ color: '#94A3B8', fontSize: 13 }}>{previewLoading ? 'Rendering preview…' : 'Preview will appear here'}</span>}
+          <LiveCertificatePreview 
+            certType={certType === 'Custom' ? customType : certType}
+            recipientName={recipientName}
+            certificateNumber="PREVIEW"
+            signatures={signatures.filter(s => selectedSignatureIds.includes(s.id)).map(s => ({ name: s.name, designation: s.designation, image_url: s.image_url }))}
+            fields={{ eyebrow, title, presentedLine, bodyHtml, employeeId }}
+            colorConfig={colorConfig}
+          />
         </div>
         
         {canWrite && (
