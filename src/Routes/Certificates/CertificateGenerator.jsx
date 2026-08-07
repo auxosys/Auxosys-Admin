@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ColorEngine from './ColorEngine';
 import RichTextEditor from '../../Components/RichTextEditor';
 import { listSignatures, createCertificate } from '../../helper/certificatesApi';
