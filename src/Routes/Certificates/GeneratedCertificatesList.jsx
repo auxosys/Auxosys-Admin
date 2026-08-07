@@ -127,7 +127,7 @@ export default function GeneratedCertificatesList() {
                 <td>{new Date(c.issued_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
                 <td className="cl-actions">
                   <a href={downloadCertificateUrl(c.id)} target="_blank" rel="noreferrer">Download</a>
-                  <a href={`http://localhost:3001/verify/${c.id}`} target="_blank" rel="noreferrer" style={{color: '#059669', textDecoration: 'none'}}>Verify page</a>
+                  <a href={`https://verify.auxosys.com/${c.id}`} target="_blank" rel="noreferrer" style={{color: '#059669', textDecoration: 'none'}}>Verify page</a>
                   {c.status === 'valid' && canRevoke && (
                     <button className="revoke" onClick={() => handleRevokeClick(c.id)}>Revoke</button>
                   )}
