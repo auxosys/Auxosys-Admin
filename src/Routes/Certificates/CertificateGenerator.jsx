@@ -31,7 +31,7 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const debounceRef = useRef(null);
+
 
   useEffect(() => {
     listSignatures(true).then(({ signatures }) => setSignatures(signatures)).catch(() => {});
