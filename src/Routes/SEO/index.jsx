@@ -420,7 +420,7 @@ const SEO = () => {
                       </div>
                     </div>
                     <a
-                      href="http://localhost:3001/sitemap.xml"
+                      href="https://admin.auxosys.com/sitemap.xml"
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs bg-white border border-emerald-200 px-3 py-1.5 rounded-lg shadow-sm text-emerald-700 font-medium hover:bg-emerald-100 whitespace-nowrap"
