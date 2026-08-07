@@ -7,7 +7,9 @@ const MODULES = [
   { id: "contact", label: "Contact Us" },
   { id: "careers", label: "Careers" },
   { id: "newsroom", label: "Newsroom" },
-  { id: "subscriptions", label: "Subscriptions" }
+  { id: "subscriptions", label: "Subscriptions" },
+  { id: "certificates_issued", label: "Certificates - Issued Certificates" },
+  { id: "certificates_generate", label: "Certificates - Generate certificate" }
 ];
 
 const AccessControl = () => {
@@ -120,11 +122,11 @@ const AccessControl = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-8 px-6">
-      <div className="flex justify-between items-start mb-8 pt-6">
+    <div className="">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Access Control</h1>
-          <p className="text-gray-500 mt-1">Manage admin users and module permissions.</p>
+          <h2 className="text-xl font-bold text-gray-800">Admin Users</h2>
+          <p className="text-gray-500 mt-1 text-sm">Manage admin users and module permissions.</p>
         </div>
         <button
           onClick={() => openModal()}
@@ -145,7 +147,13 @@ const AccessControl = () => {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {users.map((u) => {
+            {users.sort((a, b) => {
+              const isASuper = a.email === "admin@auxosys.com" || a.email === "auxosys@gmail.com";
+              const isBSuper = b.email === "admin@auxosys.com" || b.email === "auxosys@gmail.com";
+              if (isASuper && !isBSuper) return -1;
+              if (!isASuper && isBSuper) return 1;
+              return 0;
+            }).map((u) => {
               // Normalize for display just in case
               const normalized = (u.permissions || []).map(p => 
                 typeof p === 'string' ? { module: p, access: 'Read & Write' } : p
@@ -165,22 +173,41 @@ const AccessControl = () => {
                     </div>
                   </td>
                   <td className="py-4 px-6">
-                    {u.email === "ausosys@gmail.com" || MODULES.every(m => normalized.some(p => p.module === m.id && p.access === "Read & Write")) ? (
+                    {u.email === "auxosys@gmail.com" || u.email === "admin@auxosys.com" || MODULES.every(m => normalized.some(p => p.module === m.id && p.access === "Read & Write")) ? (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
                         <ShieldCheck size={14} /> Full Access
                       </span>
                     ) : normalized.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {normalized.map((p) => {
-                          const m = MODULES.find(mod => mod.id === p.module);
-                          const isReadWrite = p.access === "Read & Write";
-                          return (
-                            <span key={p.module} className={`px-2 py-1 border text-[11px] rounded font-medium ${isReadWrite ? "bg-green-50 border-green-200 text-green-700" : "bg-gray-100 border-gray-200 text-gray-600"}`}>
-                              {m ? m.label : p.module} ({p.access})
-                            </span>
-                          );
-                        })}
-                      </div>
+                      normalized.length > 2 ? (
+                        <details className="relative group cursor-pointer outline-none">
+                          <summary className="list-none text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full inline-flex items-center gap-1 hover:bg-blue-100 transition-colors">
+                            {normalized.length} Modules Allowed <span className="text-[10px]">▼</span>
+                          </summary>
+                          <div className="mt-3 flex flex-wrap gap-2 p-2 bg-gray-50 border rounded-lg">
+                            {normalized.map((p) => {
+                              const m = MODULES.find(mod => mod.id === p.module);
+                              const isReadWrite = p.access === "Read & Write";
+                              return (
+                                <span key={p.module} className={`px-2 py-1 border text-[11px] rounded font-medium ${isReadWrite ? "bg-green-50 border-green-200 text-green-700" : "bg-gray-100 border-gray-200 text-gray-600"}`}>
+                                  {m ? m.label : p.module} ({p.access})
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </details>
+                      ) : (
+                        <div className="flex flex-wrap gap-2">
+                          {normalized.map((p) => {
+                            const m = MODULES.find(mod => mod.id === p.module);
+                            const isReadWrite = p.access === "Read & Write";
+                            return (
+                              <span key={p.module} className={`px-2 py-1 border text-[11px] rounded font-medium ${isReadWrite ? "bg-green-50 border-green-200 text-green-700" : "bg-gray-100 border-gray-200 text-gray-600"}`}>
+                                {m ? m.label : p.module} ({p.access})
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )
                     ) : (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold">
                         <ShieldAlert size={14} /> No Access
@@ -192,7 +219,7 @@ const AccessControl = () => {
                       <button onClick={() => openModal(u)} className="hover:text-blue-500 transition-colors">
                         <Edit2 size={16} />
                       </button>
-                      {u.email !== "ausosys@gmail.com" && (
+                      {u.email !== "auxosys@gmail.com" && u.email !== "admin@auxosys.com" && (
                         <button onClick={() => handleDelete(u._id)} className="hover:text-red-500 transition-colors">
                           <Trash2 size={16} />
                         </button>
@@ -261,9 +288,9 @@ const AccessControl = () => {
                 </div>
               </div>
 
-              {formData.email === "auxosys@gmail.com" ? (
+              {formData.email === "auxosys@gmail.com" || formData.email === "admin@auxosys.com" ? (
                 <div className="bg-blue-50 text-blue-800 p-4 rounded-lg text-sm mb-4">
-                  This user is the Super Admin and inherently has full access to all modules.
+                  This user is a Super Admin and inherently has full access to all modules.
                 </div>
               ) : (
                 <div className="mb-2">

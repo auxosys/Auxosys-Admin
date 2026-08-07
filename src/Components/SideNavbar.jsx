@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   LogOut,
   FileText,
+  Award,
 } from "lucide-react";
 import { apiClient } from "../helper/apiClient";
 import { useAuth } from "../context/AuthContext";
@@ -145,6 +146,13 @@ const Sidebar = () => {
             </Link>
           )}
 
+          {(hasAccess("certificates_issued") || hasAccess("certificates_generate")) && (
+            <Link to="/certificates" className={getLinkClass("/certificates")}>
+              <Award size={20} />
+              <span className="font-medium">Certificates</span>
+            </Link>
+          )}
+
           {(hasAccess("seo") || hasAccess("access-control") || hasAccess("settings") || hasAccess("legal")) && (
             <div className="px-3 pt-2 mb-1 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
               Site Management
@@ -155,13 +163,6 @@ const Sidebar = () => {
             <Link to="/seo" className={getLinkClass("/seo")}>
               <Search size={20} />
               <span className="font-medium">SEO</span>
-            </Link>
-          )}
-
-          {hasAccess("access-control") && (
-            <Link to="/access-control" className={getLinkClass("/access-control")}>
-              <ShieldCheck size={20} />
-              <span className="font-medium">Access Control</span>
             </Link>
           )}
 

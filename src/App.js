@@ -23,6 +23,7 @@ import AccessControl from './Routes/AccessControl';
 import LegalPages from './Routes/LegalPages';
 import LegalPageForm from './Routes/LegalPageForm';
 import IconStudio from './Routes/IconStudio';
+import Certificates from './Routes/Certificates';
 
 import CookieConsentLogs from './Routes/CookieConsentLogs';
 import CookieConsentDetails from './Routes/CookieConsentDetails';
@@ -36,7 +37,12 @@ import CareerApplicants from './Routes/CareerApplicants';
 const RoleRoute = ({ moduleName, children }) => {
   const { hasAccess, isLoading } = useAuth();
   if (isLoading) return <div className="p-8 text-center text-gray-500">Verifying permissions...</div>;
-  if (!hasAccess(moduleName)) return <Navigate to="/" replace />;
+  
+  const hasAccessToAny = Array.isArray(moduleName)
+    ? moduleName.some(name => hasAccess(name))
+    : hasAccess(moduleName);
+
+  if (!hasAccessToAny) return <Navigate to="/" replace />;
   return children;
 };
 
@@ -113,6 +119,7 @@ function App() {
             <Route path="settings" element={<SuperAdminRoute><Settings /></SuperAdminRoute>} />
             <Route path="access-control" element={<SuperAdminRoute><AccessControl /></SuperAdminRoute>} />
             <Route path="icon-studio" element={<SuperAdminRoute><IconStudio /></SuperAdminRoute>} />
+            <Route path="certificates" element={<RoleRoute moduleName={["certificates_issued", "certificates_generate"]}><Certificates /></RoleRoute>} />
             <Route path="consent-logs" element={<SuperAdminRoute><CookieConsentLogs /></SuperAdminRoute>} />
             <Route path="consent-details/:id" element={<SuperAdminRoute><CookieConsentDetails /></SuperAdminRoute>} />
             <Route path="cookie-management" element={<SuperAdminRoute><CookieManagement /></SuperAdminRoute>} />

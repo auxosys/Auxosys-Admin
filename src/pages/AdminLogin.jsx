@@ -57,7 +57,7 @@ const AdminLogin = () => {
           key={src}
           src={src}
           loading={idx === 0 ? "eager" : "lazy"}
-          fetchpriority={idx === 0 ? "high" : "auto"}
+          fetchPriority={idx === 0 ? "high" : "auto"}
           alt={`AUXOSYS Background ${idx}`}
           className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-[2000ms] ease-in-out ${
             idx === currentBg ? "opacity-100" : "opacity-0"

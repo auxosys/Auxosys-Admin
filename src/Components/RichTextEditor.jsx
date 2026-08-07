@@ -312,7 +312,7 @@ const RichTextEditor = ({ value = "", onChange }) => {
       >
         <EditorContent
           editor={editor}
-          className="prose max-w-none prose-p:my-1 prose-headings:my-2 focus:outline-none"
+          className="prose max-w-none prose-p:my-1 prose-headings:my-2 [&_.ProseMirror]:outline-none [&_.ProseMirror]:border-none [&_.ProseMirror]:ring-0 [&_.ProseMirror]:focus:ring-0 [&_.ProseMirror]:focus:border-transparent [&_.ProseMirror]:focus:outline-none [&_.ProseMirror_*]:outline-none"
         />
       </div>
     </div>

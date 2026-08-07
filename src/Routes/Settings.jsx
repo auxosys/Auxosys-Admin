@@ -3,6 +3,7 @@ import { apiClient } from "../helper/apiClient";
 import { toast } from "react-toastify";
 import { useNotificationSettings } from "../context/NotificationContext";
 import { usePermissions } from "../hooks/usePermissions";
+import AccessControl from "./AccessControl";
 
 const LANGUAGES = [
   { value: "en", label: "English" },
@@ -23,6 +24,7 @@ const Settings = () => {
   const { canWrite } = usePermissions("settings");
   const { setPreferences } = useNotificationSettings();
   const [settingsId, setSettingsId] = useState(null);
+  const [activeTab, setActiveTab] = useState("general");
   const [form, setForm] = useState({
     language: "en",
     timezone: "Asia/Kolkata",
@@ -113,12 +115,33 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-8 px-6">
-      <div className="mb-6 pt-2">
+      <div className="mb-6 pt-6">
         <h1 className="text-3xl font-bold text-gray-800">Settings</h1>
-        <p className="text-gray-500 mt-1">Manage regional preferences and notifications.</p>
+        <p className="text-gray-500 mt-1">Manage regional preferences, notifications, and access control.</p>
       </div>
 
-      {/* ── Regional ── */}
+      <div className="flex border-b border-gray-200 mb-6 gap-6">
+        <button
+          className={`pb-3 text-sm font-medium transition-colors ${
+            activeTab === "general" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500 hover:text-gray-700"
+          }`}
+          onClick={() => setActiveTab("general")}
+        >
+          General Settings
+        </button>
+        <button
+          className={`pb-3 text-sm font-medium transition-colors ${
+            activeTab === "access" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500 hover:text-gray-700"
+          }`}
+          onClick={() => setActiveTab("access")}
+        >
+          Access Control
+        </button>
+      </div>
+
+      {activeTab === "general" && (
+        <>
+          {/* ── Regional ── */}
       <div className="bg-white border rounded-xl p-6 mb-6">
         <h2 className="font-semibold text-gray-800 mb-4">Regional</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -262,6 +285,12 @@ const Settings = () => {
           </div>
         )}
       </div>
+        </>
+      )}
+
+      {activeTab === "access" && (
+        <AccessControl />
+      )}
     </div>
   );
 };
