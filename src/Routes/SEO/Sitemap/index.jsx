@@ -268,7 +268,7 @@ export default function SitemapManager({ canWrite }) {
                         </button>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-1">
                         <button
                           title="Validate URL"
                           onClick={() => validateUrl(l.url, l.id)}
