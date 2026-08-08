@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Activity, FileText, AlertTriangle, Link as LinkIcon, Users, MousePointer2, Clock, Globe } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
+import { XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { apiClient } from "../../../helper/apiClient";
 
 export default function HealthDashboard() {
