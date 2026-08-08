@@ -11,6 +11,9 @@ const Newsroom = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newsError, setNewsError] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { hasPermission } = useAuth();
   const canPublish = hasPermission("newsroom", "Read & Write");
 
@@ -47,14 +50,23 @@ const Newsroom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const deletePost = async (id) => {
-    if (!window.confirm("Delete this post?")) return;
+  const confirmDelete = (id) => {
+    setPostToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const deletePost = async () => {
+    if (!postToDelete) return;
+    setIsDeleting(true);
     try {
-      await apiClient.delete(`/news/${id}`);
+      await apiClient.delete(`/news/${postToDelete}`);
       toast.success("Post deleted");
       fetchNews();
+      setDeleteModalOpen(false);
     } catch (err) {
       toast.error(err.response?.data?.message || "Permission denied");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -151,7 +163,7 @@ const Newsroom = () => {
                   <Trash2
                     size={16}
                     className="cursor-pointer hover:text-red-500"
-                    onClick={() => deletePost(item._id)}
+                    onClick={() => confirmDelete(item._id)}
                   />
                 </div>
               )}
@@ -189,6 +201,32 @@ const Newsroom = () => {
       </div>
 
       {renderContent()}
+
+      {deleteModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 overflow-hidden">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Post</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Are you sure you want to delete this post? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteModalOpen(false)}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deletePost}
+                disabled={isDeleting}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
