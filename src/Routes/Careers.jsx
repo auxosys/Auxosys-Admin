@@ -322,7 +322,7 @@ const Careers = () => {
                   <div>
                     <div className="font-medium text-gray-800">{job.title}</div>
                     <div className="text-sm text-gray-500">
-                      {job.location || "—"} &bull; {job.type || "—"} &bull;{" "}
+                      {job.office_location || job.city || job.country || "—"} &bull; {job.employment_type || "—"} &bull;{" "}
                       {job.status === "Active" ? "Active" : "Closed"}
                     </div>
                   </div>
@@ -385,11 +385,11 @@ const Careers = () => {
 
                 <div className="text-xs text-gray-500 space-y-1 mb-4">
                   <div className="flex items-center">
-                    <MapPin size={12} className="mr-1" /> {job.location || "—"}
+                    <MapPin size={12} className="mr-1" /> {job.office_location || job.city || job.country || "—"}
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="flex items-center">
-                      <Briefcase size={12} className="mr-1" /> {job.type || "—"}
+                      <Briefcase size={12} className="mr-1" /> {job.employment_type || "—"}
                     </span>
                     <span className="flex items-center">
                       <Clock size={12} className="mr-1" /> {postedLabel(job.createdAt)}
@@ -432,8 +432,8 @@ const Careers = () => {
                 jobs.map((job) => (
                   <tr key={job._id} className="border-t">
                     <td className="p-4 font-medium text-gray-800">{job.title}</td>
-                    <td className="p-4 text-gray-600">{job.location || "—"}</td>
-                    <td className="p-4 text-gray-600">{job.type || "—"}</td>
+                    <td className="p-4 text-gray-600">{job.office_location || job.city || job.country || "—"}</td>
+                    <td className="p-4 text-gray-600">{job.employment_type || "—"}</td>
                     <td className="p-4">
                       <span
                         className={`text-xs px-2 py-1 rounded ${job.status === "Active"
