@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, Edit2, Search, RefreshCw, Eye, Activity } from "lucide-react";
+import { Plus, Trash2, Edit2, Search, RefreshCw, Eye, Activity, Send } from "lucide-react";
 import { apiClient } from "../../../helper/apiClient";
 import { toast } from "react-toastify";
 
@@ -8,6 +8,7 @@ export default function SitemapManager({ canWrite }) {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [validating, setValidating] = useState(null);
+  const [indexing, setIndexing] = useState(null);
   
   const [form, setForm] = useState({
     id: null,
@@ -93,6 +94,18 @@ export default function SitemapManager({ canWrite }) {
       toast.error(err.response?.data?.message || "Invalid URL");
     } finally {
       setValidating(null);
+    }
+  };
+
+  const pingGoogle = async (url, id) => {
+    setIndexing(id);
+    try {
+      const res = await apiClient.post("/api/v1/seo/indexing", { url, type: "URL_UPDATED" });
+      toast.success("Sent to Google Indexing API");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to notify Google");
+    } finally {
+      setIndexing(null);
     }
   };
 
@@ -276,6 +289,14 @@ export default function SitemapManager({ canWrite }) {
                           className="p-1.5 text-blue-500 hover:bg-blue-50 rounded"
                         >
                           {validating === l.id ? <RefreshCw size={14} className="animate-spin" /> : <Activity size={14} />}
+                        </button>
+                        <button
+                          title="Push to Google Indexing"
+                          onClick={() => pingGoogle(l.url, l.id)}
+                          disabled={indexing === l.id}
+                          className="p-1.5 text-indigo-500 hover:bg-indigo-50 rounded"
+                        >
+                          {indexing === l.id ? <RefreshCw size={14} className="animate-spin" /> : <Send size={14} />}
                         </button>
                         {canWrite && (
                           <>

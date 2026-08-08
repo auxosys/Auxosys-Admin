@@ -19,6 +19,7 @@ import {
 import { usePermissions } from "../../hooks/usePermissions";
 import RedirectsManager from "./Redirects";
 import SitemapManager from "./Sitemap";
+import RobotsManager from "./Robots";
 import PageSEO from "./PageSEO";
 import HealthDashboard from "./Dashboard";
 
