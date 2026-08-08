@@ -11,7 +11,6 @@ import {
   FileText,
   Link as LinkIcon,
   Settings,
-  Construction,
   Loader2,
   CheckCircle2,
   AlertCircle,
@@ -86,17 +85,6 @@ const SaveButton = ({ onClick, saving, disabled, label = "Save changes" }) => (
   </button>
 );
 
-const ComingSoon = ({ label, icon: Icon }) => (
-  <div className="flex flex-col items-center justify-center text-center py-16 px-6 border border-dashed border-gray-200 rounded-xl bg-gray-50/60">
-    <div className="w-11 h-11 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-3">
-      <Construction size={18} className="text-gray-400" />
-    </div>
-    <h3 className="text-sm font-semibold text-gray-700">{label} is on its way</h3>
-    <p className="text-xs text-gray-400 mt-1 max-w-xs">
-      This section is being migrated to the new settings schema. Check back soon.
-    </p>
-  </div>
-);
 
 const JsonField = ({ label, hint, value, onChange, placeholder }) => {
   const text = typeof value === "object" && value !== null ? JSON.stringify(value, null, 2) : value || "";
