@@ -23,6 +23,12 @@ export default function CertificatesModule() {
   if (canWriteGenerate) tabs.push({ id: 'signatures', label: 'Signature Library', icon: PenTool });
 
   const [activeTab, setActiveTab] = useState(canViewList ? 'list' : canGenerate ? 'generator' : 'signatures');
+  const [editCertificateId, setEditCertificateId] = useState(null);
+
+  const handleEditCertificate = (id) => {
+    setEditCertificateId(id);
+    setActiveTab('generator');
+  };
 
   const navigate = useNavigate();
 
@@ -79,10 +85,21 @@ export default function CertificatesModule() {
           </nav>
         </div>
 
-        {/* Tab Content */}
+        {/* Tabs Content */}
         <div className="mt-6">
-          {activeTab === 'list' && <GeneratedCertificatesList />}
-          {activeTab === 'generator' && <CertificateGenerator canWrite={canWriteGenerate} />}
+          {activeTab === 'list' && (
+            <GeneratedCertificatesList canRevoke={canWriteGenerate} onEdit={handleEditCertificate} />
+          )}
+          {activeTab === 'generator' && (
+            <CertificateGenerator 
+              canWrite={canWriteGenerate} 
+              editId={editCertificateId}
+              onGenerated={() => {
+                setEditCertificateId(null);
+                setActiveTab('list');
+              }} 
+            />
+          )}
           {activeTab === 'signatures' && <SignatureLibrary />}
         </div>
 

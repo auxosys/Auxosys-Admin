@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ColorEngine from './ColorEngine';
 import RichTextEditor from '../../Components/RichTextEditor';
-import { listSignatures, createCertificate } from '../../helper/certificatesApi';
+import { listSignatures, createCertificate, updateCertificate, getCertificate } from '../../helper/certificatesApi';
 import LiveCertificatePreview from './LiveCertificatePreview';
 
 const CERT_TYPES = [
@@ -13,7 +13,7 @@ const CERT_TYPES = [
 
 const DEFAULT_COLOR = { type: 'solid', colors: ['#14B8A6'], logoColor: 'auto' };
 
-export default function CertificateGenerator({ canWrite = true, onGenerated }) {
+export default function CertificateGenerator({ canWrite = true, editId = null, onGenerated }) {
   const [certType, setCertType] = useState('internship');
   const [customType, setCustomType] = useState('');
   const [recipientName, setRecipientName] = useState('');
@@ -37,6 +37,29 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
   useEffect(() => {
     listSignatures(true).then(({ signatures }) => setSignatures(signatures)).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (editId) {
+      setGenerating(true);
+      getCertificate(editId).then((cert) => {
+        setCertType(cert.cert_type === 'Custom' ? 'custom' : cert.cert_type);
+        if (cert.cert_type === 'Custom') setCustomType(cert.cert_type);
+        setRecipientName(cert.recipient_name || '');
+        setRecipientEmail(cert.recipient_email || '');
+        setEyebrow(cert.fields?.eyebrow || '');
+        setTitle(cert.fields?.title || '');
+        setPresentedLine(cert.fields?.presentedLine || '');
+        setBodyHtml(cert.fields?.bodyHtml || '');
+        setEmployeeId(cert.fields?.employeeId || '');
+        if (cert.color_config) setColorConfig(cert.color_config);
+        if (cert.signatures) setSelectedSignatureIds(cert.signatures.map(s => s.signature_id || s.id));
+      }).catch(err => {
+        setError('Failed to fetch certificate for editing.');
+      }).finally(() => {
+        setGenerating(false);
+      });
+    }
+  }, [editId]);
 
   const handleTypeChange = (value) => {
     setCertType(value);
@@ -78,9 +101,11 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
     setGenerating(true);
     setError(null);
     try {
-      const res = await createCertificate(buildPayload());
+      const res = editId 
+        ? await updateCertificate(editId, buildPayload())
+        : await createCertificate(buildPayload());
       setResult(res);
-      onGenerated && onGenerated(res.certificate);
+      onGenerated && onGenerated(res.certificate || res);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -246,9 +271,13 @@ export default function CertificateGenerator({ canWrite = true, onGenerated }) {
         
         {canWrite && (
           <>
-            <button className="cg-generate-btn" style={{ width: '100%' }} onClick={handleGenerate} disabled={generating}>
-              {generating ? 'Generating…' : 'Generate certificate'}
-            </button>
+              <button 
+                className="cg-generate-btn" 
+                onClick={handleGenerate} 
+                disabled={generating || signatures.length === 0}
+              >
+                {generating ? 'Processing...' : editId ? 'Update Certificate' : 'Generate Secure Certificate'}
+              </button>
 
             <div className="cg-section" style={{ marginTop: '32px', width: '100%' }}>
               <h4 style={{ textAlign: 'center' }}>Panel color</h4>

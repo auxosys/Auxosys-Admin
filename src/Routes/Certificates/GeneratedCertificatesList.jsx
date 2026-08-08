@@ -9,7 +9,7 @@ const STATUS_STYLE = {
   expired: { bg: '#FFF7ED', color: '#C2410C', label: 'Expired' },
 };
 
-export default function GeneratedCertificatesList() {
+export default function GeneratedCertificatesList({ onEdit }) {
   const [certificates, setCertificates] = useState([]);
   const [sendingEmail, setSendingEmail] = useState(null);
   const [total, setTotal] = useState(0);
@@ -21,7 +21,8 @@ export default function GeneratedCertificatesList() {
   const [revokeReason, setRevokeReason] = useState('');
 
   const { hasPermission, profile } = useAuth();
-  // Be extremely permissive for testing if hasPermission is failing due to strict equality
+  
+  // Also check module-level write access
   const canRevoke = profile?.role === 'Superadmin' || 
                     profile?.email === 'admin@auxosys.com' ||
                     profile?.permissions?.some(p => p.module === 'certificates_issued' && p.access?.includes('Write')) ||
@@ -146,6 +147,23 @@ export default function GeneratedCertificatesList() {
                 <td className="cl-actions">
                   <a href={downloadCertificateUrl(c.id)} target="_blank" rel="noreferrer">Download</a>
                   <a href={`https://verify.auxosys.com/${c.id}`} target="_blank" rel="noreferrer" style={{color: '#059669', textDecoration: 'none'}}>Verify page</a>
+                  {c.status === 'valid' && (
+                    <button 
+                      className="email-btn" 
+                      onClick={() => onEdit(c.id)} 
+                      style={{ 
+                        background: 'transparent', 
+                        border: 'none', 
+                        color: '#6366f1', 
+                        cursor: 'pointer', 
+                        fontSize: '13px', 
+                        fontWeight: '500', 
+                        padding: '0' 
+                      }}
+                    >
+                      Edit
+                    </button>
+                  )}
                   {c.recipient_email && c.status === 'valid' && (
                     <button 
                       className="email-btn" 

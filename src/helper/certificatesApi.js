@@ -43,6 +43,16 @@ export async function createCertificate(payload) {
   return data;
 }
 
+export async function getCertificate(id) {
+  const { data } = await apiClient.get(`/api/certificates/${id}`);
+  return data.certificate;
+}
+
+export async function updateCertificate(id, payload) {
+  const { data } = await apiClient.put(`/api/certificates/${id}`, payload);
+  return data;
+}
+
 export async function revokeCertificate(id, reason) {
   const { data } = await apiClient.post(`/api/certificates/${id}/revoke`, { reason });
   return data;
