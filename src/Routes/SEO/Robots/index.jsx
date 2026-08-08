@@ -19,7 +19,7 @@ export default function RobotsManager({ settings, updateSetting, saveSettings, c
         </div>
         <div className="flex gap-2 shrink-0">
           <a
-            href="https://admin.auxosys.com/robots.txt"
+            href="https://www.auxosys.com/robots.txt"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-1.5 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg font-medium text-xs transition-colors"
