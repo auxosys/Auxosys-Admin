@@ -14,8 +14,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  ExternalLink,
   Construction,
+  ShieldAlert,
+  Save,
 } from "lucide-react";
 import { usePermissions } from "../../hooks/usePermissions";
 import RedirectsManager from "./Redirects";
@@ -177,7 +178,6 @@ const SEO = () => {
   }, [fetchData]);
 
   const updateSetting = (field, value) => setSettings((prev) => ({ ...prev, [field]: value }));
-  const updateSitemap = (field, value) => setSitemap((prev) => ({ ...prev, [field]: value }));
 
   const saveSettings = async () => {
     try {
@@ -191,17 +191,7 @@ const SEO = () => {
     }
   };
 
-  const saveSitemap = async () => {
-    try {
-      setSaving(true);
-      await apiClient.patch("/api/v1/seo/sitemap", sitemap);
-      toast.success("Sitemap settings saved");
-    } catch {
-      toast.error("Failed to save sitemap settings");
-    } finally {
-      setSaving(false);
-    }
-  };
+
 
   const saveAiFiles = async () => {
     try {
