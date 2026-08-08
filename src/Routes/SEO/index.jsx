@@ -20,6 +20,7 @@ import { usePermissions } from "../../hooks/usePermissions";
 import RedirectsManager from "./Redirects";
 import SitemapManager from "./Sitemap";
 import RobotsManager from "./Robots";
+import SocialManager from "./Social";
 import PageSEO from "./PageSEO";
 import HealthDashboard from "./Dashboard";
 
@@ -449,7 +450,15 @@ const SEO = () => {
                   saving={saving}
                 />
               )}
-              {activeTab === "social" && <ComingSoon label="Social Sharing" icon={Share2} />}
+              {activeTab === "social" && (
+                <SocialManager
+                  settings={settings}
+                  updateSetting={updateSetting}
+                  saveSettings={saveSettings}
+                  canWrite={canWrite}
+                  saving={saving}
+                />
+              )}
             </fieldset>
           </main>
         </div>
