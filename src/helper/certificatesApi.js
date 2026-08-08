@@ -48,6 +48,11 @@ export async function revokeCertificate(id, reason) {
   return data;
 }
 
+export async function sendCertificateEmail(id) {
+  const { data } = await apiClient.post(`/api/certificates/${id}/send-email`);
+  return data;
+}
+
 export function downloadCertificateUrl(id) {
   return `${apiClient.defaults.baseURL}/api/certificates/${id}/download`;
 }

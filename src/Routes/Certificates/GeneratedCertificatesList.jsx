@@ -8,8 +8,11 @@ const STATUS_STYLE = {
   expired: { bg: '#FFF7ED', color: '#C2410C', label: 'Expired' },
 };
 
+import { listCertificates, revokeCertificate, downloadCertificateUrl, sendCertificateEmail } from '../../helper/certificatesApi';
+
 export default function GeneratedCertificatesList() {
   const [certificates, setCertificates] = useState([]);
+  const [sendingEmail, setSendingEmail] = useState(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState('');
@@ -47,11 +50,27 @@ export default function GeneratedCertificatesList() {
   };
 
   const submitRevoke = async () => {
-    if (!revokeReason.trim()) return;
-    await revokeCertificate(revokeModalId, revokeReason);
-    setRevokeModalId(null);
-    setRevokeReason('');
-    load();
+    try {
+      await revokeCertificate(revokeModalId, revokeReason);
+      toast.success('Certificate revoked successfully');
+      setRevokeModalId(null);
+      setRevokeReason('');
+      load();
+    } catch (err) {
+      toast.error('Failed to revoke certificate');
+    }
+  };
+
+  const handleSendEmail = async (id) => {
+    try {
+      setSendingEmail(id);
+      await sendCertificateEmail(id);
+      toast.success('Email sent successfully');
+    } catch (err) {
+      toast.error('Failed to send email');
+    } finally {
+      setSendingEmail(null);
+    }
   };
 
   const totalPages = Math.max(1, Math.ceil(total / 15));
@@ -128,6 +147,24 @@ export default function GeneratedCertificatesList() {
                 <td className="cl-actions">
                   <a href={downloadCertificateUrl(c.id)} target="_blank" rel="noreferrer">Download</a>
                   <a href={`https://verify.auxosys.com/${c.id}`} target="_blank" rel="noreferrer" style={{color: '#059669', textDecoration: 'none'}}>Verify page</a>
+                  {c.recipient_email && c.status === 'valid' && (
+                    <button 
+                      className="email-btn" 
+                      onClick={() => handleSendEmail(c.id)} 
+                      disabled={sendingEmail === c.id}
+                      style={{ 
+                        background: 'transparent', 
+                        border: 'none', 
+                        color: '#0284c7', 
+                        cursor: 'pointer', 
+                        fontSize: '13px', 
+                        fontWeight: '500', 
+                        padding: '0' 
+                      }}
+                    >
+                      {sendingEmail === c.id ? 'Sending...' : 'Send Email'}
+                    </button>
+                  )}
                   {c.status === 'valid' && canRevoke && (
                     <button className="revoke" onClick={() => handleRevokeClick(c.id)}>Revoke</button>
                   )}
