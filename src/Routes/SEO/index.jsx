@@ -35,7 +35,6 @@ const TABS = [
   { id: "redirects", label: "Redirects", icon: LinkIcon, group: "Discovery" },
   { id: "social", label: "Social Sharing", icon: Share2, group: "Appearance" },
   { id: "ai_search", label: "AI Search", icon: FileText, group: "Appearance" },
-  { id: "analytics", label: "Analytics", icon: BarChart2, group: "Appearance" },
 ];
 
 const TAB_GROUPS = ["Core", "Discovery", "Appearance"];
@@ -440,7 +439,6 @@ const SEO = () => {
               )}
 
               {/* PLACEHOLDER TABS */}
-              {activeTab === "analytics" && <ComingSoon label="Analytics" icon={BarChart2} />}
               {activeTab === "robots" && (
                 <RobotsManager
                   settings={settings}
