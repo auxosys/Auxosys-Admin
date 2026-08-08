@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { usePermissions } from "../../hooks/usePermissions";
 import RedirectsManager from "./Redirects";
+import SitemapManager from "./Sitemap";
 import PageSEO from "./PageSEO";
 import HealthDashboard from "./Dashboard";
 
@@ -408,65 +409,7 @@ const SEO = () => {
 
               {/* SITEMAP */}
               {activeTab === "sitemap" && (
-                <SectionCard footer={<SaveButton onClick={saveSitemap} saving={saving} disabled={!canWrite} />}>
-                  <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-lg flex items-center justify-between gap-4">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle2 size={16} className="text-emerald-600 mt-0.5 shrink-0" />
-                      <div>
-                        <h3 className="text-sm font-semibold text-emerald-800">Dynamic sitemap active</h3>
-                        <p className="text-xs text-emerald-600 mt-0.5">
-                          Generated on the fly and cached for high performance.
-                        </p>
-                      </div>
-                    </div>
-                    <a
-                      href="https://admin.auxosys.com/sitemap.xml"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs bg-white border border-emerald-200 px-3 py-1.5 rounded-lg shadow-sm text-emerald-700 font-medium hover:bg-emerald-100 whitespace-nowrap"
-                    >
-                      View XML <ExternalLink size={12} />
-                    </a>
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-semibold text-gray-700 tracking-wide uppercase mb-2">
-                      Content included
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      {[
-                        { key: "include_services", label: "Services" },
-                        { key: "include_products", label: "Products" },
-                        { key: "include_news", label: "Newsroom" },
-                        { key: "include_jobs", label: "Careers" },
-                      ].map(({ key, label }) => (
-                        <label
-                          key={key}
-                          className="flex items-center gap-2.5 border border-gray-200 rounded-lg px-3 py-2.5 cursor-pointer hover:border-gray-300 has-[:checked]:border-[#132242] has-[:checked]:bg-gray-50"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={sitemap[key] || false}
-                            onChange={(e) => updateSitemap(key, e.target.checked)}
-                          />
-                          <span className="text-sm text-gray-700">{label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Field label="Global priority" hint="Relative priority hint for crawlers, from 0.0 to 1.0.">
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="1"
-                      className="input max-w-[150px]"
-                      value={sitemap.priority ?? 0.8}
-                      onChange={(e) => updateSitemap("priority", parseFloat(e.target.value))}
-                    />
-                  </Field>
-                </SectionCard>
+                <SitemapManager canWrite={canWrite} />
               )}
 
               {/* REDIRECTS */}
