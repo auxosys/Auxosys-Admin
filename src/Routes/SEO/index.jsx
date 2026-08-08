@@ -11,12 +11,7 @@ import {
   FileText,
   Link as LinkIcon,
   Settings,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
   Construction,
-  ShieldAlert,
-  Save,
 } from "lucide-react";
 import { usePermissions } from "../../hooks/usePermissions";
 import RedirectsManager from "./Redirects";
@@ -148,20 +143,17 @@ const SEO = () => {
   const [saving, setSaving] = useState(false);
 
   const [settings, setSettings] = useState({});
-  const [sitemap, setSitemap] = useState({});
   const [llmsTxt, setLlmsTxt] = useState("");
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [settingsRes, sitemapRes, filesRes] = await Promise.all([
+      const [settingsRes, filesRes] = await Promise.all([
         apiClient.get("/api/v1/seo/settings"),
-        apiClient.get("/api/v1/seo/sitemap"),
         apiClient.get("/api/v1/seo/files"),
       ]);
 
       setSettings(settingsRes.data.data || {});
-      setSitemap(sitemapRes.data.data || {});
       
       const files = filesRes.data.data || [];
       const llmsFile = files.find((f) => f.filename === "llms.txt");
