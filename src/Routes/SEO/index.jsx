@@ -440,7 +440,15 @@ const SEO = () => {
 
               {/* PLACEHOLDER TABS */}
               {activeTab === "analytics" && <ComingSoon label="Analytics" icon={BarChart2} />}
-              {activeTab === "robots" && <ComingSoon label="Robots" icon={Shield} />}
+              {activeTab === "robots" && (
+                <RobotsManager
+                  settings={settings}
+                  updateSetting={updateSetting}
+                  saveSettings={saveSettings}
+                  canWrite={canWrite}
+                  saving={saving}
+                />
+              )}
               {activeTab === "social" && <ComingSoon label="Social Sharing" icon={Share2} />}
             </fieldset>
           </main>

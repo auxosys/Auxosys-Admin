@@ -100,7 +100,7 @@ export default function SitemapManager({ canWrite }) {
   const pingGoogle = async (url, id) => {
     setIndexing(id);
     try {
-      const res = await apiClient.post("/api/v1/seo/indexing", { url, type: "URL_UPDATED" });
+      await apiClient.post("/api/v1/seo/indexing", { url, type: "URL_UPDATED" });
       toast.success("Sent to Google Indexing API");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to notify Google");
