@@ -39,6 +39,11 @@ const KanbanCard = React.memo(({ applicant, canWrite, handleDragStart, handleDra
     >
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-bold text-gray-900 text-sm tracking-tight">{fullName(applicant)}</h3>
+        {applicant.public_id && (
+          <span className="bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded text-[10px] font-mono font-medium border border-gray-200 shrink-0 ml-2">
+            {applicant.public_id}
+          </span>
+        )}
       </div>
 
       <div className="space-y-2 mb-4">
@@ -625,9 +630,17 @@ const CareerApplicants = () => {
             </button>
 
             {/* Left Sidebar (1/3) */}
-            <div className="w-full md:w-1/3 bg-gray-50/80 p-6 md:p-8 border-r border-gray-200 overflow-y-auto flex flex-col gap-6">
+            <div className="w-full md:w-1/3 bg-gray-50/80 p-6 md:p-8 border-r border-gray-200 overflow-y-auto flex flex-col gap-6 relative">
+              {/* Application ID Top Left */}
+              {selectedApplicant.public_id && (
+                <div className="absolute top-4 left-4 z-10">
+                  <span className="bg-white border border-gray-200 text-gray-500 px-2 py-1 rounded text-[11px] font-mono font-medium shadow-sm">
+                    {selectedApplicant.public_id}
+                  </span>
+                </div>
+              )}
               {/* Candidate Identity */}
-              <div className="flex flex-col items-center text-center gap-4 pt-4">
+              <div className="flex flex-col items-center text-center gap-4 pt-6">
                 <div className="w-24 h-24 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl font-bold shadow-sm border-4 border-white uppercase">
                   {selectedApplicant.firstName?.[0]}{selectedApplicant.lastName?.[0]}
                 </div>
