@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { listCertificates, revokeCertificate, downloadCertificateUrl } from '../../helper/certificatesApi';
+import { listCertificates, revokeCertificate, downloadCertificateUrl, sendCertificateEmail } from '../../helper/certificatesApi';
 import { useAuth } from '../../context/AuthContext';
 
 const STATUS_STYLE = {
@@ -7,8 +7,6 @@ const STATUS_STYLE = {
   revoked: { bg: '#FEF2F2', color: '#DC2626', label: 'Revoked' },
   expired: { bg: '#FFF7ED', color: '#C2410C', label: 'Expired' },
 };
-
-import { listCertificates, revokeCertificate, downloadCertificateUrl, sendCertificateEmail } from '../../helper/certificatesApi';
 
 export default function GeneratedCertificatesList() {
   const [certificates, setCertificates] = useState([]);
