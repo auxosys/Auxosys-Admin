@@ -32,7 +32,7 @@ const PostJob = () => {
     hiring_manager: "",
     hiring_priority: "Medium",
     openings: 1,
-    status: "Published",
+    status: "Active",
     featured: false,
     urgent: false,
     campus_hiring: false,
@@ -164,7 +164,7 @@ const PostJob = () => {
     }
   };
 
-  const handleSubmit = async (submitStatus = "Published") => {
+  const handleSubmit = async (submitStatus = "Active") => {
     if (!form.title.trim()) { toast.error("Job Title is required"); return; }
     if (!form.department.trim()) { toast.error("Department is required"); return; }
 

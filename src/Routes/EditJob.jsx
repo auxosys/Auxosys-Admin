@@ -20,7 +20,7 @@ const EditJob = () => {
   const [form, setForm] = useState({
     title: "", department: "", team: "", employment_type: "Full-Time", work_mode: "Hybrid",
     experience_level: "Mid Level", hiring_manager: "", hiring_priority: "Medium", openings: 1,
-    status: "Published", featured: false, urgent: false, campus_hiring: false, country: "India",
+    status: "Active", featured: false, urgent: false, campus_hiring: false, country: "India",
     state: "", city: "", office_location: "", remote_regions: "", timezone: "", relocation_support: false,
     currency: "INR", min_salary: "", max_salary: "", salary_type: "Annual", hide_salary: false, salary_negotiable: true,
     stipend: "", bonus: "", equity: "", benefits_included: "", expected_joining_date: "",
@@ -144,7 +144,7 @@ const EditJob = () => {
     }
   };
 
-  const handleSubmit = async (submitStatus = "Published") => {
+  const handleSubmit = async (submitStatus = "Active") => {
     if (!form.title.trim()) { toast.error("Job Title is required"); return; }
     if (!form.department.trim()) { toast.error("Department is required"); return; }
 
