@@ -340,7 +340,7 @@ const Careers = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
-              <div key={job._id} className="bg-white border rounded-xl p-5 hover:shadow-md">
+              <div key={job._id} className="bg-white border rounded-xl p-5 hover:shadow-md flex flex-col h-full">
                 <div className="flex justify-between mb-3">
                   <div className="flex gap-2">
                     {isNewJob(job.createdAt) && (
@@ -399,7 +399,7 @@ const Careers = () => {
 
                 <div
                   onClick={() => navigate(`/careers/applications/${job._id}`)}
-                  className="border-t pt-3 flex justify-between cursor-pointer"
+                  className="mt-auto border-t pt-3 flex justify-between cursor-pointer items-end"
                 >
                   <span className="text-2xl font-black text-[#132242]">{job.applicantCount ?? 0}</span>
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Applications</span>
