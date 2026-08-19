@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, MoveUp, MoveDown, Layout, Globe, Edit2 } from "lucide-react";
+import { Plus, Trash2, MoveUp, MoveDown, Globe, Edit2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../helper/apiClient";
 
