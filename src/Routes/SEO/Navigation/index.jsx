@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, Save, MoveUp, MoveDown, Layout, Globe, Search } from "lucide-react";
+import { Plus, Trash2, MoveUp, MoveDown, Layout, Globe } from "lucide-react";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../helper/apiClient";
 
@@ -13,6 +13,7 @@ export default function NavigationManager({ canWrite }) {
 
   useEffect(() => {
     fetchLinks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuType]);
 
   const fetchLinks = async () => {
