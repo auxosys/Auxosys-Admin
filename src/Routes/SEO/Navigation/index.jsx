@@ -8,6 +8,7 @@ export default function NavigationManager({ canWrite }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [menuType, setMenuType] = useState('header');
+  const [globalSettings, setGlobalSettings] = useState(null);
 
   const [newLink, setNewLink] = useState({ label: '', url: '/', parent_id: null, description: '' });
 
@@ -17,9 +18,22 @@ export default function NavigationManager({ canWrite }) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
+    fetchGlobalSettings();
+  }, []);
+
+  useEffect(() => {
     fetchLinks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuType]);
+
+  const fetchGlobalSettings = async () => {
+    try {
+      const res = await apiClient.get("/api/v1/seo/settings");
+      setGlobalSettings(res.data.data);
+    } catch (err) {
+      console.error("Failed to load settings", err);
+    }
+  };
 
   const fetchLinks = async () => {
     setLoading(true);
@@ -34,6 +48,21 @@ export default function NavigationManager({ canWrite }) {
   };
 
   const handleAddLink = async () => {
+    if (newLink.id === 'main') {
+      setSaving(true);
+      try {
+        await apiClient.patch("/api/v1/seo/settings", { site_description: newLink.description });
+        toast.success("Main link description updated");
+        setNewLink({ label: '', url: '/', parent_id: null, description: '' });
+        fetchGlobalSettings();
+      } catch (err) {
+        toast.error("Failed to update main link");
+      } finally {
+        setSaving(false);
+      }
+      return;
+    }
+
     if (!newLink.label || !newLink.url) return toast.error("Label and URL are required");
     setSaving(true);
     try {
@@ -55,6 +84,11 @@ export default function NavigationManager({ canWrite }) {
 
   const handleEditLink = (link) => {
     setNewLink({ id: link.id, label: link.label, url: link.url, parent_id: link.parent_id, description: link.description || '' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleEditMainLink = () => {
+    setNewLink({ id: 'main', label: globalSettings?.site_name || 'Auxosys', url: '/', parent_id: null, description: globalSettings?.site_description || '' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -123,26 +157,19 @@ export default function NavigationManager({ canWrite }) {
         </div>
 
         <div className="p-6">
-          <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg flex gap-3 mb-6">
-            <Layout size={16} className="text-blue-600 mt-0.5 shrink-0" />
-            <p className="text-xs text-blue-700 leading-relaxed">
-              Google uses site navigation to understand the hierarchy of your content and automatically generates Sitelinks in search results. You cannot force specific sitelinks, but a logical menu structure highly increases the likelihood of them appearing.
-            </p>
-          </div>
-
           <div className="flex flex-col gap-3 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
              <div className="flex gap-3 items-end">
                <div className="flex-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Label</label>
-                  <input type="text" className="input w-full" value={newLink.label} onChange={e => setNewLink({...newLink, label: e.target.value})} placeholder="e.g. Services" />
+                  <input type="text" className="input w-full" value={newLink.label} onChange={e => setNewLink({...newLink, label: e.target.value})} placeholder="e.g. Services" disabled={newLink.id === 'main'} />
                </div>
                <div className="flex-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">URL path</label>
-                  <input type="text" className="input w-full font-mono text-sm" value={newLink.url} onChange={e => setNewLink({...newLink, url: e.target.value})} placeholder="/services" />
+                  <input type="text" className="input w-full font-mono text-sm" value={newLink.url} onChange={e => setNewLink({...newLink, url: e.target.value})} placeholder="/services" disabled={newLink.id === 'main'} />
                </div>
                <div className="flex-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Parent (Optional)</label>
-                  <select className="input w-full" value={newLink.parent_id || ''} onChange={e => setNewLink({...newLink, parent_id: e.target.value ? parseInt(e.target.value) : null})}>
+                  <select className="input w-full" value={newLink.parent_id || ''} onChange={e => setNewLink({...newLink, parent_id: e.target.value ? parseInt(e.target.value) : null})} disabled={newLink.id === 'main'}>
                      <option value="">-- Top Level --</option>
                      {rootLinks.filter(r => r.id !== newLink.id).map(r => (
                        <option key={r.id} value={r.id}>{r.label}</option>
@@ -170,9 +197,26 @@ export default function NavigationManager({ canWrite }) {
              <div className="py-8 text-center text-sm text-gray-500">Loading structure...</div>
           ) : (
             <div className="space-y-2 border border-gray-200 rounded-lg overflow-hidden bg-gray-50/30">
-               {rootLinks.length === 0 ? (
-                 <div className="p-8 text-center text-gray-500 text-sm">No links in this menu.</div>
-               ) : (
+                
+                {/* Main Link (Homepage) */}
+                <div className="flex flex-col bg-white border-b-2 border-gray-200">
+                  <div className="flex items-center justify-between p-3 bg-gray-50">
+                    <div className="flex items-center gap-3">
+                      <span className="font-bold text-sm text-[#1a0dab]">{globalSettings?.site_name || 'Auxosys'} (Homepage)</span>
+                      <span className="text-xs font-mono text-gray-400">/</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={handleEditMainLink} disabled={!canWrite} className="p-1.5 text-blue-400 hover:bg-blue-50 rounded"><Edit2 size={14}/></button>
+                    </div>
+                  </div>
+                  <div className="px-3 pb-3 pt-1 text-xs text-gray-600 line-clamp-1">
+                    {globalSettings?.site_description || 'No description set'}
+                  </div>
+                </div>
+
+                {rootLinks.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500 text-sm">No links in this menu.</div>
+                ) : (
                  rootLinks.map((link, idx) => (
                    <div key={link.id} className="flex flex-col bg-white border-b border-gray-100 last:border-b-0">
                      <div className="flex items-center justify-between p-3">
@@ -228,8 +272,10 @@ export default function NavigationManager({ canWrite }) {
                   <p className="text-[10px] text-gray-500 font-mono">https://www.auxosys.com</p>
                 </div>
              </div>
-             <h3 className="text-xl text-[#1a0dab] font-medium hover:underline cursor-pointer mb-1">Auxosys - Enterprise Software Solutions</h3>
-             <p className="text-sm text-[#4d5156] mb-4 line-clamp-2">Leading provider of modern SaaS platforms and enterprise tools. We build scalable systems that drive growth and automation for modern businesses.</p>
+             <div className="mb-5">
+               <h3 className="text-xl text-[#1a0dab] font-medium hover:underline cursor-pointer mb-1">{globalSettings?.site_name || 'Auxosys'} - Enterprise Software Solutions</h3>
+               <p className="text-sm text-[#4d5156] mb-4 line-clamp-2">{globalSettings?.site_description || 'Leading provider of modern SaaS platforms and enterprise tools. We build scalable systems that drive growth and automation for modern businesses.'}</p>
+             </div>
              
              {/* Sitelinks Grid */}
              {rootLinks.length > 0 && (
