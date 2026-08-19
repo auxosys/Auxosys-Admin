@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Activity, FileText, AlertTriangle, Link as LinkIcon, Users, MousePointer2, Clock, Globe, Search, BarChart3, TrendingUp, Info, X } from "lucide-react";
+import { Activity, FileText, AlertTriangle, Link as LinkIcon, Users, MousePointer2, Clock, Globe, Search, X } from "lucide-react";
 import { XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { apiClient } from "../../../helper/apiClient";
 
@@ -81,6 +81,7 @@ export default function HealthDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period]);
 
   const fetchDashboardData = async () => {
