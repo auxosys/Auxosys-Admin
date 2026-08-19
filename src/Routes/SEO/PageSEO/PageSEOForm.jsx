@@ -186,6 +186,15 @@ export default function PageSEOForm({ pageId, onBack, canWrite }) {
                 onChange={(e) => setForm({ ...form, keywords: e.target.value })}
               />
             </Field>
+            <Field label="Canonical URL" hint="Overrides Global Settings canonical (e.g. https://www.auxosys.com/about)">
+              <input
+                type="url"
+                className="input w-full"
+                placeholder="Leave blank to use default"
+                value={form.canonical || ""}
+                onChange={(e) => setForm({ ...form, canonical: e.target.value })}
+              />
+            </Field>
           </section>
 
           <section>
