@@ -88,11 +88,11 @@ export default function HealthDashboard() {
     setLoading(true);
     try {
       const [pagesRes, redirectsRes, analyticsRes, gscRes, insightsRes] = await Promise.all([
-        apiClient.get("/api/v1/seo/pages"),
-        apiClient.get("/api/v1/seo/redirects"),
-        apiClient.get(`/api/v1/seo/analytics?startDate=${period}&endDate=today`),
-        apiClient.get(`/api/v1/seo/gsc?startDate=${period}&endDate=today`),
-        apiClient.get("/api/v1/seo/insights")
+        apiClient.get("/api/v1/seo/pages").catch(() => ({ data: { data: [] } })),
+        apiClient.get("/api/v1/seo/redirects").catch(() => ({ data: { data: [] } })),
+        apiClient.get(`/api/v1/seo/analytics?startDate=${period}&endDate=today`).catch(() => ({ data: null })),
+        apiClient.get(`/api/v1/seo/gsc?startDate=${period}&endDate=today`).catch(() => ({ data: null })),
+        apiClient.get("/api/v1/seo/insights").catch(() => ({ data: null }))
       ]);
       
       const pages = pagesRes.data.data || [];
