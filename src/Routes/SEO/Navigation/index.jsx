@@ -287,11 +287,18 @@ export default function NavigationManager({ canWrite }) {
                        <h4 className="text-[15px] text-[#1a0dab] font-medium hover:underline cursor-pointer mb-1">{link.label}</h4>
                        <p className="text-xs text-[#4d5156] line-clamp-2">{link.description || `Access ${link.label.toLowerCase()} resources, features, and information for your business needs.`}</p>
                        {children.length > 0 && (
-                         <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 pl-3 border-l-2 border-gray-100">
+                         <div className="flex flex-col gap-2 mt-2 pl-3 border-l-2 border-gray-100">
                            {children.map(child => (
-                             <span key={child.id} className="text-[13px] text-[#1a0dab] hover:underline cursor-pointer font-medium">
-                               {child.label}
-                             </span>
+                             <div key={child.id} className="flex flex-col">
+                               <span className="text-[13px] text-[#1a0dab] hover:underline cursor-pointer font-medium">
+                                 {child.label}
+                               </span>
+                               {child.description && (
+                                 <span className="text-[11px] text-[#4d5156] mt-0.5 leading-snug">
+                                   {child.description}
+                                 </span>
+                               )}
+                             </div>
                            ))}
                          </div>
                        )}
