@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, MoveUp, MoveDown, Layout, Globe } from "lucide-react";
+import { Plus, Trash2, MoveUp, MoveDown, Layout, Globe, Edit2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../helper/apiClient";
 
@@ -9,7 +9,7 @@ export default function NavigationManager({ canWrite }) {
   const [saving, setSaving] = useState(false);
   const [menuType, setMenuType] = useState('header');
 
-  const [newLink, setNewLink] = useState({ label: '', url: '/', parent_id: null });
+  const [newLink, setNewLink] = useState({ label: '', url: '/', parent_id: null, description: '' });
 
   // Delete Modal State
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -44,13 +44,18 @@ export default function NavigationManager({ canWrite }) {
       };
       await apiClient.post("/api/v1/seo/navigation", payload);
       toast.success("Link added");
-      setNewLink({ label: '', url: '/', parent_id: null });
+      setNewLink({ label: '', url: '/', parent_id: null, description: '' });
       fetchLinks();
     } catch (err) {
       toast.error("Failed to add link");
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleEditLink = (link) => {
+    setNewLink({ id: link.id, label: link.label, url: link.url, parent_id: link.parent_id, description: link.description || '' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const confirmDelete = (id) => {
@@ -125,27 +130,40 @@ export default function NavigationManager({ canWrite }) {
             </p>
           </div>
 
-          <div className="flex gap-3 mb-6 items-end bg-gray-50 p-4 rounded-xl border border-gray-100">
-             <div className="flex-1">
-                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Label</label>
-                <input type="text" className="input w-full" value={newLink.label} onChange={e => setNewLink({...newLink, label: e.target.value})} placeholder="e.g. Services" />
+          <div className="flex flex-col gap-3 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+             <div className="flex gap-3 items-end">
+               <div className="flex-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Label</label>
+                  <input type="text" className="input w-full" value={newLink.label} onChange={e => setNewLink({...newLink, label: e.target.value})} placeholder="e.g. Services" />
+               </div>
+               <div className="flex-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">URL path</label>
+                  <input type="text" className="input w-full font-mono text-sm" value={newLink.url} onChange={e => setNewLink({...newLink, url: e.target.value})} placeholder="/services" />
+               </div>
+               <div className="flex-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Parent (Optional)</label>
+                  <select className="input w-full" value={newLink.parent_id || ''} onChange={e => setNewLink({...newLink, parent_id: e.target.value ? parseInt(e.target.value) : null})}>
+                     <option value="">-- Top Level --</option>
+                     {rootLinks.filter(r => r.id !== newLink.id).map(r => (
+                       <option key={r.id} value={r.id}>{r.label}</option>
+                     ))}
+                  </select>
+               </div>
              </div>
-             <div className="flex-1">
-                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">URL path</label>
-                <input type="text" className="input w-full font-mono text-sm" value={newLink.url} onChange={e => setNewLink({...newLink, url: e.target.value})} placeholder="/services" />
+             <div>
+               <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Short Description (Optional)</label>
+               <input type="text" className="input w-full text-sm" value={newLink.description || ''} onChange={e => setNewLink({...newLink, description: e.target.value})} placeholder="Briefly describe this page for search results..." />
              </div>
-             <div className="flex-1">
-                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">Parent (Optional)</label>
-                <select className="input w-full" value={newLink.parent_id || ''} onChange={e => setNewLink({...newLink, parent_id: e.target.value ? parseInt(e.target.value) : null})}>
-                   <option value="">-- Top Level --</option>
-                   {rootLinks.map(r => (
-                     <option key={r.id} value={r.id}>{r.label}</option>
-                   ))}
-                </select>
+             <div className="flex justify-end gap-2 mt-2">
+                {newLink.id && (
+                  <button onClick={() => setNewLink({ label: '', url: '/', parent_id: null, description: '' })} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors">
+                     Cancel
+                  </button>
+                )}
+                <button onClick={handleAddLink} disabled={!canWrite || saving} className="bg-[#132242] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black transition-colors flex items-center gap-2">
+                   <Plus size={16} /> {newLink.id ? 'Save Changes' : 'Add Link'}
+                </button>
              </div>
-             <button onClick={handleAddLink} disabled={!canWrite || saving} className="px-4 py-2 bg-[#132242] text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-gray-800 disabled:opacity-50">
-                <Plus size={16} /> Add
-             </button>
           </div>
 
           {loading ? (
@@ -163,6 +181,7 @@ export default function NavigationManager({ canWrite }) {
                           <span className="text-xs font-mono text-gray-400">{link.url}</span>
                         </div>
                         <div className="flex items-center gap-2">
+                          <button onClick={() => handleEditLink(link)} disabled={!canWrite} className="p-1.5 text-blue-400 hover:bg-blue-50 rounded"><Edit2 size={14}/></button>
                           <button onClick={() => moveItem(links.indexOf(link), -1)} disabled={!canWrite} className="p-1.5 text-gray-400 hover:bg-gray-100 rounded"><MoveUp size={14}/></button>
                           <button onClick={() => moveItem(links.indexOf(link), 1)} disabled={!canWrite} className="p-1.5 text-gray-400 hover:bg-gray-100 rounded"><MoveDown size={14}/></button>
                           <button onClick={() => confirmDelete(link.id)} disabled={!canWrite} className="p-1.5 text-red-400 hover:bg-red-50 rounded"><Trash2 size={14}/></button>
@@ -178,6 +197,7 @@ export default function NavigationManager({ canWrite }) {
                                <span className="text-xs font-mono text-gray-400">{child.url}</span>
                              </div>
                              <div className="flex items-center gap-2">
+                               <button onClick={() => handleEditLink(child)} disabled={!canWrite} className="p-1.5 text-blue-400 hover:bg-blue-50 rounded"><Edit2 size={14}/></button>
                                <button onClick={() => confirmDelete(child.id)} disabled={!canWrite} className="p-1.5 text-red-400 hover:bg-red-50 rounded"><Trash2 size={14}/></button>
                              </div>
                            </div>
@@ -219,7 +239,7 @@ export default function NavigationManager({ canWrite }) {
                    return (
                      <div key={link.id}>
                        <h4 className="text-[15px] text-[#1a0dab] font-medium hover:underline cursor-pointer mb-1">{link.label}</h4>
-                       <p className="text-xs text-[#4d5156] line-clamp-2">Access {link.label.toLowerCase()} resources, features, and information for your business needs.</p>
+                       <p className="text-xs text-[#4d5156] line-clamp-2">{link.description || `Access ${link.label.toLowerCase()} resources, features, and information for your business needs.`}</p>
                        {children.length > 0 && (
                          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 pl-3 border-l-2 border-gray-100">
                            {children.map(child => (
