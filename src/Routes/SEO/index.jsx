@@ -274,10 +274,12 @@ const SEO = () => {
 
           {/* Content */}
           <main className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-4">
-              {activeMeta && <activeMeta.icon size={16} className="text-gray-400" />}
-              <h2 className="text-sm font-semibold text-gray-500">{activeMeta?.label}</h2>
-            </div>
+            {activeTab !== "dashboard" && (
+              <div className="flex items-center gap-2 mb-4">
+                {activeMeta && <activeMeta.icon size={16} className="text-gray-400" />}
+                <h2 className="text-sm font-semibold text-gray-500">{activeMeta?.label}</h2>
+              </div>
+            )}
 
             <fieldset disabled={!canWrite} className="space-y-6">
               

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Activity, FileText, AlertTriangle, Link as LinkIcon, Users, Globe, Search, Clock, X, CheckCircle, RotateCcw } from "lucide-react";
+import { Activity, FileText, AlertTriangle, Link as LinkIcon, Users, Globe, Search, Clock, X, CheckCircle, RotateCcw, BarChart2 } from "lucide-react";
 import { XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { apiClient } from "../../../helper/apiClient";
 
@@ -128,7 +128,12 @@ export default function HealthDashboard() {
       <InsightModal issue={selectedIssue} onClose={() => setSelectedIssue(null)} />
 
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-end gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+        <div className="flex items-center gap-2">
+          <BarChart2 size={16} className="text-gray-400" />
+          <h2 className="text-sm font-semibold text-gray-500">Health Dashboard</h2>
+        </div>
+
         <div className="flex items-center gap-4 bg-white px-3 py-2 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center gap-2 text-xs font-medium text-gray-600 border-r border-gray-200 pr-3">
             <span className={`w-2 h-2 rounded-full ${overview?.freshness?.ga4 === 'connected' ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
