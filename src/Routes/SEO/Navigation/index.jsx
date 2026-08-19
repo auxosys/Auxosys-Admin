@@ -11,6 +11,11 @@ export default function NavigationManager({ canWrite }) {
 
   const [newLink, setNewLink] = useState({ label: '', url: '/', parent_id: null });
 
+  // Delete Modal State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [linkToDelete, setLinkToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     fetchLinks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,14 +53,24 @@ export default function NavigationManager({ canWrite }) {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this link?")) return;
+  const confirmDelete = (id) => {
+    setLinkToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const deleteLink = async () => {
+    if (!linkToDelete) return;
+    setIsDeleting(true);
     try {
-      await apiClient.delete(`/api/v1/seo/navigation/${id}`);
+      await apiClient.delete(`/api/v1/seo/navigation/${linkToDelete}`);
       toast.success("Link deleted");
       fetchLinks();
+      setDeleteModalOpen(false);
+      setLinkToDelete(null);
     } catch (err) {
       toast.error("Failed to delete link");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -150,7 +165,7 @@ export default function NavigationManager({ canWrite }) {
                         <div className="flex items-center gap-2">
                           <button onClick={() => moveItem(links.indexOf(link), -1)} disabled={!canWrite} className="p-1.5 text-gray-400 hover:bg-gray-100 rounded"><MoveUp size={14}/></button>
                           <button onClick={() => moveItem(links.indexOf(link), 1)} disabled={!canWrite} className="p-1.5 text-gray-400 hover:bg-gray-100 rounded"><MoveDown size={14}/></button>
-                          <button onClick={() => handleDelete(link.id)} disabled={!canWrite} className="p-1.5 text-red-400 hover:bg-red-50 rounded"><Trash2 size={14}/></button>
+                          <button onClick={() => confirmDelete(link.id)} disabled={!canWrite} className="p-1.5 text-red-400 hover:bg-red-50 rounded"><Trash2 size={14}/></button>
                         </div>
                      </div>
                      {/* Children */}
@@ -163,7 +178,7 @@ export default function NavigationManager({ canWrite }) {
                                <span className="text-xs font-mono text-gray-400">{child.url}</span>
                              </div>
                              <div className="flex items-center gap-2">
-                               <button onClick={() => handleDelete(child.id)} disabled={!canWrite} className="p-1.5 text-red-400 hover:bg-red-50 rounded"><Trash2 size={14}/></button>
+                               <button onClick={() => confirmDelete(child.id)} disabled={!canWrite} className="p-1.5 text-red-400 hover:bg-red-50 rounded"><Trash2 size={14}/></button>
                              </div>
                            </div>
                          ))}
@@ -218,6 +233,32 @@ export default function NavigationManager({ canWrite }) {
            <p className="text-xs text-gray-400 mt-4 max-w-2xl">Note: This is an approximation. Google's algorithms dynamically decide whether to show sitelinks and which links to include based on user queries, site structure, and navigation hierarchies.</p>
         </div>
       </div>
+
+      {deleteModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 overflow-hidden">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Link</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Are you sure you want to delete this link? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteModalOpen(false)}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deleteLink}
+                disabled={isDeleting}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
