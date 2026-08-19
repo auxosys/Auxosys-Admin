@@ -67,7 +67,6 @@ export default function PageSEO({ canWrite }) {
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
               <tr>
                 <th className="px-4 py-3 font-semibold">Route Slug</th>
-                <th className="px-4 py-3 font-semibold">Title</th>
                 <th className="px-4 py-3 font-semibold text-center">Status</th>
                 <th className="px-4 py-3 font-semibold text-center">Score</th>
                 {canWrite && <th className="px-4 py-3 font-semibold text-right">Actions</th>}
@@ -75,10 +74,10 @@ export default function PageSEO({ canWrite }) {
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
               {loading ? (
-                <tr><td colSpan={5} className="text-center py-6 text-gray-400">Loading...</td></tr>
+                <tr><td colSpan={4} className="text-center py-6 text-gray-400">Loading...</td></tr>
               ) : pages.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-10 text-gray-400 text-sm">
+                  <td colSpan={4} className="text-center py-10 text-gray-400 text-sm">
                     No page overrides configured yet
                   </td>
                 </tr>
@@ -90,9 +89,6 @@ export default function PageSEO({ canWrite }) {
                       <div className="text-xs text-gray-400 flex items-center gap-1">
                         <Globe size={10} /> {p.canonical || "No canonical"}
                       </div>
-                    </td>
-                    <td className="px-4 py-3 text-gray-700 max-w-[250px] truncate" title={p.title}>
-                      {p.title || "Inherits Global Title"}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <span className={`px-2 py-1 rounded-full text-[10px] font-medium uppercase tracking-wider ${
