@@ -158,8 +158,8 @@ export default function HealthDashboard() {
       {/* Grid Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Search Perf. Score */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex justify-between items-start mb-4">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start mb-2">
             <h3 className="text-sm font-bold text-gray-600">Search Perf. Score</h3>
             <div className="w-8 h-8 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
               <Activity size={18} />
@@ -179,8 +179,8 @@ export default function HealthDashboard() {
         </div>
 
         {/* Organic Clicks */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex justify-between items-start mb-4">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start mb-2">
             <h3 className="text-sm font-bold text-gray-600">Organic Clicks</h3>
             <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
               <Search size={18} />
@@ -195,8 +195,8 @@ export default function HealthDashboard() {
         </div>
 
         {/* Total Pages */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex justify-between items-start mb-4">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start mb-2">
             <h3 className="text-sm font-bold text-gray-600">Total Pages</h3>
             <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center">
               <FileText size={18} />
@@ -214,8 +214,8 @@ export default function HealthDashboard() {
         </div>
 
         {/* Active Redirects */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex justify-between items-start mb-4">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start mb-2">
             <h3 className="text-sm font-bold text-gray-600">Active Redirects</h3>
             <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center">
               <LinkIcon size={18} />
