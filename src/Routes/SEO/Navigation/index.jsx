@@ -51,7 +51,7 @@ export default function NavigationManager({ canWrite }) {
     if (newLink.id === 'main') {
       setSaving(true);
       try {
-        await apiClient.patch("/api/v1/seo/settings", { site_description: newLink.description });
+        await apiClient.patch("/api/v1/seo/settings", { meta_description: newLink.description });
         toast.success("Main link description updated");
         setNewLink({ label: '', url: '/', parent_id: null, description: '' });
         fetchGlobalSettings();
@@ -88,7 +88,7 @@ export default function NavigationManager({ canWrite }) {
   };
 
   const handleEditMainLink = () => {
-    setNewLink({ id: 'main', label: globalSettings?.site_name || 'Auxosys', url: '/', parent_id: null, description: globalSettings?.site_description || '' });
+    setNewLink({ id: 'main', label: globalSettings?.site_title || 'Auxosys', url: '/', parent_id: null, description: globalSettings?.meta_description || '' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -202,7 +202,7 @@ export default function NavigationManager({ canWrite }) {
                 <div className="flex flex-col bg-white border-b-2 border-gray-200">
                   <div className="flex items-center justify-between p-3 bg-gray-50">
                     <div className="flex items-center gap-3">
-                      <span className="font-bold text-sm text-[#1a0dab]">{globalSettings?.site_name || 'Auxosys'} (Homepage)</span>
+                      <span className="font-bold text-sm text-[#1a0dab]">{globalSettings?.site_title || 'Auxosys'} (Homepage)</span>
                       <span className="text-xs font-mono text-gray-400">/</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -210,7 +210,7 @@ export default function NavigationManager({ canWrite }) {
                     </div>
                   </div>
                   <div className="px-3 pb-3 pt-1 text-xs text-gray-600 line-clamp-1">
-                    {globalSettings?.site_description || 'No description set'}
+                    {globalSettings?.meta_description || 'No description set'}
                   </div>
                 </div>
 
@@ -273,8 +273,8 @@ export default function NavigationManager({ canWrite }) {
                 </div>
              </div>
              <div className="mb-5">
-               <h3 className="text-xl text-[#1a0dab] font-medium hover:underline cursor-pointer mb-1">{globalSettings?.site_name || 'Auxosys'} - Enterprise Software Solutions</h3>
-               <p className="text-sm text-[#4d5156] mb-4 line-clamp-2">{globalSettings?.site_description || 'Leading provider of modern SaaS platforms and enterprise tools. We build scalable systems that drive growth and automation for modern businesses.'}</p>
+               <h3 className="text-xl text-[#1a0dab] font-medium hover:underline cursor-pointer mb-1">{globalSettings?.site_title || 'Auxosys'} - Enterprise Software Solutions</h3>
+               <p className="text-sm text-[#4d5156] mb-4 line-clamp-2">{globalSettings?.meta_description || 'Leading provider of modern SaaS platforms and enterprise tools. We build scalable systems that drive growth and automation for modern businesses.'}</p>
              </div>
              
              {/* Sitelinks Grid */}
