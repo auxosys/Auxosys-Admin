@@ -22,6 +22,7 @@ import RobotsManager from "./Robots";
 import SocialManager from "./Social";
 import PageSEO from "./PageSEO";
 import HealthDashboard from "./Dashboard";
+import NavigationManager from "./Navigation";
 
 const TABS = [
   { id: "dashboard", label: "Health Dashboard", icon: BarChart2, group: "Core" },
@@ -30,6 +31,7 @@ const TABS = [
   { id: "metadata", label: "Metadata", icon: Search, group: "Core" },
   { id: "structured_data", label: "Structured Data", icon: Building2, group: "Core" },
   { id: "sitemap", label: "Sitemap", icon: Map, group: "Discovery" },
+  { id: "navigation", label: "Navigation & Sitelinks", icon: LinkIcon, group: "Discovery" },
   { id: "robots", label: "Robots", icon: Shield, group: "Discovery" },
   { id: "redirects", label: "Redirects", icon: LinkIcon, group: "Discovery" },
   { id: "social", label: "Social Sharing", icon: Share2, group: "Appearance" },
@@ -384,6 +386,11 @@ const SEO = () => {
               {/* SITEMAP */}
               {activeTab === "sitemap" && (
                 <SitemapManager canWrite={canWrite} />
+              )}
+
+              {/* NAVIGATION */}
+              {activeTab === "navigation" && (
+                <NavigationManager canWrite={canWrite} />
               )}
 
               {/* REDIRECTS */}
