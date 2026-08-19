@@ -287,7 +287,12 @@ export default function PageSEOForm({ pageId, onBack, canWrite }) {
                 <option value="WebSite">WebSite</option>
                 <option value="Article">Article</option>
                 <option value="Product">Product</option>
+                <option value="CollectionPage">CollectionPage</option>
+                <option value="AboutPage">AboutPage</option>
+                <option value="ContactPage">ContactPage</option>
+                <option value="Service">Service</option>
                 <option value="FAQPage">FAQPage</option>
+                <option value="JobPosting">JobPosting</option>
               </select>
             </Field>
           </div>
