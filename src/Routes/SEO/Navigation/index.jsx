@@ -213,7 +213,7 @@ export default function NavigationManager({ canWrite }) {
              
              {/* Sitelinks Grid */}
              {rootLinks.length > 0 && (
-               <div className="grid grid-cols-2 gap-x-8 gap-y-4 pl-4 pt-2">
+               <div className="flex flex-col gap-y-4 pl-4 pt-2">
                  {rootLinks.slice(0, 4).map(link => (
                    <div key={link.id}>
                      <h4 className="text-[15px] text-[#1a0dab] font-medium hover:underline cursor-pointer mb-1">{link.label}</h4>
