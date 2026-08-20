@@ -33,6 +33,9 @@ import CookieManagement from './Routes/CookieManagement';
 import PostJob from './Routes/PostJob';
 import EditJob from './Routes/EditJob';
 import CareerApplicants from './Routes/CareerApplicants';
+import OfferLetters from './Routes/OfferLetters';
+import GenerateOffer from './Routes/OfferLetters/GenerateOffer';
+import GenerateDetailedOffer from './Routes/OfferLetters/GenerateDetailedOffer';
 
 const RoleRoute = ({ moduleName, children }) => {
   const { hasAccess, isLoading } = useAuth();
@@ -108,6 +111,9 @@ function App() {
             <Route path="careers/new" element={<RoleRoute moduleName="careers"><PostJob /></RoleRoute>} />
             <Route path="careers/edit/:id" element={<RoleRoute moduleName="careers"><EditJob /></RoleRoute>} />
             <Route path="careers/applications/:jobId" element={<RoleRoute moduleName="careers"><CareerApplicants /></RoleRoute>} />
+            <Route path="offer-letters" element={<RoleRoute moduleName="careers"><OfferLetters /></RoleRoute>} />
+            <Route path="offer-letters/new" element={<RoleRoute moduleName="careers"><GenerateOffer /></RoleRoute>} />
+            <Route path="offer-letters/detailed/new" element={<RoleRoute moduleName="careers"><GenerateDetailedOffer /></RoleRoute>} />
 
             <Route path="subscriptions" element={<RoleRoute moduleName="subscriptions"><Subscriptions /></RoleRoute>} />
 

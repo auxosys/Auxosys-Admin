@@ -132,6 +132,13 @@ const Sidebar = () => {
             </Link>
           )}
 
+          {hasAccess("careers") && (
+            <Link to="/offer-letters" className={getLinkClass("/offer-letters")}>
+              <FileText size={20} />
+              <span className="font-medium">Offer Letters</span>
+            </Link>
+          )}
+
           {hasAccess("newsroom") && (
             <Link to="/newsroom" className={getLinkClass("/newsroom")}>
               <Newspaper size={20} />
