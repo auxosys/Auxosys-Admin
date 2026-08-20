@@ -9,7 +9,8 @@ const MODULES = [
   { id: "newsroom", label: "Newsroom" },
   { id: "subscriptions", label: "Subscriptions" },
   { id: "certificates_issued", label: "Certificates - Issued Certificates" },
-  { id: "certificates_generate", label: "Certificates - Generate certificate" }
+  { id: "certificates_generate", label: "Certificates - Generate certificate" },
+  { id: "offer_letters", label: "Offer Letters" }
 ];
 
 const AccessControl = () => {
@@ -308,7 +309,7 @@ const AccessControl = () => {
                             className="text-sm border-gray-300 rounded-md py-1.5 pl-3 pr-8 focus:ring-blue-500 focus:border-blue-500 bg-white"
                           >
                             <option value="None">No Access</option>
-                            <option value="Read">Read Only</option>
+                            {mod.id !== "offer_letters" && <option value="Read">Read Only</option>}
                             <option value="Read & Write">Read & Write</option>
                           </select>
                         </div>
