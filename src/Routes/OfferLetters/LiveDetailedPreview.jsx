@@ -39,15 +39,7 @@ const replaceVars = (text, data) => {
     .replace(/\{\{job\.reporting_manager\}\}/g, data.reportingManager || "");
 };
 
-const formatCurrency = (value, currency) => {
-  if (!value) return "0";
-  const formatter = new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: currency || 'INR',
-    minimumFractionDigits: 0
-  });
-  return formatter.format(value);
-};
+
 
 export default function LiveDetailedPreview({ formState }) {
   const containerRef = React.useRef(null);
@@ -86,15 +78,6 @@ export default function LiveDetailedPreview({ formState }) {
     signatoryName,
     signatoryDesignation,
     signatureUrl,
-    offerType,
-    letterTitle, 
-    jobTitle,
-    jobDepartment,
-    joiningDate,
-    workMode,
-    reportingManager,
-    ctcAmount,
-    currency,
     offerIntroduction,
     offerDetails,
     closingStatement,
