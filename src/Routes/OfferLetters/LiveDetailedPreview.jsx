@@ -40,7 +40,6 @@ export default function LiveDetailedPreview({ formState }) {
     companyEmail,
     companyWebsite,
     companyAddress,
-    logoUrl,
     candidateName,
     candidateAddress,
     candidateCity,

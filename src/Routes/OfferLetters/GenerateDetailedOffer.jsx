@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Loader2, ChevronDown, Upload, GripVertical, Check } from "lucide-react";
+import { ArrowLeft, Download, Loader2, ChevronDown, Upload } from "lucide-react";
 import { apiClient } from "../../helper/apiClient";
 import { toast } from "react-toastify";
 import RichTextEditor from "../../Components/RichTextEditor";
