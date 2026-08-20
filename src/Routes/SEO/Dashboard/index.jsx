@@ -37,7 +37,7 @@ const InsightModal = ({ issue, onClose }) => {
               </div>
               <div className="col-span-2">
                 <p className="text-xs text-gray-500 mb-1">Evidence</p>
-                <p className="text-sm font-medium text-gray-900">{issue.evidence}</p>
+                <p className="text-sm font-medium text-gray-900 break-words">{issue.evidence}</p>
               </div>
             </div>
           </div>
@@ -352,9 +352,9 @@ export default function HealthDashboard() {
                     <AlertTriangle size={14} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-0.5">
+                    <div className="flex items-center gap-2 mb-0.5 min-w-0">
                       <p className="text-sm font-bold text-gray-900 truncate">{issue.title}</p>
-                      <span className="px-1.5 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-wide">{issue.category}</span>
+                      <span className="shrink-0 px-1.5 py-0.5 rounded bg-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-wide">{issue.category}</span>
                     </div>
                     <p className="text-xs text-gray-500 truncate font-mono">{issue.affected_url}</p>
                   </div>
