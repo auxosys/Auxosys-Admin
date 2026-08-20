@@ -50,9 +50,10 @@ const DEFAULT_VALUES = {
   signatureSize: 65
 };
 
-function Section({ title, defaultOpen = true, children }) {
+function Section({ title, defaultOpen = false, children }) {
   return (
     <details
+      name="offer-sections"
       className="group rounded-xl border border-slate-200 bg-white overflow-hidden"
       open={defaultOpen}
     >
@@ -318,8 +319,7 @@ function OfferLetterForm({
       </p>
 
       <div className="flex flex-col gap-3.5">
-        
-        <Section title="Offer Letter Type" defaultOpen={true}>
+        <Section title="Offer Letter Type">
            <Field label="Select Employment Type">
             <select className={inputClass} value={values.offerType} onChange={handleTypeChange}>
               <option value="Full-Time">Full-Time Employment</option>
