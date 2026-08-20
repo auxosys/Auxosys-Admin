@@ -347,7 +347,7 @@ export default function HealthDashboard() {
           ) : (
             issues.map((issue, i) => (
               <div key={i} className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between gap-4">
-                <div className="flex items-start gap-3 w-full">
+                <div className="flex items-start gap-3 flex-1 min-w-0">
                   <div className={`mt-0.5 shrink-0 p-1.5 rounded-md ${issue.priority === 'Critical' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
                     <AlertTriangle size={14} />
                   </div>
