@@ -2,7 +2,33 @@ import React from 'react';
 
 const replaceVars = (text, data) => {
   if (!text) return "";
-  return text
+
+  const valueMap = {
+    'job.title': data.jobTitle,
+    'company.legal_company_name': data.legalCompanyName,
+    'job.department': data.jobDepartment,
+    'job.joining_date': data.joiningDate,
+    'job.work_mode': data.workMode,
+    'compensation.annual_ctc': data.ctcAmount,
+    'compensation.currency': data.currency,
+    'job.reporting_manager': data.reportingManager
+  };
+
+  // Remove any block element (li, p, div) that contains a mustache variable which is empty
+  let processedText = text.replace(/<(li|p|div)[^>]*>[\s\S]*?<\/\1>/gi, (match) => {
+    const vars = match.match(/\{\{([^}]+)\}\}/g);
+    if (vars) {
+      for (let v of vars) {
+        const varName = v.replace(/[{}]/g, '').trim();
+        if (valueMap.hasOwnProperty(varName) && !valueMap[varName]) {
+          return ""; // Omit the entire block
+        }
+      }
+    }
+    return match;
+  });
+
+  return processedText
     .replace(/\{\{job\.title\}\}/g, data.jobTitle || "")
     .replace(/\{\{company\.legal_company_name\}\}/g, data.legalCompanyName || "")
     .replace(/\{\{job\.department\}\}/g, data.jobDepartment || "")
@@ -88,6 +114,25 @@ export default function LiveOfferLetterPreview({ formState }) {
             borderRadius: '4px'
           }}
         >
+          {/* Watermark */}
+          {/* Watermark */}
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '680px', height: '680px', opacity: 0.15, pointerEvents: 'none', zIndex: 1 }}>
+
+            <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(100,103)">
+                <path d="M -56 -7 A 58 58 0 1 1 43 45" fill="none" stroke="#081826" strokeWidth="1.2" opacity="0.5" />
+                <line x1="-6" y1="-42" x2="36" y2="16" stroke="#081826" strokeWidth="5.2" strokeLinecap="round" />
+                <line x1="36" y1="16" x2="-33" y2="29" stroke="#081826" strokeWidth="5.2" strokeLinecap="round" />
+                <line x1="-33" y1="29" x2="-6" y2="-42" stroke="#081826" strokeWidth="3" strokeLinecap="round" opacity="0.6" />
+                <circle cx="-6" cy="-42" r="10" fill="#081826" />
+                <circle cx="36" cy="16" r="14.5" fill="#081826" />
+                <circle cx="-33" cy="29" r="7.3" fill="#081826" />
+                <circle cx="43" cy="45" r="3.6" fill="#081826" />
+              </g>
+            </svg>
+
+          </div>
+
           {/* Corner Decors */}
           <div style={{ position: 'absolute', width: 300, height: 300, top: -2, left: -2, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
             <div style={{ position: 'absolute', borderRadius: '50%', width: 460, height: 460, top: -230, left: -230, background: 'radial-gradient(circle at 65% 35%, #223349 0%, #101828 60%, #0b1119 100%)' }}></div>
@@ -95,7 +140,7 @@ export default function LiveOfferLetterPreview({ formState }) {
             <div style={{ position: 'absolute', borderRadius: '50%', width: 320, height: 320, top: -132, left: -162, background: 'radial-gradient(circle at 60% 30%, #26374f 0%, #101828 65%, #0b1119 100%)' }}></div>
           </div>
 
-          <div style={{ position: 'absolute', width: 300, height: 300, bottom: -2, right: -2, overflow: 'hidden', pointerEvents: 'none', zIndex: 0, transform: 'rotate(180deg)' }}>
+          <div style={{ position: 'absolute', width: 300, height: 300, bottom: -2, right: -2, overflow: 'hidden', pointerEvents: 'none', zIndex: 3, transform: 'rotate(180deg)' }}>
             <div style={{ position: 'absolute', borderRadius: '50%', width: 460, height: 460, top: -230, left: -230, background: 'radial-gradient(circle at 65% 35%, #223349 0%, #101828 60%, #0b1119 100%)' }}></div>
             <div style={{ position: 'absolute', borderRadius: '50%', width: 375, height: 375, top: -150, left: -188, background: 'linear-gradient(135deg, #20B2AA 0%, #2fd0c7 100%)' }}></div>
             <div style={{ position: 'absolute', borderRadius: '50%', width: 320, height: 320, top: -132, left: -162, background: 'radial-gradient(circle at 60% 30%, #26374f 0%, #101828 65%, #0b1119 100%)' }}></div>

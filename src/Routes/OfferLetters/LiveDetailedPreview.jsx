@@ -2,7 +2,33 @@ import React from 'react';
 
 const replaceVars = (text, data) => {
   if (!text) return "";
-  return text
+
+  const valueMap = {
+    'job.title': data.jobTitle,
+    'company.legal_company_name': data.legalCompanyName,
+    'job.department': data.jobDepartment,
+    'job.joining_date': data.joiningDate,
+    'job.work_mode': data.workMode,
+    'compensation.annual_ctc': data.ctcAmount,
+    'compensation.currency': data.currency,
+    'job.reporting_manager': data.reportingManager
+  };
+
+  // Remove any block element (li, p, div) that contains a mustache variable which is empty
+  let processedText = text.replace(/<(li|p|div)[^>]*>[\s\S]*?<\/\1>/gi, (match) => {
+    const vars = match.match(/\{\{([^}]+)\}\}/g);
+    if (vars) {
+      for (let v of vars) {
+        const varName = v.replace(/[{}]/g, '').trim();
+        if (valueMap.hasOwnProperty(varName) && !valueMap[varName]) {
+          return ""; // Omit the entire block
+        }
+      }
+    }
+    return match;
+  });
+
+  return processedText
     .replace(/\{\{job\.title\}\}/g, data.jobTitle || "")
     .replace(/\{\{company\.legal_company_name\}\}/g, data.legalCompanyName || "")
     .replace(/\{\{job\.department\}\}/g, data.jobDepartment || "")
@@ -13,6 +39,16 @@ const replaceVars = (text, data) => {
     .replace(/\{\{job\.reporting_manager\}\}/g, data.reportingManager || "");
 };
 
+const formatCurrency = (value, currency) => {
+  if (!value) return "0";
+  const formatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: currency || 'INR',
+    minimumFractionDigits: 0
+  });
+  return formatter.format(value);
+};
+
 export default function LiveDetailedPreview({ formState }) {
   const containerRef = React.useRef(null);
   const [scale, setScale] = React.useState(1);
@@ -21,12 +57,12 @@ export default function LiveDetailedPreview({ formState }) {
     if (!containerRef.current) return;
     
     // Calculate initial scale to fit width
-    setScale(Math.min(containerRef.current.offsetWidth / 780, 1));
+    setScale(Math.min(containerRef.current.offsetWidth / 794, 1)); // 794px ~ A4 width at 96 DPI
 
     const observer = new ResizeObserver((entries) => {
       for (let entry of entries) {
         const width = entry.contentRect.width;
-        setScale(Math.min(width / 780, 1));
+        setScale(Math.min(width / 794, 1));
       }
     });
     
@@ -40,6 +76,7 @@ export default function LiveDetailedPreview({ formState }) {
     companyEmail,
     companyWebsite,
     companyAddress,
+    logoUrl,
     candidateName,
     candidateAddress,
     candidateCity,
@@ -49,124 +86,247 @@ export default function LiveDetailedPreview({ formState }) {
     signatoryName,
     signatoryDesignation,
     signatureUrl,
-    letterTitle,
-    clauses
+    offerType,
+    letterTitle, 
+    jobTitle,
+    jobDepartment,
+    joiningDate,
+    workMode,
+    reportingManager,
+    ctcAmount,
+    currency,
+    offerIntroduction,
+    offerDetails,
+    closingStatement,
+    candidateAcknowledgement,
+    clauses,
+    titleSize = 16,
+    headingSize = 16,
+    bodySize = 14.5,
+    listSize = 14.5,
+    contactSize = 14,
+    signatureSize = 65
   } = formState;
 
   const activeClauses = (clauses || []).filter(c => c.isActive);
 
   return (
     <div ref={containerRef} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-      <div style={{ position: 'relative', width: 780 * scale, height: 'auto', minHeight: 1123 * scale }}>
+      <div style={{ position: 'relative', width: 794 * scale, height: 'auto', minHeight: 1123 * scale }}>
+        
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10, overflow: 'hidden' }}>
+          <div style={{ position: 'sticky', top: '50vh', margin: '0 auto', transform: 'translateY(-50%)', width: '680px', height: '680px', opacity: 0.15, pointerEvents: 'none' }}>
+
+            <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(100,103)">
+                <path d="M -56 -7 A 58 58 0 1 1 43 45" fill="none" stroke="#081826" strokeWidth="1.2" opacity="0.5" />
+                <line x1="-6" y1="-42" x2="36" y2="16" stroke="#081826" strokeWidth="5.2" strokeLinecap="round" />
+                <line x1="36" y1="16" x2="-33" y2="29" stroke="#081826" strokeWidth="5.2" strokeLinecap="round" />
+                <line x1="-33" y1="29" x2="-6" y2="-42" stroke="#081826" strokeWidth="3" strokeLinecap="round" opacity="0.6" />
+                <circle cx="-6" cy="-42" r="10" fill="#081826" />
+                <circle cx="36" cy="16" r="14.5" fill="#081826" />
+                <circle cx="-33" cy="29" r="7.3" fill="#081826" />
+                <circle cx="43" cy="45" r="3.6" fill="#081826" />
+              </g>
+            </svg>
+
+          </div>
+        </div>
         <div 
           className="ol-preview-container shadow-lg"
           style={{
             transformOrigin: 'top left',
             transform: `scale(${scale})`,
-            width: '780px',
+            width: '794px',
             minHeight: '1123px',
             background: '#ffffff',
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: 'Georgia, "Times New Roman", serif',
-            color: '#232a33',
-            lineHeight: 1.55,
-            fontSize: '13.5px',
+            fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif",
+            color: '#101828',
             borderRadius: '4px',
-            padding: '60px 58px',
-            margin: '0 auto',
+            position: 'relative',
+            overflow: 'hidden'
           }}
         >
+          
+          {/* Corner Decors */}
+          <div style={{ position: 'absolute', width: 300, height: 300, top: -2, left: -2, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+            <div style={{ position: 'absolute', borderRadius: '50%', width: 460, height: 460, top: -230, left: -230, background: 'radial-gradient(circle at 65% 35%, #223349 0%, #101828 60%, #0b1119 100%)' }}></div>
+            <div style={{ position: 'absolute', borderRadius: '50%', width: 375, height: 375, top: -150, left: -188, background: 'linear-gradient(135deg, #20B2AA 0%, #2fd0c7 100%)' }}></div>
+            <div style={{ position: 'absolute', borderRadius: '50%', width: 320, height: 320, top: -132, left: -162, background: 'radial-gradient(circle at 60% 30%, #26374f 0%, #101828 65%, #0b1119 100%)' }}></div>
+          </div>
+
+          <div style={{ position: 'absolute', width: 300, height: 300, bottom: -2, right: -2, overflow: 'hidden', pointerEvents: 'none', zIndex: 3, transform: 'rotate(180deg)' }}>
+            <div style={{ position: 'absolute', borderRadius: '50%', width: 460, height: 460, top: -230, left: -230, background: 'radial-gradient(circle at 65% 35%, #223349 0%, #101828 60%, #0b1119 100%)' }}></div>
+            <div style={{ position: 'absolute', borderRadius: '50%', width: 375, height: 375, top: -150, left: -188, background: 'linear-gradient(135deg, #20B2AA 0%, #2fd0c7 100%)' }}></div>
+            <div style={{ position: 'absolute', borderRadius: '50%', width: 320, height: 320, top: -132, left: -162, background: 'radial-gradient(circle at 60% 30%, #26374f 0%, #101828 65%, #0b1119 100%)' }}></div>
+          </div>
+
           {/* Header */}
-          <div style={{
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'flex-start', 
-            borderBottom: '3px solid #1f4b6e', 
-            paddingBottom: '14px', 
-            marginBottom: '22px'
-          }}>
-            <div style={{ fontFamily: '-apple-system, sans-serif' }}>
-              <b style={{ fontSize: '19px', color: '#1f4b6e', letterSpacing: '0.4px' }}>{companyName}</b>
-              <div style={{ fontSize: '10.5px', color: '#6b7480', marginTop: '2px', maxWidth: '260px' }}>{legalCompanyName}</div>
-              <div style={{ fontSize: '10.5px', color: '#6b7480', marginTop: '2px', maxWidth: '260px' }}>{companyAddress}</div>
-              <div style={{ fontSize: '10.5px', color: '#6b7480', marginTop: '2px', maxWidth: '260px' }}>
-                {companyWebsite} {companyEmail ? `· ${companyEmail}` : ""}
+          <div style={{ position: 'relative', zIndex: 2, padding: '44px 44px 26px 44px', minHeight: 260 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: -44 }}>
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" style={{ height: 56, objectFit: 'contain' }} />
+              ) : (
+                <>
+                  <svg viewBox="0 0 200 200" style={{ width: 56, height: 56, flex: 'none' }} xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(100,103)">
+                      <path d="M -56 -7 A 58 58 0 1 1 43 45" fill="none" stroke="#F8FAFC" strokeWidth="1.2" opacity="0.5"/>
+                      <line x1="-6" y1="-42" x2="36" y2="16" stroke="#F8FAFC" strokeWidth="5.2" strokeLinecap="round"/>
+                      <line x1="36" y1="16" x2="-33" y2="29" stroke="#F8FAFC" strokeWidth="5.2" strokeLinecap="round"/>
+                      <line x1="-33" y1="29" x2="-6" y2="-42" stroke="#F8FAFC" strokeWidth="3" strokeLinecap="round" opacity="0.6"/>
+                      <circle cx="-6" cy="-42" r="10" fill="#F8FAFC"/>
+                      <circle cx="36" cy="16" r="14.5" fill="#F8FAFC"/>
+                      <circle cx="-33" cy="29" r="7.3" fill="#F8FAFC"/>
+                      <circle cx="43" cy="45" r="3.6" fill="#F8FAFC"/>
+                    </g>
+                  </svg>
+                  <div style={{ color: '#fff', fontWeight: 700, fontSize: 19, lineHeight: 1.2 }}>{companyName}</div>
+                </>
+              )}
+            </div>
+
+            <div style={{ position: 'absolute', right: 44, top: 44, textAlign: 'right', color: '#101828', fontSize: contactSize, lineHeight: 1.6 }}>
+              <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 2 }}>{legalCompanyName}</div>
+              {companyAddress}<br/>
+              {companyWebsite}, {companyEmail}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div style={{ position: 'relative', zIndex: 2, padding: '10px 44px 0 44px', flex: 1, color: '#101828' }}>
+            {/* Title */}
+            <div style={{
+              fontSize: titleSize,
+              fontWeight: 800,
+              color: '#101828',
+              letterSpacing: '0.3px',
+              margin: '-36px 0 28px 0',
+              textAlign: 'center'
+            }}>
+              {formState?.letterTitle || 'OFFER LETTER'}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: headingSize }}>To:</div>
+                <div style={{ fontSize: bodySize, lineHeight: 1.6, marginTop: 2 }}>
+                  {candidateName}<br/>
+                  {candidateAddress && <>{candidateAddress}<br/></>}
+                  {candidateCity && <>{candidateCity}, {candidateState} {candidatePin}</>}
+                </div>
+              </div>
+              <div style={{ fontWeight: 700, fontSize: headingSize, whiteSpace: 'nowrap' }}>{offerDate}</div>
+            </div>
+
+            <div style={{ fontWeight: 700, fontSize: headingSize, marginTop: 26, marginBottom: 12 }}>Dear {candidateName},</div>
+
+            <div 
+              style={{ fontSize: bodySize, lineHeight: 1.65, marginTop: 18, textAlign: 'justify' }}
+              dangerouslySetInnerHTML={{ __html: replaceVars(offerIntroduction, formState) }}
+            />
+
+            <div style={{ fontSize: listSize, marginTop: 22, fontWeight: 600 }}>Offer Details</div>
+            
+            <div 
+              className="ol-details-list"
+              style={{ fontSize: listSize, lineHeight: 1.6 }}
+              dangerouslySetInnerHTML={{ __html: replaceVars(offerDetails, formState) }}
+            />
+
+            <div 
+              style={{ fontSize: bodySize, lineHeight: 1.65, marginTop: 18, textAlign: 'justify' }}
+              dangerouslySetInnerHTML={{ __html: replaceVars(closingStatement, formState) }}
+            />
+
+            <div className="ol-clauses" style={{ marginTop: 24 }}>
+              {activeClauses.map((clause, index) => (
+                <div key={clause.id} style={{ margin: '18px 0', pageBreakInside: 'avoid' }}>
+                  <h2 style={{ fontSize: headingSize, fontWeight: 700, color: '#101828', marginBottom: 6 }}>
+                    {clause.title}
+                  </h2>
+                  <div 
+                    className="clause-content"
+                    style={{ fontSize: bodySize, lineHeight: 1.6, color: '#333' }}
+                    dangerouslySetInnerHTML={{ __html: replaceVars(clause.content, formState) }} 
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="candidate-ack" style={{ marginTop: 40, pageBreakInside: 'avoid' }}>
+              <h2 style={{ fontSize: headingSize, fontWeight: 700, color: '#101828', marginBottom: 8 }}>Candidate Acknowledgement</h2>
+              <div 
+                style={{ fontSize: bodySize, color: '#333', marginBottom: 24 }}
+                dangerouslySetInnerHTML={{ __html: replaceVars(candidateAcknowledgement, formState) }}
+              />
+              <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: 16, width: 400 }}>
+                <div style={{ fontSize: bodySize, color: '#101828', width: 160, fontWeight: 600 }}>Candidate Signature</div>
+                <div style={{ flex: 1, borderBottom: '1px solid #94A3B8', marginLeft: 12, height: 20 }}></div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: 16, width: 400 }}>
+                <div style={{ fontSize: bodySize, color: '#101828', width: 160, fontWeight: 600 }}>Full Legal Name</div>
+                <div style={{ flex: 1, borderBottom: '1px solid #94A3B8', marginLeft: 12, height: 20 }}></div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: 16, width: 400 }}>
+                <div style={{ fontSize: bodySize, color: '#101828', width: 160, fontWeight: 600 }}>Aadhaar Number</div>
+                <div style={{ flex: 1, borderBottom: '1px solid #94A3B8', marginLeft: 12, height: 20 }}></div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: 16, width: 400 }}>
+                <div style={{ fontSize: bodySize, color: '#101828', width: 160, fontWeight: 600 }}>PAN Number</div>
+                <div style={{ flex: 1, borderBottom: '1px solid #94A3B8', marginLeft: 12, height: 20 }}></div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: 16, width: 400 }}>
+                <div style={{ fontSize: bodySize, color: '#101828', width: 160, fontWeight: 600 }}>Full Address</div>
+                <div style={{ flex: 1, borderBottom: '1px solid #94A3B8', marginLeft: 12, height: 20 }}></div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: 16, width: 400 }}>
+                <div style={{ fontSize: bodySize, color: '#101828', width: 160, fontWeight: 600 }}>Date</div>
+                <div style={{ flex: 1, borderBottom: '1px solid #94A3B8', marginLeft: 12, height: 20 }}></div>
               </div>
             </div>
-            <div style={{ fontFamily: '-apple-system, sans-serif', textAlign: 'right', fontSize: '10px', color: '#9aa1ab', letterSpacing: '.12em', textTransform: 'uppercase' }}>
-              Offer Letter
-              <b style={{ display: 'block', fontSize: '14px', color: '#1c2430', letterSpacing: '0', marginTop: '3px' }}>{letterTitle}</b>
-            </div>
-          </div>
-
-          {/* Date & To */}
-          <div style={{ fontSize: '12.5px', color: '#5a6472', marginBottom: '16px', fontFamily: '-apple-system, sans-serif' }}>
-            {offerDate}
-          </div>
-          <div style={{ marginBottom: '16px' }}>
-            <b style={{ fontSize: '15px' }}>{candidateName}</b>
-            <div style={{ fontSize: '12.5px', color: '#5a6472' }}>
-              {candidateAddress && <>{candidateAddress}<br/></>}
-              {candidateCity && <>{candidateCity}, {candidateState} {candidatePin}</>}
-            </div>
-          </div>
-
-          <p>Dear {candidateName.split(" ")[0]},</p>
-          <p style={{ color: '#1f4b6e', fontWeight: 700, fontSize: '15px', margin: '14px 0 6px' }}>Congratulations!</p>
-          <p>We are delighted to extend to you an offer to join <b>{legalCompanyName}</b>, a company committed to innovation, integrity, and excellence. Your skills and enthusiasm made a strong impression on our team, and this letter sets out the terms of your engagement &mdash; this document constitutes a binding agreement upon your acceptance.</p>
-
-          {/* Clauses */}
-          <div className="ol-clauses" style={{ marginTop: '22px' }}>
-            {activeClauses.map((clause, index) => (
-              <div key={clause.id}>
-                <h3 style={{ fontSize: '14.5px', color: '#1f4b6e', borderBottom: '1px solid #dde2e8', paddingBottom: '5px', margin: '22px 0 10px', fontFamily: '-apple-system, sans-serif' }}>
-                  {clause.title}
-                </h3>
-                <div 
-                  className="clause-content"
-                  style={{ textAlign: 'justify' }}
-                  dangerouslySetInnerHTML={{ __html: replaceVars(clause.content, formState) }} 
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Accept Box */}
-          <div style={{ border: '1px solid #dde2e8', borderRadius: '8px', padding: '14px 16px', marginTop: '18px', background: '#fbfbfc' }}>
-            <b>Candidate Acceptance</b>
-            <p style={{ margin: '8px 0 0' }}>I accept the terms and conditions described in this offer letter.</p>
-            <div style={{ borderBottom: '1px solid #c8ccd2', height: '22px', marginTop: '14px' }}></div>
-            <div style={{ fontSize: '10.5px', color: '#8b93a0', marginTop: '2px' }}>Candidate Signature &nbsp;&nbsp;&nbsp;&nbsp; Date</div>
-          </div>
-
-          {/* Signature Block */}
-          <div style={{ marginTop: '26px', fontSize: '13px', position: 'relative' }}>
-            Sincerely,
-            {signatureUrl ? (
-              <img src={signatureUrl} alt="Signature" style={{ height: '52px', display: 'block', margin: '10px 0 2px' }} />
-            ) : (
-              <div style={{ borderBottom: '1px solid #232a33', width: '220px', margin: '34px 0 6px' }}></div>
-            )}
-            <b>{signatoryName}</b><br/>
-            {signatoryDesignation}<br/>
-            {companyName}
           </div>
 
           {/* Footer */}
-          <div style={{ marginTop: '30px', paddingTop: '10px', borderTop: '1px solid #dde2e8', fontSize: '9.5px', color: '#9aa1ab', fontFamily: '-apple-system, sans-serif' }}>
-            {legalCompanyName}<br/>
-            {companyAddress} &middot; {companyWebsite} {companyEmail ? `&middot; ${companyEmail}` : ""}
+          <div style={{ height: 210, position: 'relative', zIndex: 2, marginTop: 40, pageBreakInside: 'avoid' }}>
+            <div style={{ position: 'absolute', bottom: 60, left: 44, fontSize: contactSize, lineHeight: 1.6 }}>
+              <div style={{ fontSize: 15 }}>Sincerely,</div>
+              {signatureUrl ? (
+                <img src={signatureUrl} alt="Signature" style={{ maxHeight: signatureSize, margin: '8px 0 6px -4px', display: 'block' }} />
+              ) : (
+                <svg viewBox="0 0 200 90" fill="none" style={{ display: 'block', width: 150, height: signatureSize, margin: '8px 0 6px -4px' }}>
+                  <path d="M15 55 C 25 20, 40 20, 45 45 C 48 60, 55 40, 65 35 C 78 28, 78 55, 90 45 C 100 38, 105 25, 120 35 C 135 45, 150 30, 165 40"
+                        stroke="#101828" strokeWidth="3" strokeLinecap="round"/>
+                </svg>
+              )}
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 16 }}>{signatoryName}</div>
+                <div style={{ fontSize: 14, marginTop: 2 }}>{signatoryDesignation}, {companyName}</div>
+              </div>
+            </div>
+            <div style={{ position: 'absolute', bottom: 34, left: 44, width: 'calc(100% - 88px)', height: 4, background: '#20B2AA', borderRadius: 2, zIndex: 2 }}></div>
           </div>
 
         </div>
       </div>
       
       <style>{`
-        .clause-content p { margin: 0 0 10px 0; }
+        .clause-content p { margin: 0 0 8px 0; font-size: ${bodySize}px; }
         .clause-content p:last-child { margin-bottom: 0; }
-        .clause-content ul { margin: 8px 0 12px 0; padding-left: 20px; }
-        .clause-content li { margin-bottom: 6px; }
+        .clause-content ul { margin: 4px 0 8px 0; padding-left: 20px; font-size: ${bodySize}px; }
+        .clause-content li { margin-bottom: 4px; }
+        .clause-content em { color: #B45309; }
+        
+        .ol-details-list ul { margin: 10px 0 0 0; padding-left: 20px; }
+        .ol-details-list li { margin-bottom: 4px; }
+        .ol-details-list p { margin: 0 0 4px 0; }
+        .ol-details-list li p { margin: 0; }
+        
+        .clause-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: ${bodySize}px; }
+        .clause-content table, .clause-content th, .clause-content td { border: 1px solid #CBD5E1; }
+        .clause-content th, .clause-content td { padding: 8px 12px; text-align: left; }
+        .clause-content th { background-color: #F8FAFC; font-weight: 600; color: #101828; }
       `}</style>
     </div>
   );

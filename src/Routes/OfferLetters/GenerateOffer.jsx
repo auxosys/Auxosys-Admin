@@ -37,10 +37,10 @@ const DEFAULT_VALUES = {
   signatoryDesignation: "Human Resources",
   signatureUrl: "",
 
-  offerIntroduction: `<p>We are delighted to extend this offer for the position of <strong>{{job.title}}</strong> at <strong>{{company.legal_company_name}}</strong>. After reviewing your background and experience, we believe you will be a valuable addition to our team.</p>`,
+  offerIntroduction: `<p>We are delighted to extend this offer for the position of <strong>{{job.title}}</strong> at <strong>{{company.legal_company_name}}</strong> After reviewing your background and experience, we believe you will be a valuable addition to our team.</p>`,
   offerDetails: `<ul><li>Position: {{job.title}}</li><li>Department: {{job.department}}</li><li>Start Date: {{job.joining_date}}</li><li>Work Location: {{job.work_mode}}</li><li>Compensation: {{compensation.annual_ctc}} {{compensation.currency}} annual CTC</li><li>Reporting To: {{job.reporting_manager}}</li></ul>`,
   closingStatement: `<p>We are confident that your skills, dedication, and professionalism will contribute greatly to our organization's continued success. We look forward to working with you and achieving great results together. Please confirm your acceptance of this offer within three (3) days of this letter.</p>`,
-  letterTitle: "JOB OFFER LETTER",
+  letterTitle: "OFFER LETTER",
 
   titleSize: 16,
   headingSize: 16,

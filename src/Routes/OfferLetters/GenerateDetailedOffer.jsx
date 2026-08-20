@@ -36,8 +36,18 @@ const DEFAULT_VALUES = {
   signatoryDesignation: "Human Resources",
   signatureUrl: "",
 
-  letterTitle: "JOB OFFER LETTER",
-  clauses: FULL_TIME_CLAUSES.map(c => ({ ...c }))
+  letterTitle: "OFFER LETTER",
+  clauses: FULL_TIME_CLAUSES.map(c => ({ ...c })),
+  offerIntroduction: `<p>We are delighted to extend this offer for the position of <strong>{{job.title}}</strong> at <strong>{{company.legal_company_name}}</strong> After reviewing your background and experience, we believe you will be a valuable addition to our team.</p>`,
+  offerDetails: `<ul><li>Position: {{job.title}}</li><li>Department: {{job.department}}</li><li>Start Date: {{job.joining_date}}</li><li>Work Location: {{job.work_mode}}</li><li>Compensation: {{compensation.annual_ctc}} {{compensation.currency}} annual CTC</li><li>Reporting To: {{job.reporting_manager}}</li></ul>`,
+  closingStatement: `<p>We are confident that your skills, dedication, and professionalism will contribute greatly to our organization's continued success. We look forward to working with you and achieving great results together. Please confirm your acceptance of this offer within three (3) days of this letter.</p>`,
+  candidateAcknowledgement: `<p>You agree and affirm that the information (personal or otherwise) shared by you at the time of application is accurate and complete, and you have withheld no material information. AUXOSYS is providing this offer of employment based on the preliminary information and documentation provided by you at the application stage. You understand and agree that this offer and your employment with AUXOSYS are subject to additional verification of the facts and materials/documents given to AUXOSYS, as well as any other verification deemed necessary to finalize your candidature. You may also be requested by the Company to supply paperwork and information from time to time throughout your employment; you must do so within the timeframes specified by the Company. Non-delivery of the required documents within the stated time frame will result in termination of employment.</p><p>Please do not hesitate to contact AUXOSYS through the designated communication channel if you have any questions.</p><p>We are confident that your skills and dedication will contribute to our organisation's success, and we look forward to working with you.</p><p>Congratulations on your selection, and welcome to the team!</p><p>Sincerely,</p><p>ACKNOWLEDGED AND AGREED:</p>`,
+  titleSize: 16,
+  headingSize: 16,
+  bodySize: 14.5,
+  listSize: 14.5,
+  contactSize: 14,
+  signatureSize: 65
 };
 
 function Section({ title, defaultOpen = true, children }) {
@@ -209,6 +219,31 @@ function ImageField({ label, value, onChange, hint }) {
   );
 }
 
+function SizeSlider({ label, id, value, onChange, min = 10, max = 52 }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex justify-between items-center">
+        <label htmlFor={id} className="text-[12px] font-semibold text-slate-700">
+          {label}
+        </label>
+        <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+          {value}px
+        </span>
+      </div>
+      <input
+        type="range"
+        id={id}
+        min={min}
+        max={max}
+        step={0.5}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
+      />
+    </div>
+  );
+}
+
 function OfferLetterForm({
   initialValues = {},
   onChange = () => {},
@@ -246,6 +281,27 @@ function OfferLetterForm({
       c.id === id ? { ...c, content: newContent } : c
     );
     update("clauses")(nextClauses);
+  };
+
+  const resetSizes = () => {
+    setValues((prev) => ({
+      ...prev,
+      titleSize: 16,
+      headingSize: 16,
+      bodySize: 14.5,
+      listSize: 14.5,
+      contactSize: 14,
+      signatureSize: 65,
+    }));
+    onChange({
+      ...values,
+      titleSize: 16,
+      headingSize: 16,
+      bodySize: 14.5,
+      listSize: 14.5,
+      contactSize: 14,
+      signatureSize: 65,
+    });
   };
 
   // Trigger initial onChange to bubble up defaults
@@ -374,6 +430,35 @@ function OfferLetterForm({
           />
         </Section>
 
+        <Section title="Offer Content">
+          <Field label="Offer Introduction">
+            <div className="border border-slate-200 rounded-lg overflow-hidden mt-1">
+              <RichTextEditor value={values.offerIntroduction} onChange={update("offerIntroduction")} />
+            </div>
+          </Field>
+          <div className="mt-4">
+            <Field label="Offer Details (List)">
+              <div className="border border-slate-200 rounded-lg overflow-hidden mt-1">
+                <RichTextEditor value={values.offerDetails} onChange={update("offerDetails")} />
+              </div>
+            </Field>
+          </div>
+          <div className="mt-4">
+            <Field label="Closing Statement">
+              <div className="border border-slate-200 rounded-lg overflow-hidden mt-1">
+                <RichTextEditor value={values.closingStatement} onChange={update("closingStatement")} />
+              </div>
+            </Field>
+          </div>
+          <div className="mt-4">
+            <Field label="Candidate Acknowledgement">
+              <div className="border border-slate-200 rounded-lg overflow-hidden mt-1">
+                <RichTextEditor value={values.candidateAcknowledgement} onChange={update("candidateAcknowledgement")} />
+              </div>
+            </Field>
+          </div>
+        </Section>
+
         <Section title="Clauses & Terms" defaultOpen={false}>
           <p className="text-xs text-slate-500 mb-4">
             Select the clauses to include in this offer letter. You can edit the contents of each clause directly.
@@ -401,6 +486,23 @@ function OfferLetterForm({
               </div>
             ))}
           </div>
+        </Section>
+
+        <Section title="Sizes & Dimensions" defaultOpen={false}>
+          <SizeSlider label="Signature image height" min={20} max={120} value={values.signatureSize} onChange={update("signatureSize")} />
+          <SizeSlider label='Heading "JOB OFFER LETTER"' min={12} max={52} value={values.titleSize} onChange={update("titleSize")} />
+          <SizeSlider label="Labels & names" min={12} max={22} value={values.headingSize} onChange={update("headingSize")} />
+          <SizeSlider label="Body paragraphs" min={11} max={19} value={values.bodySize} onChange={update("bodySize")} />
+          <SizeSlider label="Offer detail list" min={11} max={19} value={values.listSize} onChange={update("listSize")} />
+          <SizeSlider label="Contact / footer text" min={10} max={18} value={values.contactSize} onChange={update("contactSize")} />
+          
+          <button 
+            type="button" 
+            onClick={resetSizes}
+            className="mt-2 self-start text-[12px] font-semibold text-slate-500 hover:text-teal-600 underline underline-offset-2"
+          >
+            Reset to defaults
+          </button>
         </Section>
 
       </div>
@@ -456,8 +558,18 @@ const GenerateDetailedOffer = () => {
         },
         letterTitle: formState.letterTitle,
         offerDate: formState.offerDate,
+        offerIntroduction: formState.offerIntroduction,
+        offerDetails: formState.offerDetails,
+        closingStatement: formState.closingStatement,
+        candidateAcknowledgement: formState.candidateAcknowledgement,
         clauses: formState.clauses.filter(c => c.isActive),
-        templateType: "detailed_page" 
+        templateType: "detailed_page",
+        titleSize: formState.titleSize,
+        headingSize: formState.headingSize,
+        bodySize: formState.bodySize,
+        listSize: formState.listSize,
+        contactSize: formState.contactSize,
+        signatureSize: formState.signatureSize
       };
 
       const response = await apiClient.post("/api/offer-letters/generate-pdf", payload, {

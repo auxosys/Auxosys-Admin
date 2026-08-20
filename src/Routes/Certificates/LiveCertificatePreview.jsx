@@ -119,18 +119,18 @@ export default function LiveCertificatePreview({
           }}>
             <div className="watermark" style={{
               position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-              width: '520px', height: '520px', zIndex: -1, pointerEvents: 'none', opacity: 0.035
+              width: '820px', height: '820px', zIndex: -1, pointerEvents: 'none', opacity: 0.15
             }}>
               <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <g transform="translate(100,103)">
-                  <path d="M -56 -7 A 58 58 0 1 1 43 45" fill="none" stroke="#000000" strokeWidth="4.2" />
-                  <line x1="-6" y1="-42" x2="36" y2="16" stroke="#000000" strokeWidth="5.2" strokeLinecap="round" />
-                  <line x1="36" y1="16" x2="-33" y2="29" stroke="#000000" strokeWidth="5.2" strokeLinecap="round" />
-                  <line x1="-33" y1="29" x2="-6" y2="-42" stroke="#000000" strokeWidth="3" strokeLinecap="round" />
-                  <circle cx="-6" cy="-42" r="10" fill="#000000" />
-                  <circle cx="36" cy="16" r="14.5" fill="#000000" />
-                  <circle cx="-33" cy="29" r="7.3" fill="#000000" />
-                  <circle cx="43" cy="45" r="3.6" fill="#000000" />
+                  <path d="M -56 -7 A 58 58 0 1 1 43 45" fill="none" stroke="#081826" strokeWidth="1.2" opacity="0.5" />
+                  <line x1="-6" y1="-42" x2="36" y2="16" stroke="#081826" strokeWidth="5.2" strokeLinecap="round" />
+                  <line x1="36" y1="16" x2="-33" y2="29" stroke="#081826" strokeWidth="5.2" strokeLinecap="round" />
+                  <line x1="-33" y1="29" x2="-6" y2="-42" stroke="#081826" strokeWidth="3" strokeLinecap="round" opacity="0.6" />
+                  <circle cx="-6" cy="-42" r="10" fill="#081826" />
+                  <circle cx="36" cy="16" r="14.5" fill="#081826" />
+                  <circle cx="-33" cy="29" r="7.3" fill="#081826" />
+                  <circle cx="43" cy="45" r="3.6" fill="#081826" />
                 </g>
               </svg>
             </div>
