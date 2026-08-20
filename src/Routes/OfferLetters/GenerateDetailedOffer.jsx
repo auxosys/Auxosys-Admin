@@ -625,12 +625,12 @@ const GenerateDetailedOffer = () => {
         </div>
 
         {/* Right Preview (Scrollable Multi-page Preview) */}
-        <div className="hidden lg:flex flex-col w-[380px] xl:w-[480px] shrink-0 bg-slate-200 rounded-xl overflow-hidden mb-6 relative border border-slate-300 shadow-inner">
-          <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 shrink-0 z-10 sticky top-0 shadow-sm flex items-center justify-between">
+        <div className="hidden lg:flex flex-col w-[380px] xl:w-[420px] shrink-0 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+          <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 shrink-0 z-10 sticky top-0 flex items-center justify-between">
             <h3 className="font-semibold text-slate-700 text-sm">Live Preview</h3>
             <span className="text-xs text-slate-500">Scroll to view pages</span>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6 items-center">
+          <div className="flex-1 overflow-y-auto p-4 bg-slate-100 flex flex-col gap-6 items-center relative">
             <LiveDetailedPreview formState={formState} />
           </div>
         </div>
