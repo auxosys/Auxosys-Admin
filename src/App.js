@@ -111,9 +111,9 @@ function App() {
             <Route path="careers/new" element={<RoleRoute moduleName="careers"><PostJob /></RoleRoute>} />
             <Route path="careers/edit/:id" element={<RoleRoute moduleName="careers"><EditJob /></RoleRoute>} />
             <Route path="careers/applications/:jobId" element={<RoleRoute moduleName="careers"><CareerApplicants /></RoleRoute>} />
-            <Route path="offer-letters" element={<RoleRoute moduleName="careers"><OfferLetters /></RoleRoute>} />
-            <Route path="offer-letters/new" element={<RoleRoute moduleName="careers"><GenerateOffer /></RoleRoute>} />
-            <Route path="offer-letters/detailed/new" element={<RoleRoute moduleName="careers"><GenerateDetailedOffer /></RoleRoute>} />
+            <Route path="offer-letters" element={<RoleRoute moduleName="offer_letters"><OfferLetters /></RoleRoute>} />
+            <Route path="offer-letters/new" element={<RoleRoute moduleName="offer_letters"><GenerateOffer /></RoleRoute>} />
+            <Route path="offer-letters/detailed/new" element={<RoleRoute moduleName="offer_letters"><GenerateDetailedOffer /></RoleRoute>} />
 
             <Route path="subscriptions" element={<RoleRoute moduleName="subscriptions"><Subscriptions /></RoleRoute>} />
 
