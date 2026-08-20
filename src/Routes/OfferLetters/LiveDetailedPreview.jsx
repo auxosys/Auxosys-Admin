@@ -97,8 +97,8 @@ export default function LiveDetailedPreview({ formState }) {
     <div ref={containerRef} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
       <div style={{ position: 'relative', width: 794 * scale, height: 'auto', minHeight: 1123 * scale }}>
         
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10, overflow: 'hidden' }}>
-          <div style={{ position: 'sticky', top: '50vh', left: '50%', transform: `translate(-50%, -50%) scale(${scale})`, width: '680px', height: '680px', opacity: 0.15, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10, overflow: 'hidden', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ position: 'sticky', top: '50vh', transform: `translateY(-50%) scale(${scale})`, width: '680px', height: '680px', opacity: 0.15, pointerEvents: 'none', flexShrink: 0 }}>
 
             <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
               <g transform="translate(100,103)">
