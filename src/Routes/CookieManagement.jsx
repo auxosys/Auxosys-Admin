@@ -191,7 +191,7 @@ const CookieManagement = () => {
             <div className="flex-grow flex items-end justify-end pt-8">
               {/* Mock Banner matching Frontend */}
               <div
-                className="w-full max-w-[700px] backdrop-blur-md rounded-[16px] p-4 flex items-center justify-between gap-6"
+                className="w-full max-w-[700px] backdrop-blur-md rounded-[16px] p-4 flex flex-wrap items-center justify-between gap-4"
                 style={{
                   fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
                   backgroundColor: bannerConfig.theme === 'dark' ? 'rgba(14, 27, 33, 0.98)' : 'rgba(255, 255, 255, 0.98)',
@@ -201,7 +201,7 @@ const CookieManagement = () => {
                   boxShadow: '0 24px 60px -18px rgba(14,27,33,0.25)'
                 }}>
 
-                <div className="flex-1">
+                <div className="flex-1 min-w-[280px]">
                   <div className="flex items-center gap-2.5 mb-1.5">
                     <div className="w-7 h-7 rounded-lg bg-[#0fb5a6]/10 text-[#0fb5a6] flex items-center justify-center shrink-0">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -221,7 +221,7 @@ const CookieManagement = () => {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2.5 shrink-0">
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                   <button className="px-3.5 py-2.5 rounded-[10px] font-semibold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#1A2E35' : '#F5F8F8', borderColor: bannerConfig.theme === 'dark' ? '#2A3A41' : '#E7ECEC', borderWidth: '1px', borderStyle: 'solid', color: bannerConfig.theme === 'dark' ? '#E7ECEC' : '#10201F' }}>Reject All</button>
                   <button className="px-3.5 py-2.5 rounded-[10px] font-semibold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#1A2E35' : '#FFFFFF', borderColor: bannerConfig.theme === 'dark' ? '#2A3A41' : '#D8E0E0', borderWidth: '1px', borderStyle: 'solid', color: bannerConfig.theme === 'dark' ? '#E7ECEC' : '#10201F' }}>Customize</button>
                   <button className="px-5 py-2.5 rounded-[10px] font-bold text-[13px] transition-colors" style={{ backgroundColor: bannerConfig.theme === 'dark' ? '#0FB5A6' : '#0E1B21', color: '#FFFFFF' }}>Accept All</button>
