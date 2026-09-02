@@ -36,6 +36,7 @@ import CareerApplicants from './Routes/CareerApplicants';
 import OfferLetters from './Routes/OfferLetters';
 import GenerateOffer from './Routes/OfferLetters/GenerateOffer';
 import GenerateDetailedOffer from './Routes/OfferLetters/GenerateDetailedOffer';
+import ClientManagement from './Routes/ClientManagement/ClientManagement';
 
 const RoleRoute = ({ moduleName, children }) => {
   const { hasAccess, isLoading } = useAuth();
@@ -114,6 +115,7 @@ function App() {
             <Route path="offer-letters" element={<RoleRoute moduleName="offer_letters"><OfferLetters /></RoleRoute>} />
             <Route path="offer-letters/new" element={<RoleRoute moduleName="offer_letters"><GenerateOffer /></RoleRoute>} />
             <Route path="offer-letters/detailed/new" element={<RoleRoute moduleName="offer_letters"><GenerateDetailedOffer /></RoleRoute>} />
+            <Route path="clients" element={<RoleRoute moduleName="client_management"><ClientManagement /></RoleRoute>} />
 
             <Route path="subscriptions" element={<RoleRoute moduleName="subscriptions"><Subscriptions /></RoleRoute>} />
 

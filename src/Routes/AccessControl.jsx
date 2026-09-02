@@ -10,7 +10,8 @@ const MODULES = [
   { id: "subscriptions", label: "Subscriptions" },
   { id: "certificates_issued", label: "Certificates - Issued Certificates" },
   { id: "certificates_generate", label: "Certificates - Generate certificate" },
-  { id: "offer_letters", label: "Offer Letters" }
+  { id: "offer_letters", label: "Offer Letters" },
+  { id: "client_management", label: "Client Management" }
 ];
 
 const AccessControl = () => {

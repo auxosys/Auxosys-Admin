@@ -31,7 +31,7 @@ const Sidebar = () => {
 
   const getLinkClass = (path) => {
     const base =
-      "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-colors text-[15px]";
+      "flex items-center gap-3 px-3 py-1 rounded-lg transition-colors text-[15px]";
     const active = "text-white bg-white/20 shadow-sm backdrop-blur-sm";
     const inactive = "hover:bg-white/10 hover:text-white transition-colors";
 
@@ -108,7 +108,7 @@ const Sidebar = () => {
         </div>
 
         {/* Menu */}
-        <div className="flex-1 px-3 space-y-1 overflow-y-auto">
+        <div className="flex-1 px-3 space-y-0.5 overflow-y-auto">
           <div className="px-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
             Overview
           </div>
@@ -136,6 +136,13 @@ const Sidebar = () => {
             <Link to="/offer-letters" className={getLinkClass("/offer-letters")}>
               <FileText size={20} />
               <span className="font-medium">Offer Letters</span>
+            </Link>
+          )}
+
+          {hasAccess("client_management") && (
+            <Link to="/clients" className={getLinkClass("/clients")}>
+              <Users size={20} />
+              <span className="font-medium">Clients</span>
             </Link>
           )}
 
