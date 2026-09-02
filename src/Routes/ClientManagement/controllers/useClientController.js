@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { emptyClient, validateClient } from "../../../utils/clientModel.js";
 import { clientApi } from "../lib/api.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
