@@ -109,99 +109,118 @@ const Sidebar = () => {
 
         {/* Menu */}
         <div className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-          <div className="px-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
-            Overview
-          </div>
-
-          <Link to="/" className={getLinkClass("/")}>
-            <LayoutDashboard size={20} />
-            <span className="font-medium">Dashboard</span>
-          </Link>
-
-          {hasAccess("contact") && (
-            <Link to="/contact" className={getLinkClass("/contact")}>
-              <Mail size={20} />
-              <span className="font-medium">Contact Us</span>
-            </Link>
-          )}
-
-          {hasAccess("careers") && (
-            <Link to="/careers" className={getLinkClass("/careers")}>
-              <Briefcase size={20} />
-              <span className="font-medium">Careers</span>
-            </Link>
-          )}
-
-          {hasAccess("offer_letters") && (
-            <Link to="/offer-letters" className={getLinkClass("/offer-letters")}>
-              <FileText size={20} />
-              <span className="font-medium">Offer Letters</span>
-            </Link>
-          )}
-
-          {hasAccess("client_management") && (
-            <Link to="/clients" className={getLinkClass("/clients")}>
-              <Users size={20} />
-              <span className="font-medium">Clients</span>
-            </Link>
-          )}
-
-          {hasAccess("newsroom") && (
-            <Link to="/newsroom" className={getLinkClass("/newsroom")}>
-              <Newspaper size={20} />
-              <span className="font-medium">Newsroom</span>
-            </Link>
-          )}
-
-          {hasAccess("subscriptions") && (
-            <Link to="/subscriptions" className={getLinkClass("/subscriptions")}>
-              <Users size={20} />
-              <span className="font-medium">Subscriptions</span>
-            </Link>
-          )}
-
-          {(hasAccess("certificates_issued") || hasAccess("certificates_generate")) && (
-            <Link to="/certificates" className={getLinkClass("/certificates")}>
-              <Award size={20} />
-              <span className="font-medium">Certificates</span>
-            </Link>
-          )}
-
-          {(hasAccess("seo") || hasAccess("access-control") || hasAccess("settings") || hasAccess("legal")) && (
-            <div className="px-3 pt-2 mb-1 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
-              Site Management
-            </div>
-          )}
-
-          {hasAccess("seo") && (
-            <Link to="/seo" className={getLinkClass("/seo")}>
-              <Search size={20} />
-              <span className="font-medium">SEO</span>
-            </Link>
-          )}
-
-          {hasAccess("legal") && (
-            <Link to="/legal-pages" className={getLinkClass("/legal-pages")}>
-              <FileText size={20} />
-              <span className="font-medium">Legal Pages</span>
-            </Link>
-          )}
-
-          {hasAccess("settings") && (
+          {/* OVERVIEW */}
+          {hasAccess("dashboard") && (
             <>
-              <Link to="/consent-logs" className={getLinkClass("/consent-logs")}>
-                <ShieldCheck size={20} />
-                <span className="font-medium">Cookie Consent Logs</span>
+              <div className="px-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                Overview
+              </div>
+              <Link to="/" className={getLinkClass("/")}>
+                <LayoutDashboard size={20} />
+                <span className="font-medium">Dashboard</span>
               </Link>
             </>
           )}
 
-          {/* hasAccess("settings") && (
-            <Link to="/icon-studio" className={getLinkClass("/icon-studio")}>
-              <Palette size={20} />
-              <span className="font-medium">Icon Studio</span>
-            </Link>
-          ) */}
+          {/* BUSINESS MANAGEMENT */}
+          {(hasAccess("client_management") || hasAccess("contact") || hasAccess("outreach") || hasAccess("subscriptions")) && (
+            <>
+              <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                Business Management
+              </div>
+              {hasAccess("client_management") && (
+                <Link to="/clients" className={getLinkClass("/clients")}>
+                  <Users size={20} />
+                  <span className="font-medium">Clients</span>
+                </Link>
+              )}
+              {hasAccess("contact") && (
+                <Link to="/contact" className={getLinkClass("/contact")}>
+                  <Mail size={20} />
+                  <span className="font-medium">Contact Us</span>
+                </Link>
+              )}
+              {hasAccess("outreach") && (
+                <Link to="/outreach" className={getLinkClass("/outreach")}>
+                  <Mail size={20} />
+                  <span className="font-medium">Outreach & Mailbox</span>
+                </Link>
+              )}
+              {hasAccess("subscriptions") && (
+                <Link to="/subscriptions" className={getLinkClass("/subscriptions")}>
+                  <Users size={20} />
+                  <span className="font-medium">Subscriptions</span>
+                </Link>
+              )}
+            </>
+          )}
+
+          {/* HR & RECRUITMENT */}
+          {(hasAccess("careers") || hasAccess("offer_letters") || hasAccess("certificates_issued") || hasAccess("certificates_generate")) && (
+            <>
+              <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                HR & Recruitment
+              </div>
+              {hasAccess("careers") && (
+                <Link to="/careers" className={getLinkClass("/careers")}>
+                  <Briefcase size={20} />
+                  <span className="font-medium">Careers</span>
+                </Link>
+              )}
+              {hasAccess("offer_letters") && (
+                <Link to="/offer-letters" className={getLinkClass("/offer-letters")}>
+                  <FileText size={20} />
+                  <span className="font-medium">Offer Letters</span>
+                </Link>
+              )}
+              {(hasAccess("certificates_issued") || hasAccess("certificates_generate")) && (
+                <Link to="/certificates" className={getLinkClass("/certificates")}>
+                  <Award size={20} />
+                  <span className="font-medium">Certificates</span>
+                </Link>
+              )}
+            </>
+          )}
+
+          {/* CONTENT MANAGEMENT */}
+          {hasAccess("newsroom") && (
+            <>
+              <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                Content Management
+              </div>
+              <Link to="/newsroom" className={getLinkClass("/newsroom")}>
+                <Newspaper size={20} />
+                <span className="font-medium">Newsroom</span>
+              </Link>
+            </>
+          )}
+
+          {/* SITE MANAGEMENT */}
+          {(hasAccess("seo") || hasAccess("access-control") || hasAccess("settings") || hasAccess("legal")) && (
+            <>
+              <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                Site Management
+              </div>
+              {hasAccess("seo") && (
+                <Link to="/seo" className={getLinkClass("/seo")}>
+                  <Search size={20} />
+                  <span className="font-medium">SEO</span>
+                </Link>
+              )}
+              {hasAccess("legal") && (
+                <Link to="/legal-pages" className={getLinkClass("/legal-pages")}>
+                  <FileText size={20} />
+                  <span className="font-medium">Legal Pages</span>
+                </Link>
+              )}
+              {hasAccess("settings") && (
+                <Link to="/consent-logs" className={getLinkClass("/consent-logs")}>
+                  <ShieldCheck size={20} />
+                  <span className="font-medium">Cookie Consent Logs</span>
+                </Link>
+              )}
+            </>
+          )}
         </div>
 
         {/* Footer */}

@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Plus, Shield, ShieldCheck, ShieldAlert, Edit2, Trash2, Eye, EyeOff } from "lucide-react";
 import { apiClient } from "../helper/apiClient";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 
 const MODULES = [
+  { id: "dashboard", label: "Dashboard" },
+  { id: "outreach", label: "Outreach & Mailbox" },
   { id: "contact", label: "Contact Us" },
   { id: "careers", label: "Careers" },
   { id: "newsroom", label: "Newsroom" },
@@ -15,6 +18,7 @@ const MODULES = [
 ];
 
 const AccessControl = () => {
+  const { fetchProfile } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,9 +51,15 @@ const AccessControl = () => {
   const openModal = (user = null) => {
     if (user) {
       // Handle potential legacy string array `['newsroom', 'contact']` by converting to object array
-      const normalizedPermissions = (user.permissions || []).map(p => 
-        typeof p === 'string' ? { module: p, access: 'Read & Write' } : p
-      );
+      const normalizedPermissions = (user.permissions || []).map(p => {
+        if (typeof p === 'string') {
+          return { module: p, access: p === 'dashboard' ? 'Read' : 'Read & Write' };
+        }
+        if (p.module === 'dashboard' && p.access === 'Read & Write') {
+          return { ...p, access: 'Read' };
+        }
+        return p;
+      });
 
       setFormData({
         id: user._id,
@@ -103,6 +113,7 @@ const AccessControl = () => {
       }
       setIsModalOpen(false);
       fetchUsers();
+      fetchProfile?.();
     } catch (err) {
       toast.error(err.response?.data?.message || "Operation failed");
     }
@@ -311,7 +322,7 @@ const AccessControl = () => {
                           >
                             <option value="None">No Access</option>
                             {mod.id !== "offer_letters" && <option value="Read">Read Only</option>}
-                            <option value="Read & Write">Read & Write</option>
+                            {mod.id !== "dashboard" && <option value="Read & Write">Read & Write</option>}
                           </select>
                         </div>
                       );

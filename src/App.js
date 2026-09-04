@@ -37,6 +37,7 @@ import OfferLetters from './Routes/OfferLetters';
 import GenerateOffer from './Routes/OfferLetters/GenerateOffer';
 import GenerateDetailedOffer from './Routes/OfferLetters/GenerateDetailedOffer';
 import ClientManagement from './Routes/ClientManagement/ClientManagement';
+import Outreach from './Routes/Outreach';
 
 const RoleRoute = ({ moduleName, children }) => {
   const { hasAccess, isLoading } = useAuth();
@@ -46,7 +47,22 @@ const RoleRoute = ({ moduleName, children }) => {
     ? moduleName.some(name => hasAccess(name))
     : hasAccess(moduleName);
 
-  if (!hasAccessToAny) return <Navigate to="/" replace />;
+  if (!hasAccessToAny) {
+    const modules = [
+      { id: 'dashboard', path: '/' },
+      { id: 'outreach', path: '/outreach' },
+      { id: 'contact', path: '/contact' },
+      { id: 'careers', path: '/careers' },
+      { id: 'offer_letters', path: '/offer-letters' },
+      { id: 'client_management', path: '/clients' },
+      { id: 'newsroom', path: '/newsroom' },
+      { id: 'subscriptions', path: '/subscriptions' },
+      { id: 'certificates_issued', path: '/certificates' },
+      { id: 'certificates_generate', path: '/certificates' },
+    ];
+    const allowed = modules.find(m => hasAccess(m.id));
+    return <Navigate to={allowed ? allowed.path : '/profile'} replace />;
+  }
   return children;
 };
 
@@ -97,7 +113,7 @@ function App() {
             }
           >
             {/* Dashboard */}
-            <Route index element={<Dashboard />} />
+            <Route index element={<RoleRoute moduleName="dashboard"><Dashboard /></RoleRoute>} />
 
             {/* Admin Pages */}
             <Route path="contact" element={<RoleRoute moduleName="contact"><Contact /></RoleRoute>} />
@@ -116,6 +132,9 @@ function App() {
             <Route path="offer-letters/new" element={<RoleRoute moduleName="offer_letters"><GenerateOffer /></RoleRoute>} />
             <Route path="offer-letters/detailed/new" element={<RoleRoute moduleName="offer_letters"><GenerateDetailedOffer /></RoleRoute>} />
             <Route path="clients" element={<RoleRoute moduleName="client_management"><ClientManagement /></RoleRoute>} />
+
+            {/* OUTREACH & MAILBOX */}
+            <Route path="outreach" element={<RoleRoute moduleName="outreach"><Outreach /></RoleRoute>} />
 
             <Route path="subscriptions" element={<RoleRoute moduleName="subscriptions"><Subscriptions /></RoleRoute>} />
 
