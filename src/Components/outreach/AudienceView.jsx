@@ -24,7 +24,7 @@ export default function AudienceView() {
   // Form states
   const [newContact, setNewContact] = useState({ email: '', first_name: '', last_name: '', company: '', job_title: '' });
   const [newList, setNewList] = useState({ name: '', description: '' });
-  const [csvContent, setCsvContent] = useState('');
+  const [, setCsvContent] = useState('');
   const [csvPreview, setCsvPreview] = useState([]);
 
   useEffect(() => {
@@ -33,6 +33,7 @@ export default function AudienceView() {
 
   useEffect(() => {
     loadContacts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedListId, search]);
 
   const loadLists = async () => {

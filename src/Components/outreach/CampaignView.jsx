@@ -11,7 +11,7 @@ import {
   createTemplate,
 } from '../../api/mailboxApi';
 import { useAuth } from '../../context/AuthContext';
-import { Play, Pause, Trash2, Rocket, Mail, Users, FileText, Settings, AlertCircle } from 'lucide-react';
+import { Trash2, Rocket } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 export default function CampaignView() {

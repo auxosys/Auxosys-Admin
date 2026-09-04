@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Plus, RefreshCw, Shield, CheckCircle, AlertTriangle, UserCheck, Trash2, Edit3, Key } from 'lucide-react';
+import { Mail, Plus, RefreshCw, Shield, CheckCircle, AlertTriangle, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import {
   listSenderEmails,
   createSenderEmail,
-  updateSenderEmail,
   deleteSenderEmail,
   syncBrevoSenders,
   assignUserSenderPermission,
@@ -49,7 +48,7 @@ export default function SenderEmailView() {
     if (isSuperAdmin) {
       fetchUsers();
     }
-  }, []);
+  }, [isSuperAdmin]);
 
   const fetchSenders = async () => {
     try {

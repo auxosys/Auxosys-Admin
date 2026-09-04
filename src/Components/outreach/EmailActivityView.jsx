@@ -11,6 +11,7 @@ export default function EmailActivityView() {
 
   useEffect(() => {
     fetchActivity();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchActivity = async (searchTerm = search) => {

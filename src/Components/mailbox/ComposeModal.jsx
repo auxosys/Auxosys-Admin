@@ -123,6 +123,7 @@ export default function ComposeModal({
         editorRef.current.innerHTML = `<br><br>${quoted}`;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

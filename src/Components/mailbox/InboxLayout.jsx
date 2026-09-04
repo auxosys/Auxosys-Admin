@@ -4,7 +4,7 @@ import {
   PenSquare, ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { listMailboxes, listSenderEmails, listMessages, syncFolder, updateMessageFlags } from '../../api/mailboxApi';
+import { listSenderEmails, listMessages, syncFolder, updateMessageFlags } from '../../api/mailboxApi';
 import { useMailSocket } from '../../hooks/useMailSocket';
 import FolderSidebar from './FolderSidebar';
 import MessageList from './MessageList';
