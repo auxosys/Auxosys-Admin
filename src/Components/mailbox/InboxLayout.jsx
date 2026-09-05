@@ -86,9 +86,11 @@ export default function InboxLayout() {
 
   useEffect(() => { loadMailboxes(); }, [loadMailboxes]);
 
-  const loadMessages = useCallback(async () => {
+  const loadMessages = useCallback(async (isSilent = false) => {
     if (!activeMailboxId) return;
-    setLoadingMessages(true);
+    if (!isSilent) {
+      setLoadingMessages(true);
+    }
     try {
       const params = { folder: activeFolder };
       if (search) params.q = search;
@@ -109,9 +111,9 @@ export default function InboxLayout() {
 
   useEffect(() => {
     if (activeTab !== 'inbox') return;
-    loadMessages();
+    loadMessages(false);
     const interval = setInterval(() => {
-      loadMessages();
+      loadMessages(true);
     }, 10000);
     return () => clearInterval(interval);
   }, [activeTab, loadMessages]);
@@ -127,9 +129,32 @@ export default function InboxLayout() {
 
   const handleRefresh = async () => {
     if (!activeMailboxId) return;
-    await syncFolder(activeMailboxId, activeFolder);
-    loadMessages();
+    try {
+      await syncFolder(activeMailboxId, activeFolder);
+    } catch (e) {}
+    await loadMessages(true);
   };
+
+  const handleSelectMessage = useCallback(async (id) => {
+    if (!id) return;
+    setActiveMessageId(id);
+    setMessages((prev) =>
+      prev.map((m) => (String(m.id) === String(id) ? { ...m, is_read: true } : m))
+    );
+    try {
+      await updateMessageFlags(activeMailboxId, id, { is_read: true });
+    } catch (err) {
+      console.warn('Failed to update is_read:', err.message);
+    }
+  }, [activeMailboxId]);
+
+  useEffect(() => {
+    if (!activeMessageId) return;
+    setMessages((prev) =>
+      prev.map((m) => (String(m.id) === String(activeMessageId) && !m.is_read ? { ...m, is_read: true } : m))
+    );
+    updateMessageFlags(activeMailboxId, activeMessageId, { is_read: true }).catch(() => {});
+  }, [activeMessageId, activeMailboxId]);
 
   const handleStar = async (message) => {
     setMessages((prev) => prev.map((m) => (m.id === message.id ? { ...m, is_starred: !m.is_starred } : m)));
@@ -145,6 +170,11 @@ export default function InboxLayout() {
 
   const confirmDeleteDraft = async () => {
     if (!draftToDelete) return;
+    if (!isSuperAdmin) {
+      toast.error('Access Denied: Only Super Admin can delete emails and drafts');
+      setDraftToDelete(null);
+      return;
+    }
     setDeletingDraft(true);
     try {
       await deleteDraft(draftToDelete.id);
@@ -265,12 +295,13 @@ export default function InboxLayout() {
                 activeFolder={activeFolder}
                 onSelectFolder={(f) => { setActiveFolder(f); setActiveMessageId(null); }}
                 unreadCount={unreadCount}
+                isSuperAdmin={isSuperAdmin}
               />
               <MessageList
                 messages={messages}
                 loading={loadingMessages}
                 activeMessageId={activeMessageId}
-                onSelectMessage={(id) => setActiveMessageId(id)}
+                onSelectMessage={(id) => handleSelectMessage(id)}
                 search={search}
                 onSearchChange={(q) => setSearch(q)}
                 onRefresh={handleRefresh}
@@ -280,6 +311,7 @@ export default function InboxLayout() {
                 mailboxId={activeMailboxId}
                 messageId={activeMessageId}
                 selectedMessage={messages.find((m) => String(m.id) === String(activeMessageId))}
+                isSuperAdmin={isSuperAdmin}
                 onReply={(msg) => setCompose({ mode: 'reply', message: msg })}
                 onForward={(msg) => setCompose({ mode: 'forward', message: msg })}
                 onEditDraft={(msg) => setCompose({ mode: 'edit_draft', draftId: msg.id, message: msg })}

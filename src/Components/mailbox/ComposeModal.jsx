@@ -391,7 +391,12 @@ export default function ComposeModal({
               ref={editorRef}
               contentEditable
               suppressContentEditableWarning
-              style={{ ...styles.body, minHeight: expanded ? '340px' : '200px' }}
+              style={{
+                ...styles.body,
+                minHeight: expanded ? '300px' : '150px',
+                maxHeight: expanded ? 'calc(90vh - 240px)' : 'calc(100vh - 300px)',
+                overflowY: 'auto'
+              }}
               data-placeholder="Compose your message…"
             />
 
@@ -523,8 +528,8 @@ export default function ComposeModal({
 function buildQuote(msg) {
   const dateStr = msg.received_at ? new Date(msg.received_at).toLocaleString('en-IN') : '';
   const from = msg.from_name ? `${msg.from_name} &lt;${msg.from_address}&gt;` : msg.from_address || '';
-  return `<div style="border-left:3px solid #cbd5e1;margin-top:16px;padding-left:12px;color:#64748b;font-size:13px">
-    <div style="margin-bottom:8px;color:#94a3b8">On ${dateStr}, ${from} wrote:</div>
+  return `<div style="border-left:3px solid #cbd5e1;margin-top:14px;padding:10px 12px;color:#64748b;font-size:13px;max-height:180px;overflow-y:auto;background:#f8fafc;border-radius:8px;">
+    <div style="margin-bottom:6px;color:#94a3b8;font-weight:600;">On ${dateStr}, ${from} wrote:</div>
     ${msg.body_html || (msg.body_text || '').replace(/\n/g, '<br>')}
   </div>`;
 }
@@ -568,6 +573,7 @@ const styles = {
     borderRadius: '12px 12px 0 0',
     width: '560px',
     maxWidth: '95vw',
+    maxHeight: 'calc(100vh - 60px)',
     boxShadow: '0 -8px 40px -8px rgba(15,23,42,0.28)',
     display: 'flex',
     flexDirection: 'column',

@@ -11,6 +11,40 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
     }
   };
 
+  const renderListAvatar = (fromName, fromAddress) => {
+    const isAuxosys = fromAddress && fromAddress.toLowerCase().includes('@auxosys.com');
+    if (isAuxosys) {
+      return (
+        <div className="ml-avatar-box">
+          <img
+            src={logoAvatar}
+            alt="Profile Logo"
+            className="ml-avatar-img"
+            onError={(e) => {
+              e.target.src = process.env.PUBLIC_URL + '/android-chrome-512.png';
+            }}
+          />
+        </div>
+      );
+    }
+
+    const uiAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(fromName || 'Lead')}&background=6366f1&color=fff&rounded=true&bold=true&size=64`;
+    const unavatarUrl = `https://unavatar.io/${encodeURIComponent(fromAddress || '')}`;
+
+    return (
+      <div className="ml-avatar-box">
+        <img
+          src={unavatarUrl}
+          alt={fromName}
+          className="ml-avatar-img"
+          onError={(e) => {
+            e.target.src = uiAvatarUrl;
+          }}
+        />
+      </div>
+    );
+  };
+
   return (
     <div className="msg-list">
       <style>{`
@@ -27,7 +61,7 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
         .ml-row.active { background: #EFF6FF; border-left: 3px solid #1D4ED8; }
         .ml-avatar-box { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 1px solid #CBD5E1; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 2px; }
         .ml-avatar-img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; display: block; }
-        .ml-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; text-transform: uppercase; }
+        .ml-avatar-initial { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: 700; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .ml-content { flex: 1; min-width: 0; }
         .ml-top-row { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
         .ml-from { font-size: 13.5px; font-weight: 600; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -51,16 +85,29 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
       </div>
 
       <div className="ml-scroll">
-        {loading ? (
+        {loading && messages.length === 0 ? (
           <div className="ml-empty">Loading messages…</div>
         ) : messages.length === 0 ? (
           <div className="ml-empty">No messages found.</div>
         ) : messages.map((m) => {
           const isSentFolder = (m.folder || '').toUpperCase() === 'SENT';
           const recipientAddr = m.to_addresses?.[0]?.address || m.recipient_email;
+
+          const rawFrom = m.from_name || '';
+          let displayName = rawFrom;
+          if (!displayName || displayName === m.from_address || displayName.includes('@')) {
+            if (m.from_address && m.from_address.includes('dpritam2708')) {
+              displayName = 'Pritam Das';
+            } else if (m.from_address) {
+              const uname = m.from_address.split('@')[0];
+              displayName = uname.charAt(0).toUpperCase() + uname.slice(1);
+            } else {
+              displayName = 'Lead';
+            }
+          }
           const senderName = isSentFolder && recipientAddr
             ? `To: ${recipientAddr}`
-            : (m.from_name || m.from_address || 'Lead');
+            : displayName;
 
           return (
             <div
@@ -68,16 +115,7 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
               className={`ml-row ${m.id === activeMessageId ? 'active' : ''} ${!m.is_read ? 'unread' : ''}`}
               onClick={() => handleSelect(m)}
             >
-              <div className="ml-avatar-box">
-                <img
-                  src={logoAvatar}
-                  alt="Profile Logo"
-                  className="ml-avatar-img"
-                  onError={(e) => {
-                    e.target.src = process.env.PUBLIC_URL + '/android-chrome-512.png';
-                  }}
-                />
-              </div>
+              {renderListAvatar(senderName, m.from_address)}
               <div className="ml-content">
                 <div className="ml-top-row">
                   <span className="ml-from">{senderName}</span>
