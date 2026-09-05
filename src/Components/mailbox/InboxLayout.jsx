@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   BarChart3, Mail, Users, Zap, Activity, Inbox,
   PenSquare, ChevronDown, AlertTriangle, X
@@ -86,9 +86,12 @@ export default function InboxLayout() {
 
   useEffect(() => { loadMailboxes(); }, [loadMailboxes]);
 
+  const hasLoadedOnceRef = useRef(false);
+
   const loadMessages = useCallback(async (isSilent = false) => {
     if (!activeMailboxId) return;
-    if (!isSilent) {
+    const shouldShowLoading = !isSilent && !hasLoadedOnceRef.current;
+    if (shouldShowLoading) {
       setLoadingMessages(true);
     }
     try {
@@ -97,6 +100,7 @@ export default function InboxLayout() {
       const { messages: msgs } = await listMessages(activeMailboxId, params);
       const list = msgs || [];
       setMessages(list);
+      hasLoadedOnceRef.current = true;
       if (list.length > 0) {
         setActiveMessageId((prev) => (prev && list.some(m => String(m.id) === String(prev)) ? prev : list[0].id));
       } else {
@@ -111,7 +115,7 @@ export default function InboxLayout() {
 
   useEffect(() => {
     if (activeTab !== 'inbox') return;
-    loadMessages(false);
+    loadMessages(hasLoadedOnceRef.current);
     const interval = setInterval(() => {
       loadMessages(true);
     }, 10000);
