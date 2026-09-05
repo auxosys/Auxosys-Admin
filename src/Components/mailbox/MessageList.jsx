@@ -1,20 +1,6 @@
 import React from 'react';
 import { Search, RefreshCw, Star } from 'lucide-react';
-
-const AVATAR_COLORS = [
-  'bg-blue-600 text-white',
-  'bg-purple-600 text-white',
-  'bg-emerald-600 text-white',
-  'bg-amber-600 text-white',
-  'bg-indigo-600 text-white',
-  'bg-rose-600 text-white',
-];
-
-function getAvatarColor(name = '') {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
-}
+import logoAvatar from '../../assets/logo-avatar.png';
 
 export default function MessageList({ messages = [], loading, activeMessageId, onSelect, onSelectMessage, onStar, search, onSearchChange, onRefresh }) {
   const handleSelect = (m) => {
@@ -39,6 +25,8 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
         .ml-row { padding: 14px 16px; border-bottom: 1px solid #F1F5F9; cursor: pointer; transition: background 0.15s; display: flex; gap: 12px; align-items: flex-start; }
         .ml-row:hover { background: #F8FAFC; }
         .ml-row.active { background: #EFF6FF; border-left: 3px solid #1D4ED8; }
+        .ml-avatar-box { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 1px solid #CBD5E1; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 2px; }
+        .ml-avatar-img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; display: block; }
         .ml-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; text-transform: uppercase; }
         .ml-content { flex: 1; min-width: 0; }
         .ml-top-row { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
@@ -73,8 +61,6 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
           const senderName = isSentFolder && recipientAddr
             ? `To: ${recipientAddr}`
             : (m.from_name || m.from_address || 'Lead');
-          const avatarColor = getAvatarColor(senderName);
-          const initial = isSentFolder ? 'T' : (senderName[0] || 'A').toUpperCase();
 
           return (
             <div
@@ -82,8 +68,15 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
               className={`ml-row ${m.id === activeMessageId ? 'active' : ''} ${!m.is_read ? 'unread' : ''}`}
               onClick={() => handleSelect(m)}
             >
-              <div className={`ml-avatar ${avatarColor}`}>
-                {initial}
+              <div className="ml-avatar-box">
+                <img
+                  src={logoAvatar}
+                  alt="Profile Logo"
+                  className="ml-avatar-img"
+                  onError={(e) => {
+                    e.target.src = process.env.PUBLIC_URL + '/android-chrome-512.png';
+                  }}
+                />
               </div>
               <div className="ml-content">
                 <div className="ml-top-row">

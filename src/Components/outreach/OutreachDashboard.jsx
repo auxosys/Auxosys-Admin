@@ -110,15 +110,18 @@ export default function OutreachDashboard() {
 
       {loading ? (
         <div style={css.loadingGrid}>
-          {STAT_DEFS.map(d => (
-            <div key={d.key} style={{ ...css.card, opacity: 0.4 }}>
-              <div style={{ ...css.cardIconWrap, background: d.bg, border: `1px solid ${d.border}` }}>
-                <d.icon size={20} color={d.color} />
+          {STAT_DEFS.map(d => {
+            const Icon = d.icon;
+            return (
+              <div key={d.key} style={{ ...css.card, opacity: 0.4 }}>
+                <div style={{ ...css.cardIconWrap, background: d.bg, border: `1px solid ${d.border}` }}>
+                  <Icon size={20} color={d.color} />
+                </div>
+                <div style={css.cardSkeleton} />
+                <div style={{ ...css.cardSkeleton, width: '60%', marginTop: 6 }} />
               </div>
-              <div style={css.cardSkeleton} />
-              <div style={{ ...css.cardSkeleton, width: '60%', marginTop: 6 }} />
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : error ? (
         <div style={css.errorBox}>

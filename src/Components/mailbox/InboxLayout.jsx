@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   BarChart3, Mail, Users, Zap, Activity, Inbox,
-  PenSquare, ChevronDown
+  PenSquare, ChevronDown, AlertTriangle, X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { listSenderEmails, listMessages, syncFolder, updateMessageFlags } from '../../api/mailboxApi';
+import { listSenderEmails, listMessages, syncFolder, updateMessageFlags, deleteDraft } from '../../api/mailboxApi';
+import { toast } from 'react-toastify';
 import { useMailSocket } from '../../hooks/useMailSocket';
 import FolderSidebar from './FolderSidebar';
 import MessageList from './MessageList';
@@ -15,6 +16,7 @@ import CampaignView from '../outreach/CampaignView';
 import OutreachDashboard from '../outreach/OutreachDashboard';
 import SenderEmailView from '../outreach/SenderEmailView';
 import EmailActivityView from '../outreach/EmailActivityView';
+import logoAvatar from '../../assets/logo-avatar.png';
 
 const TABS = [
   { id: 'dashboard', label: 'Overview',       icon: BarChart3 },
@@ -24,19 +26,6 @@ const TABS = [
   { id: 'activity',  label: 'Activity Logs',   icon: Activity },
   { id: 'inbox',     label: 'Inbox & Replies', icon: Inbox },
 ];
-
-function getSenderAvatar(mb) {
-  if (!mb) return { bg: '#2563eb', label: 'M' };
-  if (mb.id === 'all') return { bg: '#4f46e5', label: 'ALL' };
-  const email = (mb.email_address || mb.email || '').toLowerCase();
-  if (email.startsWith('careers')) return { bg: '#7c3aed', label: 'C' };
-  if (email.startsWith('sales')) return { bg: '#059669', label: 'S' };
-  if (email.startsWith('support')) return { bg: '#dc2626', label: 'SU' };
-  if (email.startsWith('hr')) return { bg: '#d97706', label: 'HR' };
-  if (email.startsWith('hello') || email.startsWith('contact')) return { bg: '#2563eb', label: 'H' };
-  const first = email[0] ? email[0].toUpperCase() : 'M';
-  return { bg: '#2563eb', label: first };
-}
 
 export default function InboxLayout() {
   const { profile } = useAuth();
@@ -151,9 +140,28 @@ export default function InboxLayout() {
     }
   };
 
+  const [draftToDelete, setDraftToDelete] = useState(null);
+  const [deletingDraft, setDeletingDraft] = useState(false);
+
+  const confirmDeleteDraft = async () => {
+    if (!draftToDelete) return;
+    setDeletingDraft(true);
+    try {
+      await deleteDraft(draftToDelete.id);
+      toast.success('Draft deleted successfully');
+      setMessages((prev) => prev.filter((m) => String(m.id) !== String(draftToDelete.id)));
+      if (String(activeMessageId) === String(draftToDelete.id)) {
+        setActiveMessageId(null);
+      }
+      setDraftToDelete(null);
+    } catch (err) {
+      toast.error(err.message || 'Failed to delete draft');
+    } finally {
+      setDeletingDraft(false);
+    }
+  };
+
   const unreadCount = messages.filter((m) => !m.is_read).length;
-  const activeMailbox = mailboxes.find((m) => String(m.id) === String(activeMailboxId)) || mailboxes[0];
-  const currentAvatar = getSenderAvatar(activeMailbox);
 
   return (
     <div style={activeTab === 'inbox' ? css.page : css.pageScrollable}>
@@ -173,8 +181,15 @@ export default function InboxLayout() {
         <div style={css.pageHeaderRight}>
           {mailboxes.length > 0 && (
             <div style={css.senderPillContainer} title="Active Sender Account">
-              <div style={{ ...css.senderAvatarCircle, background: currentAvatar.bg }}>
-                {currentAvatar.label}
+              <div style={{ ...css.senderAvatarCircle, background: '#ffffff', overflow: 'hidden', border: '1px solid #cbd5e1', padding: 2 }}>
+                <img
+                  src={logoAvatar}
+                  alt="Profile Logo"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }}
+                  onError={(e) => {
+                    e.target.src = process.env.PUBLIC_URL + '/android-chrome-512.png';
+                  }}
+                />
               </div>
               <div style={css.senderTextWrap}>
                 <span style={css.senderLabelMicro}>SENDER FILTER</span>
@@ -267,6 +282,8 @@ export default function InboxLayout() {
                 selectedMessage={messages.find((m) => String(m.id) === String(activeMessageId))}
                 onReply={(msg) => setCompose({ mode: 'reply', message: msg })}
                 onForward={(msg) => setCompose({ mode: 'forward', message: msg })}
+                onEditDraft={(msg) => setCompose({ mode: 'edit_draft', draftId: msg.id, message: msg })}
+                onDeleteDraft={(msg) => setDraftToDelete(msg)}
               />
             </div>
           )
@@ -281,6 +298,46 @@ export default function InboxLayout() {
           onClose={() => setCompose(null)}
           onSent={() => { setCompose(null); if (activeTab === 'inbox') loadMessages(); }}
         />
+      )}
+
+      {/* ── CUSTOM CONFIRM DELETE DRAFT MODAL ── */}
+      {draftToDelete && (
+        <div style={css.confirmOverlay} onClick={() => setDraftToDelete(null)}>
+          <div style={css.confirmCard} onClick={(e) => e.stopPropagation()}>
+            <div style={css.confirmHeader}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={css.confirmIconWrap}>
+                  <AlertTriangle size={18} color="#dc2626" />
+                </div>
+                <span style={css.confirmTitle}>Delete Draft</span>
+              </div>
+              <button style={css.confirmCloseBtn} onClick={() => setDraftToDelete(null)}>
+                <X size={16} />
+              </button>
+            </div>
+            <div style={css.confirmBody}>
+              <p style={css.confirmText}>
+                Are you sure you want to delete the draft <strong>"{draftToDelete.subject || '(No Subject)'}"</strong>? This action cannot be undone.
+              </p>
+              <div style={css.confirmActions}>
+                <button
+                  style={css.confirmCancelBtn}
+                  onClick={() => setDraftToDelete(null)}
+                  disabled={deletingDraft}
+                >
+                  Cancel
+                </button>
+                <button
+                  style={css.confirmDeleteBtn}
+                  onClick={confirmDeleteDraft}
+                  disabled={deletingDraft}
+                >
+                  {deletingDraft ? 'Deleting…' : 'Delete Draft'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -496,5 +553,101 @@ const css = {
     flex: 1,
     display: 'flex',
     overflow: 'hidden',
+  },
+
+  /* confirmation modal */
+  confirmOverlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(15,23,42,0.45)',
+    backdropFilter: 'blur(3px)',
+    zIndex: 1300,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+  },
+  confirmCard: {
+    background: '#ffffff',
+    borderRadius: 14,
+    width: '100%',
+    maxWidth: 420,
+    boxShadow: '0 20px 50px rgba(15,23,42,0.3)',
+    border: '1px solid #e2e8f0',
+    overflow: 'hidden',
+  },
+  confirmHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '14px 18px',
+    background: '#f8fafc',
+    borderBottom: '1px solid #e2e8f0',
+  },
+  confirmTitle: {
+    fontSize: 14,
+    fontWeight: 700,
+    color: '#0f172a',
+  },
+  confirmIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmCloseBtn: {
+    background: 'none',
+    border: 'none',
+    color: '#64748b',
+    cursor: 'pointer',
+    padding: 4,
+    borderRadius: 6,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  confirmBody: {
+    padding: 18,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+  },
+  confirmText: {
+    margin: 0,
+    fontSize: 13.5,
+    color: '#334155',
+    lineHeight: 1.6,
+  },
+  confirmActions: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  confirmCancelBtn: {
+    background: '#f1f5f9',
+    color: '#475569',
+    border: '1px solid #cbd5e1',
+    borderRadius: 8,
+    padding: '8px 16px',
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+  },
+  confirmDeleteBtn: {
+    background: 'linear-gradient(135deg, #dc2626, #ef4444)',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: 8,
+    padding: '8px 18px',
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: 'pointer',
+    boxShadow: '0 2px 8px rgba(220,38,38,0.3)',
+    transition: 'all 0.15s',
   },
 };

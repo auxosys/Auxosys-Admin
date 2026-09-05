@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Reply, Forward, Mail, Clock, Paperclip } from 'lucide-react';
+import { Reply, Forward, Mail, Clock, Paperclip, PenSquare, Trash2 } from 'lucide-react';
 import { getMessage } from '../../api/mailboxApi';
+import logoAvatar from '../../assets/logo-avatar.png';
 
-export default function MessageView({ mailboxId, activeMailboxId, messageId, activeMessageId, selectedMessage, onReply, onForward }) {
+export default function MessageView({ mailboxId, activeMailboxId, messageId, activeMessageId, selectedMessage, onReply, onForward, onEditDraft, onDeleteDraft }) {
   const currentMailboxId = mailboxId || activeMailboxId || 'all';
   const currentMessageId = messageId || activeMessageId;
 
@@ -55,18 +56,25 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
   }
 
   const senderName = message.from_name || message.from_address || 'Sender';
-  const initial = (senderName[0] || 'A').toUpperCase();
   const toList = (message.to_addresses || []).map((t) => t.address || t).join(', ');
+  const isDraft = (message.folder || '').toUpperCase() === 'DRAFTS' || message.status === 'draft';
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-white overflow-y-auto">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 leading-tight">{message.subject}</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4 leading-tight">{message.subject || '(No Subject)'}</h2>
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-sm flex items-center justify-center flex-shrink-0 uppercase shadow-sm">
-              {initial}
+            <div className="w-10 h-10 rounded-full bg-white border border-gray-300 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-sm p-0.5">
+              <img
+                src={logoAvatar}
+                alt="Profile Logo"
+                className="w-full h-full object-contain rounded-full"
+                onError={(e) => {
+                  e.target.src = process.env.PUBLIC_URL + '/android-chrome-512.png';
+                }}
+              />
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-900 flex items-center gap-2">
@@ -92,20 +100,41 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
 
       {/* Action Toolbar */}
       <div className="px-6 py-3 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-        <button
-          onClick={() => onReply(message)}
-          className="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg text-xs hover:bg-gray-50 transition shadow-sm"
-        >
-          <Reply size={14} className="text-blue-600" />
-          Reply
-        </button>
-        <button
-          onClick={() => onForward(message)}
-          className="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg text-xs hover:bg-gray-50 transition shadow-sm"
-        >
-          <Forward size={14} className="text-gray-600" />
-          Forward
-        </button>
+        {isDraft ? (
+          <>
+            <button
+              onClick={() => onEditDraft?.(message)}
+              className="flex items-center gap-2 px-4 py-1.5 bg-blue-600 text-white font-semibold rounded-lg text-xs hover:bg-blue-700 transition shadow-sm"
+            >
+              <PenSquare size={14} />
+              Edit Draft
+            </button>
+            <button
+              onClick={() => onDeleteDraft?.(message)}
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-red-200 text-red-600 font-semibold rounded-lg text-xs hover:bg-red-50 transition shadow-sm"
+            >
+              <Trash2 size={14} />
+              Delete Draft
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => onReply(message)}
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg text-xs hover:bg-gray-50 transition shadow-sm"
+            >
+              <Reply size={14} className="text-blue-600" />
+              Reply
+            </button>
+            <button
+              onClick={() => onForward(message)}
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg text-xs hover:bg-gray-50 transition shadow-sm"
+            >
+              <Forward size={14} className="text-gray-600" />
+              Forward
+            </button>
+          </>
+        )}
       </div>
 
       {/* Message Body Content */}

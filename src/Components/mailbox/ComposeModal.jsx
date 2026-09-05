@@ -4,7 +4,7 @@ import {
   Bold, Italic, Underline, Strikethrough, List, ListOrdered,
   Link2, Trash2, Type
 } from 'lucide-react';
-import { listSenderEmails, sendDirectEmail, sendMessage } from '../../api/mailboxApi';
+import { listSenderEmails, sendDirectEmail, sendMessage, saveDraft, deleteDraft } from '../../api/mailboxApi';
 import { toast } from 'react-toastify';
 
 /* ─── tiny helper ─── */
@@ -104,7 +104,7 @@ export default function ComposeModal({
   const resolvedReplyTo = composeState?.message || replyTo;
 
   useEffect(() => {
-    // pre-fill for reply/forward
+    // pre-fill for reply/forward/edit_draft
     if (resolvedMode === 'reply' && resolvedReplyTo) {
       const addr = resolvedReplyTo.from_address || resolvedReplyTo.from;
       if (addr) setTo([addr]);
@@ -121,6 +121,13 @@ export default function ComposeModal({
       if (editorRef.current) {
         const quoted = buildQuote(resolvedReplyTo);
         editorRef.current.innerHTML = `<br><br>${quoted}`;
+      }
+    } else if ((resolvedMode === 'edit_draft' || resolvedMode === 'edit') && resolvedReplyTo) {
+      const addrs = (resolvedReplyTo.to_addresses || []).map(t => typeof t === 'string' ? t : t.address).filter(Boolean);
+      if (addrs.length) setTo(addrs);
+      if (resolvedReplyTo.subject) setSubject(resolvedReplyTo.subject);
+      if (editorRef.current) {
+        editorRef.current.innerHTML = resolvedReplyTo.body_html || resolvedReplyTo.body_text || '';
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -211,6 +218,34 @@ export default function ComposeModal({
     setShowLinkModal(false);
   };
 
+  const [savingDraft, setSavingDraft] = useState(false);
+
+  const draftIdToUse = composeState?.draftId || (resolvedMode === 'edit_draft' || resolvedMode === 'edit' ? resolvedReplyTo?.id : undefined);
+
+  const handleSaveDraft = async () => {
+    const bodyHtml = editorRef.current?.innerHTML || '';
+    const bodyText = editorRef.current?.innerText || '';
+
+    setSavingDraft(true);
+    try {
+      await saveDraft({
+        draftId: draftIdToUse,
+        senderEmailId: selectedSenderId || undefined,
+        mailboxId: mailboxId || undefined,
+        to, cc, bcc, subject,
+        html: bodyHtml,
+        text: bodyText,
+        files,
+      });
+      toast.success('Draft saved successfully!');
+      onSent?.();
+    } catch (err) {
+      toast.error(err.message || 'Failed to save draft.');
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
   const handleSend = async () => {
     const bodyHtml = editorRef.current?.innerHTML || '';
     const bodyText = editorRef.current?.innerText || '';
@@ -245,6 +280,11 @@ export default function ComposeModal({
         toast.error('No sender or mailbox configured.');
         return;
       }
+
+      if (draftIdToUse) {
+        await deleteDraft(draftIdToUse).catch(() => {});
+      }
+
       toast.success('Email sent successfully!');
       onSent?.();
     } catch (err) {
@@ -437,12 +477,19 @@ export default function ComposeModal({
             <div style={styles.footer}>
               <div style={styles.footerLeft}>
                 <button
-                  style={{ ...styles.sendBtn, ...(sending ? styles.sendBtnDisabled : {}) }}
+                  style={{ ...styles.sendBtn, ...((sending || savingDraft) ? styles.sendBtnDisabled : {}) }}
                   onClick={handleSend}
-                  disabled={sending}
+                  disabled={sending || savingDraft}
                 >
                   <Send size={14} style={{ marginRight: 6 }} />
                   {sending ? 'Sending…' : 'Send'}
+                </button>
+                <button
+                  style={{ ...styles.draftBtn, ...((sending || savingDraft) ? styles.sendBtnDisabled : {}) }}
+                  onClick={handleSaveDraft}
+                  disabled={sending || savingDraft}
+                >
+                  {savingDraft ? 'Saving…' : 'Save Draft'}
                 </button>
                 <label style={styles.iconBtn} title="Attach files">
                   <Paperclip size={16} />
@@ -825,6 +872,20 @@ const styles = {
   sendBtnDisabled: {
     opacity: 0.6,
     cursor: 'not-allowed',
+  },
+  draftBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    background: '#f1f5f9',
+    color: '#334155',
+    border: '1px solid #cbd5e1',
+    borderRadius: 8,
+    padding: '8px 16px',
+    fontSize: 13.5,
+    fontWeight: 600,
+    cursor: 'pointer',
+    letterSpacing: 0.2,
+    transition: 'all 0.15s',
   },
   iconBtn: {
     display: 'flex',

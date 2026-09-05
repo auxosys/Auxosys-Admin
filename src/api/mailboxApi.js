@@ -291,6 +291,25 @@ function fileToBase64(file) {
 }
 
 // ── Direct Outreach Email (Brevo-powered, no mailbox required) ────────────
+export async function saveDraft(payload) {
+  const isUpdate = !!payload.draftId;
+  const url = isUpdate ? `${API_BASE}/api/outreach/drafts/${payload.draftId}` : `${API_BASE}/api/outreach/drafts`;
+  const res = await fetch(url, {
+    method: isUpdate ? 'PUT' : 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify(payload),
+  });
+  return handle(res);
+}
+
+export async function deleteDraft(draftId) {
+  const res = await fetch(`${API_BASE}/api/outreach/drafts/${draftId}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+  return handle(res);
+}
+
 export async function sendDirectEmail({ senderEmailId, to, cc, bcc, subject, html, text, files }) {
   let attachments = [];
   if (Array.isArray(files) && files.length > 0) {
