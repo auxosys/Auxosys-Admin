@@ -114,3 +114,19 @@ table.cm-table{width:100%; border-collapse:collapse; font-size:13px;}
   font-size: 11.5px;
   font-weight: 600;
 }
+
+/* ---------- Drag and Drop ---------- */
+.cm-row-dragging {
+  opacity: 0.35;
+  background: #e2e8f0 !important;
+}
+.cm-row-dragover {
+  border-top: 3px solid var(--accent) !important;
+  background: #f1f5f9 !important;
+}
+.cm-drag-handle {
+  transition: color 0.15s ease;
+}
+.cm-drag-handle:hover {
+  color: var(--accent) !important;
+}

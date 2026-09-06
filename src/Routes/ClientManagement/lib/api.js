@@ -21,6 +21,7 @@ export const clientApi = {
   get: (id) => handleRequest(apiClient.get(`/api/clients/${id}`)),
   create: (payload) => handleRequest(apiClient.post("/api/clients", payload)),
   update: (id, payload) => handleRequest(apiClient.put(`/api/clients/${id}`, payload)),
+  reorder: (orderedIds) => handleRequest(apiClient.post("/api/clients/reorder", { orderedIds })),
   archive: (id) => handleRequest(apiClient.patch(`/api/clients/${id}/archive`)),
   unarchive: (id) => handleRequest(apiClient.patch(`/api/clients/${id}/unarchive`)),
   delete: (id) => handleRequest(apiClient.delete(`/api/clients/${id}`)),

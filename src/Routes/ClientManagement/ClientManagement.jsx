@@ -1,5 +1,5 @@
-import React from "react";
-import { Eye, Edit2, Archive, ArchiveRestore, Trash2 } from "lucide-react";
+import React, { useState } from "react";
+import { Eye, Edit2, Archive, ArchiveRestore, Trash2, GripVertical } from "lucide-react";
 import { CLIENT_STATUSES, STATUS_COLORS, SERVICES_OFFERED } from "../../utils/clientModel.js";
 import { useClientController } from "./controllers/useClientController.js";
 import "./styles/ClientManagement.css";
@@ -10,9 +10,46 @@ export default function ClientManagement() {
     clients, loading, error, toast, isEmpty,
     search, setSearch, statusFilter, setStatusFilter, showArchived, setShowArchived,
     modal, activeClient, form, formErrors, saving, deleteTarget, setDeleteTarget, confirmDelete,
-    openAdd, openEdit, openView, closeModal, setField, submitForm, toggleArchive,
+    openAdd, openEdit, openView, closeModal, setField, submitForm, toggleArchive, reorderClientsList,
     hasWriteAccess, isSuperAdmin
   } = ctrl;
+
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  const handleDragStart = (e, index) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", index.toString());
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = async (e, dropIndex) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const updated = [...clients];
+    const [movedItem] = updated.splice(draggedIndex, 1);
+    updated.splice(dropIndex, 0, movedItem);
+
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    reorderClientsList(updated);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
 
   return (
     <div className="cm-app">
@@ -65,6 +102,7 @@ export default function ClientManagement() {
           <table className="cm-table">
             <thead>
               <tr>
+                {hasWriteAccess && <th style={{ width: 36, textAlign: "center" }}></th>}
                 <th>Client</th>
                 <th>Contact Person</th>
                 <th>Phone</th>
@@ -76,12 +114,25 @@ export default function ClientManagement() {
               </tr>
             </thead>
             <tbody>
-              {clients.map((c) => (
-                <tr key={c.id}>
+              {clients.map((c, idx) => (
+                <tr
+                  key={c.id}
+                  draggable={hasWriteAccess}
+                  onDragStart={(e) => handleDragStart(e, idx)}
+                  onDragOver={(e) => handleDragOver(e, idx)}
+                  onDrop={(e) => handleDrop(e, idx)}
+                  onDragEnd={handleDragEnd}
+                  className={`${draggedIndex === idx ? "cm-row-dragging" : ""} ${dragOverIndex === idx ? "cm-row-dragover" : ""}`}
+                >
+                  {hasWriteAccess && (
+                    <td className="cm-drag-handle" title="Drag to reorder" style={{ cursor: "grab", textAlign: "center", color: "#8B93A0" }}>
+                      <GripVertical size={16} />
+                    </td>
+                  )}
                   <td className="cm-company">{c.companyName}</td>
                   <td>{c.contactPerson}</td>
                   <td>{c.phoneCountryCode} {c.phone}</td>
-                  <td>{c.email}</td>
+                  <td>{c.email || "—"}</td>
                   <td>{[c.city, c.state, c.country].filter(Boolean).join(", ") || "—"}</td>
                   <td><StatusBadge status={c.status} /></td>
                   <td className="cm-sub">{formatDate(c.createdAt)}</td>

@@ -134,13 +134,24 @@ export function useClientController() {
     } catch (e) { setError(e.message); }
   }
 
+  async function reorderClientsList(newOrderedClients) {
+    setClients(newOrderedClients);
+    try {
+      const orderedIds = newOrderedClients.map(c => c.id);
+      await clientApi.reorder(orderedIds);
+      flashToast("Client order saved.");
+    } catch (e) {
+      setError(e.message || "Failed to save order");
+    }
+  }
+
   const isEmpty = !loading && clients.length === 0;
 
   return {
-    clients, loading, error, toast, isEmpty,
+    clients, setClients, loading, error, toast, isEmpty,
     search, setSearch, statusFilter, setStatusFilter, showArchived, setShowArchived,
     modal, activeClient, form, formErrors, saving, deleteTarget, setDeleteTarget, confirmDelete,
-    openAdd, openEdit, openView, closeModal, setField, submitForm, toggleArchive,
+    openAdd, openEdit, openView, closeModal, setField, submitForm, toggleArchive, reorderClientsList,
     hasWriteAccess, isSuperAdmin
   };
 }
