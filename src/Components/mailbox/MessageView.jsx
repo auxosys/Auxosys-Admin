@@ -192,11 +192,14 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
               <div className="relative inline-block" ref={detailsRef}>
                 <button
                   type="button"
-                  onClick={() => setShowDetails((prev) => !prev)}
-                  className="text-xs text-slate-500 hover:text-slate-800 mt-0.5 flex items-center gap-1 transition rounded px-1 -ml-1 hover:bg-slate-100 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDetails((prev) => !prev);
+                  }}
+                  className="text-xs text-slate-500 hover:text-slate-900 mt-0.5 inline-flex items-center gap-1 transition rounded-md px-1.5 py-0.5 hover:bg-slate-100 cursor-pointer font-medium border border-transparent hover:border-slate-200"
                 >
                   <span>to {recipientName}</span>
-                  <ChevronDown size={13} className={`text-slate-500 transition-transform ${showDetails ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={13} className={`text-slate-500 transition-transform duration-150 ${showDetails ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* ── GMAIL-STYLE DETAILS POPOVER ── */}

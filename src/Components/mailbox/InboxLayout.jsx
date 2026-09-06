@@ -115,12 +115,13 @@ export default function InboxLayout() {
 
   useEffect(() => {
     if (activeTab !== 'inbox') return;
-    loadMessages(hasLoadedOnceRef.current);
+    hasLoadedOnceRef.current = false;
+    loadMessages(false);
     const interval = setInterval(() => {
       loadMessages(true);
     }, 10000);
     return () => clearInterval(interval);
-  }, [activeTab, loadMessages]);
+  }, [activeTab, activeMailboxId, activeFolder, loadMessages]);
 
   useMailSocket(activeMailboxId, (newMessages) => {
     if (activeFolder !== 'INBOX') return;
@@ -197,6 +198,11 @@ export default function InboxLayout() {
 
   const unreadCount = messages.filter((m) => !m.is_read).length;
 
+  const selectedMailboxObj = mailboxes.find((m) => String(m.id) === String(activeMailboxId));
+  const selectedMailboxLabel = selectedMailboxObj
+    ? (selectedMailboxObj.id === 'all' ? 'All Company Senders' : (selectedMailboxObj.email_address || selectedMailboxObj.display_name))
+    : 'All Company Senders';
+
   return (
     <div style={activeTab === 'inbox' ? css.page : css.pageScrollable}>
 
@@ -212,6 +218,31 @@ export default function InboxLayout() {
         <div style={css.pageHeaderRight}>
           {mailboxes.length > 0 && (
             <div style={css.senderPillContainer} title="Active Sender Account">
+              <select
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  opacity: 0,
+                  cursor: 'pointer',
+                  zIndex: 10,
+                }}
+                value={activeMailboxId || 'all'}
+                onChange={(e) => {
+                  const selectedVal = e.target.value;
+                  setActiveMailboxId(selectedVal);
+                  setActiveMessageId(null);
+                  hasLoadedOnceRef.current = false;
+                }}
+              >
+                {mailboxes.map((mb) => (
+                  <option key={mb.id} value={mb.id}>
+                    {mb.id === 'all' ? 'All Company Senders' : (mb.email_address || mb.display_name)}
+                  </option>
+                ))}
+              </select>
+
               <div style={{ ...css.senderAvatarCircle, background: '#ffffff', overflow: 'hidden', border: '1px solid #cbd5e1', padding: 2 }}>
                 <img
                   src={logoAvatar}
@@ -224,22 +255,11 @@ export default function InboxLayout() {
               </div>
               <div style={css.senderTextWrap}>
                 <span style={css.senderLabelMicro}>SENDER FILTER</span>
-                <select
-                  style={css.senderSelectHeader}
-                  value={activeMailboxId || 'all'}
-                  onChange={(e) => {
-                    setActiveMailboxId(e.target.value);
-                    setActiveMessageId(null);
-                  }}
-                >
-                  {mailboxes.map((mb) => (
-                    <option key={mb.id} value={mb.id}>
-                      {mb.id === 'all' ? 'All Company Senders' : (mb.email_address || mb.display_name)}
-                    </option>
-                  ))}
-                </select>
+                <span style={css.senderSelectHeader}>
+                  {selectedMailboxLabel}
+                </span>
               </div>
-              <ChevronDown size={14} color="#64748b" style={{ flexShrink: 0, marginLeft: 2 }} />
+              <ChevronDown size={14} color="#64748b" style={{ flexShrink: 0, marginLeft: 2, pointerEvents: 'none' }} />
             </div>
           )}
 
@@ -438,6 +458,7 @@ const css = {
     gap: 12,
   },
   senderPillContainer: {
+    position: 'relative',
     display: 'flex',
     alignItems: 'center',
     gap: 8,
@@ -447,6 +468,7 @@ const css = {
     padding: '4px 12px 4px 8px',
     boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
     transition: 'all 0.15s ease',
+    cursor: 'pointer',
   },
   senderAvatarCircle: {
     width: 28,
