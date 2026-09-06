@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { apiClient } from "../helper/apiClient";
 import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react";
 import { useNotificationSettings } from "../context/NotificationContext";
 import { usePermissions } from "../hooks/usePermissions";
 import AccessControl from "./AccessControl";
@@ -39,6 +40,9 @@ const Settings = () => {
     confirmPassword: "",
   });
   const [savingPw, setSavingPw] = useState(false);
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
 
   const fetchSettings = useCallback(async () => {
     try {
@@ -259,33 +263,63 @@ const Settings = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2">
             <label className="block text-xs font-medium text-gray-600 mb-1">Current Password</label>
-            <input
-              type="password"
-              value={pwForm.currentPassword}
-              onChange={(e) => setPwForm((p) => ({ ...p, currentPassword: e.target.value }))}
-              className="input"
-              placeholder="Enter current password"
-            />
+            <div className="relative">
+              <input
+                type={showCurrentPw ? "text" : "password"}
+                value={pwForm.currentPassword}
+                onChange={(e) => setPwForm((p) => ({ ...p, currentPassword: e.target.value }))}
+                className="input pr-10"
+                placeholder="Enter current password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPw(!showCurrentPw)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                tabIndex="-1"
+              >
+                {showCurrentPw ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">New Password</label>
-            <input
-              type="password"
-              value={pwForm.newPassword}
-              onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
-              className="input"
-              placeholder="New password"
-            />
+            <div className="relative">
+              <input
+                type={showNewPw ? "text" : "password"}
+                value={pwForm.newPassword}
+                onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
+                className="input pr-10"
+                placeholder="New password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPw(!showNewPw)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                tabIndex="-1"
+              >
+                {showNewPw ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Confirm Password</label>
-            <input
-              type="password"
-              value={pwForm.confirmPassword}
-              onChange={(e) => setPwForm((p) => ({ ...p, confirmPassword: e.target.value }))}
-              className="input"
-              placeholder="Confirm new password"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPw ? "text" : "password"}
+                value={pwForm.confirmPassword}
+                onChange={(e) => setPwForm((p) => ({ ...p, confirmPassword: e.target.value }))}
+                className="input pr-10"
+                placeholder="Confirm new password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPw(!showConfirmPw)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                tabIndex="-1"
+              >
+                {showConfirmPw ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
         </div>
 
