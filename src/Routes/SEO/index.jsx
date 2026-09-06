@@ -277,7 +277,7 @@ const SEO = () => {
 
           {/* Content */}
           <main className="flex-1 min-w-0">
-            {activeTab !== "dashboard" && activeMeta && (
+            {activeTab !== "dashboard" && activeTab !== "navigation" && activeMeta && (
               <div className="flex items-center gap-2.5 pb-3 mb-5 border-b border-gray-200/80">
                 <div className="w-7 h-7 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 flex-shrink-0">
                   <activeMeta.icon size={15} />

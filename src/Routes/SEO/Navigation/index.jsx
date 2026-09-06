@@ -181,35 +181,44 @@ export default function NavigationManager({ canWrite }) {
 
   return (
     <div className="space-y-6">
+      {/* Top Header Bar aligned with page title */}
+      <div className="flex items-center justify-between pb-3 mb-2 border-b border-gray-200/80">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 flex-shrink-0">
+            <Globe size={15} />
+          </div>
+          <h2 className="text-base font-bold text-gray-900">Navigation &amp; Sitelinks</h2>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={handleSyncToSitemap}
+            disabled={syncingSitemap}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition disabled:opacity-50 cursor-pointer shadow-sm"
+            title="Sync all header navigation links directly into sitemap.xml"
+          >
+            <RefreshCw size={13} className={syncingSitemap ? "animate-spin" : ""} />
+            {syncingSitemap ? "Syncing..." : "Sync to Sitemap"}
+          </button>
+
+          <button
+            onClick={handleNotifyGoogle}
+            disabled={notifyingGoogle}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition disabled:opacity-50 cursor-pointer shadow-sm"
+            title="Send indexing ping to Google for all navigation URLs"
+          >
+            <Send size={13} className={notifyingGoogle ? "animate-pulse" : ""} />
+            {notifyingGoogle ? "Notifying..." : "Notify Google"}
+          </button>
+        </div>
+      </div>
+
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
            <div>
              <h3 className="text-sm font-semibold text-gray-800">Navigation Structure</h3>
              <p className="text-xs text-gray-500 mt-0.5">Organize links to influence Google Sitelink signals</p>
            </div>
-           <div className="flex flex-wrap items-center gap-2">
-             <button
-               onClick={handleSyncToSitemap}
-               disabled={syncingSitemap}
-               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition disabled:opacity-50 cursor-pointer"
-               title="Sync all header navigation links directly into sitemap.xml"
-             >
-               <RefreshCw size={13} className={syncingSitemap ? "animate-spin" : ""} />
-               {syncingSitemap ? "Syncing..." : "Sync to Sitemap"}
-             </button>
-
-             <button
-               onClick={handleNotifyGoogle}
-               disabled={notifyingGoogle}
-               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition disabled:opacity-50 cursor-pointer"
-               title="Send indexing ping to Google for all navigation URLs"
-             >
-               <Send size={13} className={notifyingGoogle ? "animate-pulse" : ""} />
-               {notifyingGoogle ? "Notifying..." : "Notify Google"}
-             </button>
-
-             <div className="h-4 w-px bg-gray-200 mx-1" />
-
+           <div className="flex gap-2">
              <button onClick={() => setMenuType('header')} className={`px-3 py-1.5 text-xs font-bold rounded-lg ${menuType === 'header' ? 'bg-[#132242] text-white' : 'bg-gray-100 text-gray-600'}`}>Header</button>
              <button onClick={() => setMenuType('footer')} className={`px-3 py-1.5 text-xs font-bold rounded-lg ${menuType === 'footer' ? 'bg-[#132242] text-white' : 'bg-gray-100 text-gray-600'}`}>Footer</button>
            </div>
