@@ -16,6 +16,8 @@ import {
   ShieldCheck,
   LogOut,
   FileText,
+  FileCheck,
+  Scale,
   Award,
 } from "lucide-react";
 import { apiClient } from "../helper/apiClient";
@@ -172,7 +174,7 @@ const Sidebar = () => {
               )}
               {hasAccess("offer_letters") && (
                 <Link to="/offer-letters" className={getLinkClass("/offer-letters")}>
-                  <FileText size={20} />
+                  <FileCheck size={20} />
                   <span className="font-medium">Offer Letters</span>
                 </Link>
               )}
@@ -212,7 +214,7 @@ const Sidebar = () => {
               )}
               {hasAccess("legal") && (
                 <Link to="/legal-pages" className={getLinkClass("/legal-pages")}>
-                  <FileText size={20} />
+                  <Scale size={20} />
                   <span className="font-medium">Legal Pages</span>
                 </Link>
               )}

@@ -151,6 +151,16 @@ export default function SenderEmailView() {
     return <div className="p-8 text-center text-gray-500">Loading sender email infrastructure...</div>;
   }
 
+  if (!isSuperAdmin) {
+    return (
+      <div className="p-12 text-center text-gray-600 max-w-md mx-auto my-12 bg-white rounded-xl shadow-sm border border-gray-200">
+        <Shield size={42} className="mx-auto text-amber-500 mb-3" />
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Access Restricted</h2>
+        <p className="text-sm text-gray-500">Managing company sender email accounts is restricted to Super Admin users only.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 max-w-7xl mx-auto w-full pb-16">
       {/* Header Banner */}

@@ -253,7 +253,7 @@ export default function InboxLayout() {
       {/* ── TABS ── */}
       <div style={css.tabBar}>
         <div style={css.tabList}>
-          {TABS.map(tab => {
+          {TABS.filter(tab => tab.id !== 'senders' || isSuperAdmin).map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
@@ -277,7 +277,7 @@ export default function InboxLayout() {
       {/* ── CONTENT ── */}
       <div style={activeTab === 'inbox' ? css.content : css.contentScrollable}>
         {activeTab === 'dashboard'  && <OutreachDashboard />}
-        {activeTab === 'senders'    && <SenderEmailView />}
+        {activeTab === 'senders'    && (isSuperAdmin ? <SenderEmailView /> : <OutreachDashboard />)}
         {activeTab === 'audience'   && <AudienceView />}
         {activeTab === 'campaigns'  && <CampaignView />}
         {activeTab === 'activity'   && <EmailActivityView />}
