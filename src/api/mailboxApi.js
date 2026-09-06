@@ -185,6 +185,15 @@ export async function createCampaign(payload) {
   return handle(res);
 }
 
+export async function updateCampaign(id, payload) {
+  const res = await fetch(`${API_BASE}/api/outreach/campaigns/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify(payload),
+  });
+  return handle(res);
+}
+
 export async function launchCampaign(id) {
   const res = await fetch(`${API_BASE}/api/outreach/campaigns/${id}/launch`, { method: 'POST', headers: authHeaders() });
   return handle(res);
