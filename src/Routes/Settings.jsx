@@ -93,11 +93,23 @@ const Settings = () => {
       toast.error("New passwords do not match");
       return;
     }
+    if (pwForm.newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters long");
+      return;
+    }
     try {
       setSavingPw(true);
-      await apiClient.patch("/settings/change-password", pwForm);
-      toast.success("Password changed successfully");
+      const res = await apiClient.patch("/settings/change-password", pwForm);
+      toast.success(res.data?.message || "Password changed successfully. Logging out from all sessions...");
       setPwForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+
+      // Automatically log out and redirect to login page
+      setTimeout(() => {
+        localStorage.removeItem("accessToken");
+        sessionStorage.clear();
+        window.location.href = "/#/login";
+        window.location.reload();
+      }, 1500);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to change password");
     } finally {
