@@ -17,8 +17,8 @@ import {
   FileCheck,
   Scale,
   Award,
-  ChevronLeft,
-  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { apiClient } from "../helper/apiClient";
 import { useAuth } from "../context/AuthContext";
@@ -100,7 +100,7 @@ const Sidebar = () => {
         }}
       >
         {/* Company Branding Header */}
-        <div className={`flex items-center ${isCollapsed ? "justify-center px-2" : "justify-between px-5"} py-4 mb-1 border-b border-white/10 relative`}>
+        <div className={`flex ${isCollapsed ? "flex-col items-center justify-center pt-4 pb-2 gap-2" : "items-center justify-between px-5 pt-4 pb-2"} mb-1 relative`}>
           <Link to="/" className="flex items-center gap-3" title="AUXOSYS Dashboard">
             <div className="w-9 h-9 flex items-center justify-center flex-shrink-0">
               <img
@@ -119,12 +119,10 @@ const Sidebar = () => {
           {/* Desktop Collapse Toggle */}
           <button
             onClick={toggleCollapse}
-            className={`hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-blue-200/70 hover:text-white hover:bg-white/10 transition-colors ${
-              isCollapsed ? "mt-2" : ""
-            }`}
+            className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-blue-200/80 hover:text-white hover:bg-white/15 transition-all"
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            {isCollapsed ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
           </button>
 
           {/* Mobile Close Button */}
