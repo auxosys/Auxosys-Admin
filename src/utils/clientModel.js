@@ -16,6 +16,18 @@ export const CLIENT_STATUSES = [
 
 export const DEFAULT_STATUS = "Lead";
 
+export const SERVICES_OFFERED = [
+  "Web Development",
+  "Mobile App Development",
+  "UI/UX & Product Design",
+  "Cloud & DevOps",
+  "AI & Machine Learning",
+  "Custom Software & ERP",
+  "Digital Marketing & SEO",
+  "IT Consulting & Staffing",
+  "Maintenance & Support",
+];
+
 // Used for the colored status badge/pill in the table and detail view.
 export const STATUS_COLORS = {
   "Lead": { bg: "#EAF1F7", fg: "#1F4B6E" },
@@ -46,6 +58,8 @@ export function emptyClient() {
     country: "",
     industry: "",
     status: DEFAULT_STATUS,
+    services: [],
+    customServices: "",
     notes: "",
   };
 }

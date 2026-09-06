@@ -69,3 +69,48 @@ table.cm-table{width:100%; border-collapse:collapse; font-size:13px;}
 .cm-history li:last-child{border-bottom:none;}
 .cm-history .dot{width:8px; height:8px; border-radius:50%; background:var(--accent); margin-top:4px; flex:0 0 8px;}
 .cm-history .meta{color:var(--ink-soft); font-size:11.5px;}
+
+/* ---------- Services Offered ---------- */
+.cm-services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.cm-service-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: #f8fafc;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.cm-service-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: #f1f5f9;
+}
+.cm-service-chip.selected {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+.cm-services-view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.cm-service-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 11.5px;
+  font-weight: 600;
+}

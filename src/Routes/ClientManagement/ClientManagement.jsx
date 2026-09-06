@@ -1,6 +1,6 @@
 import React from "react";
 import { Eye, Edit2, Archive, ArchiveRestore, Trash2 } from "lucide-react";
-import { CLIENT_STATUSES, STATUS_COLORS } from "../../utils/clientModel.js";
+import { CLIENT_STATUSES, STATUS_COLORS, SERVICES_OFFERED } from "../../utils/clientModel.js";
 import { useClientController } from "./controllers/useClientController.js";
 import "./styles/ClientManagement.css";
 
@@ -227,6 +227,38 @@ function ClientFormModal({ isEdit, form, errors, saving, setField, onClose, onSu
             </Field>
           )}
 
+          <div className="cm-section-label">Services Provided / Offered</div>
+          <Field label="Select Services Provided">
+            <div className="cm-services-grid">
+              {(SERVICES_OFFERED || []).map((srv) => {
+                const isSelected = (form.services || []).includes(srv);
+                return (
+                  <button
+                    key={srv}
+                    type="button"
+                    className={`cm-service-chip ${isSelected ? "selected" : ""}`}
+                    onClick={() => {
+                      const current = form.services || [];
+                      const updated = isSelected
+                        ? current.filter((s) => s !== srv)
+                        : [...current, srv];
+                      setField("services", updated);
+                    }}
+                  >
+                    {isSelected ? "✓ " : "+ "}{srv}
+                  </button>
+                );
+              })}
+            </div>
+          </Field>
+          <Field label="Other / Specific Service Details (optional)">
+            <input
+              value={form.customServices || ""}
+              onChange={(e) => setField("customServices", e.target.value)}
+              placeholder="e.g. AWS Cloud Migration, React Native iOS App, Custom CRM Module"
+            />
+          </Field>
+
           <div className="cm-section-label">Internal Notes</div>
           <Field label="Notes">
             <textarea value={form.notes} onChange={(e) => setField("notes", e.target.value)} placeholder="Internal notes visible to the team only" />
@@ -276,6 +308,22 @@ function ClientViewModal({ client, onClose, onEdit, hasWriteAccess }) {
             <dt>Created</dt><dd>{formatDateTime(client.createdAt)}</dd>
             <dt>Last Updated</dt><dd>{formatDateTime(client.updatedAt)}</dd>
           </dl>
+
+          {((client.services && client.services.length > 0) || client.customServices) && (
+            <>
+              <div className="cm-section-label">Services Provided / Offered</div>
+              <div className="cm-services-view" style={{ marginBottom: 14 }}>
+                {client.services && client.services.map((srv) => (
+                  <span key={srv} className="cm-service-badge">{srv}</span>
+                ))}
+                {client.customServices && (
+                  <div style={{ fontSize: 13, color: '#5A6472', marginTop: client.services?.length ? 8 : 0, width: '100%' }}>
+                    <strong>Details:</strong> {client.customServices}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           {client.notes && (
             <>
