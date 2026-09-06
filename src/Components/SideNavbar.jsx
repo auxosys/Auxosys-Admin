@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
-  Mail,
   MessageSquare,
   Send,
   CreditCard,
@@ -15,7 +14,6 @@ import {
   Search,
   ShieldCheck,
   LogOut,
-  FileText,
   FileCheck,
   Scale,
   Award,
