@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, MoveUp, MoveDown, Globe, Edit2 } from "lucide-react";
+import { Plus, Trash2, MoveUp, MoveDown, Globe, Edit2, RefreshCw, Send } from "lucide-react";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../helper/apiClient";
 
@@ -9,6 +9,8 @@ export default function NavigationManager({ canWrite }) {
   const [saving, setSaving] = useState(false);
   const [menuType, setMenuType] = useState('header');
   const [globalSettings, setGlobalSettings] = useState(null);
+  const [syncingSitemap, setSyncingSitemap] = useState(false);
+  const [notifyingGoogle, setNotifyingGoogle] = useState(false);
 
   const [newLink, setNewLink] = useState({ label: '', url: '/', parent_id: null, description: '' });
 
@@ -16,6 +18,41 @@ export default function NavigationManager({ canWrite }) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [linkToDelete, setLinkToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleSyncToSitemap = async () => {
+    setSyncingSitemap(true);
+    try {
+      const res = await apiClient.post("/api/v1/seo/navigation/sync-sitemap");
+      toast.success(res.data.message || "Synced navigation to sitemap.xml");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to sync to sitemap");
+    } finally {
+      setSyncingSitemap(false);
+    }
+  };
+
+  const handleNotifyGoogle = async () => {
+    if (!links.length) return toast.warning("No navigation links to notify");
+    setNotifyingGoogle(true);
+    try {
+      const domain = "https://www.auxosys.com";
+      let count = 0;
+      for (const l of links) {
+        if (!l.url || l.url === '#') continue;
+        let fullUrl = l.url;
+        if (!fullUrl.startsWith("http")) {
+          fullUrl = `${domain}${fullUrl.startsWith("/") ? fullUrl : "/" + fullUrl}`;
+        }
+        await apiClient.post("/api/v1/seo/indexing", { url: fullUrl, type: "URL_UPDATED" });
+        count++;
+      }
+      toast.success(`Notified Google Indexing API for ${count} URLs`);
+    } catch (err) {
+      toast.error("Failed to notify Google for some URLs");
+    } finally {
+      setNotifyingGoogle(false);
+    }
+  };
 
   useEffect(() => {
     fetchGlobalSettings();
@@ -150,7 +187,29 @@ export default function NavigationManager({ canWrite }) {
              <h3 className="text-sm font-semibold text-gray-800">Navigation Structure</h3>
              <p className="text-xs text-gray-500 mt-0.5">Organize links to influence Google Sitelink signals</p>
            </div>
-           <div className="flex gap-2">
+           <div className="flex flex-wrap items-center gap-2">
+             <button
+               onClick={handleSyncToSitemap}
+               disabled={syncingSitemap}
+               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition disabled:opacity-50 cursor-pointer"
+               title="Sync all header navigation links directly into sitemap.xml"
+             >
+               <RefreshCw size={13} className={syncingSitemap ? "animate-spin" : ""} />
+               {syncingSitemap ? "Syncing..." : "Sync to Sitemap"}
+             </button>
+
+             <button
+               onClick={handleNotifyGoogle}
+               disabled={notifyingGoogle}
+               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition disabled:opacity-50 cursor-pointer"
+               title="Send indexing ping to Google for all navigation URLs"
+             >
+               <Send size={13} className={notifyingGoogle ? "animate-pulse" : ""} />
+               {notifyingGoogle ? "Notifying..." : "Notify Google"}
+             </button>
+
+             <div className="h-4 w-px bg-gray-200 mx-1" />
+
              <button onClick={() => setMenuType('header')} className={`px-3 py-1.5 text-xs font-bold rounded-lg ${menuType === 'header' ? 'bg-[#132242] text-white' : 'bg-gray-100 text-gray-600'}`}>Header</button>
              <button onClick={() => setMenuType('footer')} className={`px-3 py-1.5 text-xs font-bold rounded-lg ${menuType === 'footer' ? 'bg-[#132242] text-white' : 'bg-gray-100 text-gray-600'}`}>Footer</button>
            </div>
