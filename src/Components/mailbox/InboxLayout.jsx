@@ -203,9 +203,6 @@ export default function InboxLayout() {
       {/* ── PAGE HEADER ── */}
       <div style={css.pageHeader}>
         <div style={css.pageHeaderLeft}>
-          <div style={css.headerIconWrap}>
-            <Mail size={20} color="#fff" />
-          </div>
           <div>
             <h1 style={css.pageTitle}>Outreach &amp; Mailbox</h1>
             <p style={css.pageSubtitle}>Powered by Brevo · Centralized email infrastructure</p>
