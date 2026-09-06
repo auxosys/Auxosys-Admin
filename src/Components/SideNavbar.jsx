@@ -3,6 +3,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Mail,
+  MessageSquare,
+  Send,
+  CreditCard,
   Briefcase,
   Newspaper,
   Settings,
@@ -136,19 +139,19 @@ const Sidebar = () => {
               )}
               {hasAccess("contact") && (
                 <Link to="/contact" className={getLinkClass("/contact")}>
-                  <Mail size={20} />
+                  <MessageSquare size={20} />
                   <span className="font-medium">Contact Us</span>
                 </Link>
               )}
               {hasAccess("outreach") && (
                 <Link to="/outreach" className={getLinkClass("/outreach")}>
-                  <Mail size={20} />
+                  <Send size={20} />
                   <span className="font-medium">Outreach & Mailbox</span>
                 </Link>
               )}
               {hasAccess("subscriptions") && (
                 <Link to="/subscriptions" className={getLinkClass("/subscriptions")}>
-                  <Users size={20} />
+                  <CreditCard size={20} />
                   <span className="font-medium">Subscriptions</span>
                 </Link>
               )}
