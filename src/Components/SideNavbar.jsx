@@ -17,6 +17,8 @@ import {
   FileCheck,
   Scale,
   Award,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { apiClient } from "../helper/apiClient";
 import { useAuth } from "../context/AuthContext";
@@ -25,6 +27,9 @@ const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return localStorage.getItem("sidebar_collapsed") === "true";
+  });
 
   const { profile, hasAccess } = useAuth();
 
@@ -32,15 +37,22 @@ const Sidebar = () => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
+  const toggleCollapse = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem("sidebar_collapsed", String(next));
+      return next;
+    });
+  };
+
   const getLinkClass = (path) => {
     const base =
-      "flex items-center gap-3 px-3 py-1 rounded-lg transition-colors text-[15px]";
+      "flex items-center gap-3 rounded-lg transition-colors text-[15px]";
     const active = "text-white bg-white/20 shadow-sm backdrop-blur-sm";
     const inactive = "hover:bg-white/10 hover:text-white transition-colors";
+    const padding = isCollapsed ? "justify-center p-2.5" : "px-3 py-2";
 
-    return location.pathname === path
-      ? `${base} ${active}`
-      : `${base} ${inactive}`;
+    return `${base} ${padding} ${location.pathname === path ? active : inactive}`;
   };
 
   const handleLogout = async () => {
@@ -50,7 +62,6 @@ const Sidebar = () => {
       console.error("Logout failed", err);
     } finally {
       localStorage.removeItem("accessToken");
-      // Optional: setProfile(null) but redirecting to login will re-mount anyway
       navigate("/login");
     }
   };
@@ -77,8 +88,9 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-50 h-screen w-64 flex flex-col text-blue-100 border-r border-white/10
-          transition-transform duration-300 ease-in-out
+          fixed top-0 left-0 z-50 h-screen flex flex-col text-blue-100 border-r border-white/10
+          transition-all duration-300 ease-in-out
+          ${isCollapsed ? "w-20" : "w-64"}
           ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0 lg:static lg:flex-shrink-0
         `}
@@ -88,20 +100,34 @@ const Sidebar = () => {
         }}
       >
         {/* Company Branding Header */}
-        <div className="flex items-center justify-between px-6 py-4 mb-1">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 flex items-center justify-center">
+        <div className={`flex items-center ${isCollapsed ? "justify-center px-2" : "justify-between px-5"} py-4 mb-1 border-b border-white/10 relative`}>
+          <Link to="/" className="flex items-center gap-3" title="AUXOSYS Dashboard">
+            <div className="w-9 h-9 flex items-center justify-center flex-shrink-0">
               <img
                 src="/icon.svg"
                 alt="AUXOSYS Logo"
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="text-white text-[17px] font-bold tracking-wide truncate max-w-[140px]">
-              AUXOSYS
-            </span>
+            {!isCollapsed && (
+              <span className="text-white text-[17px] font-bold tracking-wide truncate max-w-[130px]">
+                AUXOSYS
+              </span>
+            )}
           </Link>
 
+          {/* Desktop Collapse Toggle */}
+          <button
+            onClick={toggleCollapse}
+            className={`hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-blue-200/70 hover:text-white hover:bg-white/10 transition-colors ${
+              isCollapsed ? "mt-2" : ""
+            }`}
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          </button>
+
+          {/* Mobile Close Button */}
           <button
             onClick={() => setIsMobileMenuOpen(false)}
             className="lg:hidden text-blue-100/80 hover:text-white"
@@ -111,16 +137,20 @@ const Sidebar = () => {
         </div>
 
         {/* Menu */}
-        <div className="flex-1 px-3 space-y-0.5 overflow-y-auto">
+        <div className="flex-1 px-3 space-y-0.5 overflow-y-auto py-2">
           {/* OVERVIEW */}
           {hasAccess("dashboard") && (
             <>
-              <div className="px-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
-                Overview
-              </div>
-              <Link to="/" className={getLinkClass("/")}>
-                <LayoutDashboard size={20} />
-                <span className="font-medium">Dashboard</span>
+              {!isCollapsed ? (
+                <div className="px-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                  Overview
+                </div>
+              ) : (
+                <div className="my-2 border-t border-white/10" />
+              )}
+              <Link to="/" className={getLinkClass("/")} title="Dashboard">
+                <LayoutDashboard size={20} className="flex-shrink-0" />
+                {!isCollapsed && <span className="font-medium truncate">Dashboard</span>}
               </Link>
             </>
           )}
@@ -128,31 +158,35 @@ const Sidebar = () => {
           {/* BUSINESS MANAGEMENT */}
           {(hasAccess("client_management") || hasAccess("contact") || hasAccess("outreach") || hasAccess("subscriptions")) && (
             <>
-              <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
-                Business Management
-              </div>
+              {!isCollapsed ? (
+                <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                  Business Management
+                </div>
+              ) : (
+                <div className="my-2 border-t border-white/10" />
+              )}
               {hasAccess("client_management") && (
-                <Link to="/clients" className={getLinkClass("/clients")}>
-                  <Users size={20} />
-                  <span className="font-medium">Clients</span>
+                <Link to="/clients" className={getLinkClass("/clients")} title="Clients">
+                  <Users size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Clients</span>}
                 </Link>
               )}
               {hasAccess("contact") && (
-                <Link to="/contact" className={getLinkClass("/contact")}>
-                  <MessageSquare size={20} />
-                  <span className="font-medium">Contact Us</span>
+                <Link to="/contact" className={getLinkClass("/contact")} title="Contact Us">
+                  <MessageSquare size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Contact Us</span>}
                 </Link>
               )}
               {hasAccess("outreach") && (
-                <Link to="/outreach" className={getLinkClass("/outreach")}>
-                  <Send size={20} />
-                  <span className="font-medium">Outreach & Mailbox</span>
+                <Link to="/outreach" className={getLinkClass("/outreach")} title="Outreach & Mailbox">
+                  <Send size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Outreach & Mailbox</span>}
                 </Link>
               )}
               {hasAccess("subscriptions") && (
-                <Link to="/subscriptions" className={getLinkClass("/subscriptions")}>
-                  <CreditCard size={20} />
-                  <span className="font-medium">Subscriptions</span>
+                <Link to="/subscriptions" className={getLinkClass("/subscriptions")} title="Subscriptions">
+                  <CreditCard size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Subscriptions</span>}
                 </Link>
               )}
             </>
@@ -161,25 +195,29 @@ const Sidebar = () => {
           {/* HR & RECRUITMENT */}
           {(hasAccess("careers") || hasAccess("offer_letters") || hasAccess("certificates_issued") || hasAccess("certificates_generate")) && (
             <>
-              <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
-                HR & Recruitment
-              </div>
+              {!isCollapsed ? (
+                <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                  HR & Recruitment
+                </div>
+              ) : (
+                <div className="my-2 border-t border-white/10" />
+              )}
               {hasAccess("careers") && (
-                <Link to="/careers" className={getLinkClass("/careers")}>
-                  <Briefcase size={20} />
-                  <span className="font-medium">Careers</span>
+                <Link to="/careers" className={getLinkClass("/careers")} title="Careers">
+                  <Briefcase size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Careers</span>}
                 </Link>
               )}
               {hasAccess("offer_letters") && (
-                <Link to="/offer-letters" className={getLinkClass("/offer-letters")}>
-                  <FileCheck size={20} />
-                  <span className="font-medium">Offer Letters</span>
+                <Link to="/offer-letters" className={getLinkClass("/offer-letters")} title="Offer Letters">
+                  <FileCheck size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Offer Letters</span>}
                 </Link>
               )}
               {(hasAccess("certificates_issued") || hasAccess("certificates_generate")) && (
-                <Link to="/certificates" className={getLinkClass("/certificates")}>
-                  <Award size={20} />
-                  <span className="font-medium">Certificates</span>
+                <Link to="/certificates" className={getLinkClass("/certificates")} title="Certificates">
+                  <Award size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Certificates</span>}
                 </Link>
               )}
             </>
@@ -188,12 +226,16 @@ const Sidebar = () => {
           {/* CONTENT MANAGEMENT */}
           {hasAccess("newsroom") && (
             <>
-              <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
-                Content Management
-              </div>
-              <Link to="/newsroom" className={getLinkClass("/newsroom")}>
-                <Newspaper size={20} />
-                <span className="font-medium">Newsroom</span>
+              {!isCollapsed ? (
+                <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                  Content Management
+                </div>
+              ) : (
+                <div className="my-2 border-t border-white/10" />
+              )}
+              <Link to="/newsroom" className={getLinkClass("/newsroom")} title="Newsroom">
+                <Newspaper size={20} className="flex-shrink-0" />
+                {!isCollapsed && <span className="font-medium truncate">Newsroom</span>}
               </Link>
             </>
           )}
@@ -201,25 +243,29 @@ const Sidebar = () => {
           {/* SITE MANAGEMENT */}
           {(hasAccess("seo") || hasAccess("access-control") || hasAccess("settings") || hasAccess("legal")) && (
             <>
-              <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
-                Site Management
-              </div>
+              {!isCollapsed ? (
+                <div className="px-3 pt-3 mb-2 text-xs font-semibold text-blue-200/70 uppercase tracking-wider">
+                  Site Management
+                </div>
+              ) : (
+                <div className="my-2 border-t border-white/10" />
+              )}
               {hasAccess("seo") && (
-                <Link to="/seo" className={getLinkClass("/seo")}>
-                  <Search size={20} />
-                  <span className="font-medium">SEO</span>
+                <Link to="/seo" className={getLinkClass("/seo")} title="SEO Dashboard">
+                  <Search size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">SEO</span>}
                 </Link>
               )}
               {hasAccess("legal") && (
-                <Link to="/legal-pages" className={getLinkClass("/legal-pages")}>
-                  <Scale size={20} />
-                  <span className="font-medium">Legal Pages</span>
+                <Link to="/legal-pages" className={getLinkClass("/legal-pages")} title="Legal Pages">
+                  <Scale size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Legal Pages</span>}
                 </Link>
               )}
               {hasAccess("settings") && (
-                <Link to="/consent-logs" className={getLinkClass("/consent-logs")}>
-                  <ShieldCheck size={20} />
-                  <span className="font-medium">Cookie Consent Logs</span>
+                <Link to="/consent-logs" className={getLinkClass("/consent-logs")} title="Cookie Consent Logs">
+                  <ShieldCheck size={20} className="flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium truncate">Cookie Consent Logs</span>}
                 </Link>
               )}
             </>
@@ -229,17 +275,19 @@ const Sidebar = () => {
         {/* Footer */}
         <div className="px-3 py-3 mt-auto border-t border-white/10 flex flex-col gap-1">
           {(hasAccess("settings") || profile?.email === "auxosys@gmail.com") && (
-            <Link to="/settings" className={getLinkClass("/settings")}>
-              <Settings size={20} />
-              <span className="font-medium">Settings</span>
+            <Link to="/settings" className={getLinkClass("/settings")} title="Settings">
+              <Settings size={20} className="flex-shrink-0" />
+              {!isCollapsed && <span className="font-medium truncate">Settings</span>}
             </Link>
           )}
 
-          <div className="flex items-center justify-between mt-1 px-2 py-2 bg-white/5 rounded-lg">
-            <div className="flex flex-col overflow-hidden flex-1 mr-2">
-              <span className="text-sm font-semibold text-white truncate">{profile?.name || profile?.firstName || "Admin User"}</span>
-              <span className="text-[11px] text-blue-200/70 truncate">{profile?.email || ""}</span>
-            </div>
+          <div className={`flex items-center ${isCollapsed ? "justify-center p-1.5" : "justify-between px-2 py-2"} mt-1 bg-white/5 rounded-lg`}>
+            {!isCollapsed && (
+              <div className="flex flex-col overflow-hidden flex-1 mr-2">
+                <span className="text-sm font-semibold text-white truncate">{profile?.name || profile?.firstName || "Admin User"}</span>
+                <span className="text-[11px] text-blue-200/70 truncate">{profile?.email || ""}</span>
+              </div>
+            )}
             <button
               onClick={handleLogout}
               className="p-1.5 rounded-md text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-colors flex-shrink-0"
