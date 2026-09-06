@@ -45,10 +45,10 @@ const TAB_GROUPS = ["Core", "Discovery", "Appearance"];
 const Field = ({ label, hint, children, className = "" }) => (
   <div className={className}>
     <div className="flex items-baseline justify-between mb-1.5">
-      <label className="block text-xs font-semibold text-gray-700 tracking-wide uppercase">{label}</label>
+      <label className="block text-xs font-bold text-gray-700 tracking-wider uppercase">{label}</label>
     </div>
     {children}
-    {hint && <p className="text-xs text-gray-400 mt-1.5">{hint}</p>}
+    {hint && <p className="text-xs text-gray-400 mt-1.5 font-normal">{hint}</p>}
   </div>
 );
 
@@ -56,7 +56,7 @@ const CharCount = ({ value = "", min, max }) => {
   const len = value.length;
   const bad = (min && len < min) || (max && len > max);
   return (
-    <span className={`text-[11px] font-medium ${bad ? "text-amber-600" : "text-gray-400"}`}>
+    <span className={`text-[11px] font-medium ${bad ? "text-amber-600 font-semibold" : "text-gray-400"}`}>
       {len}
       {max ? ` / ${max}` : ""} characters
     </span>
@@ -64,15 +64,15 @@ const CharCount = ({ value = "", min, max }) => {
 };
 
 const SectionCard = ({ title, description, children, footer }) => (
-  <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+  <div className="bg-white border border-gray-200/80 rounded-xl shadow-sm overflow-hidden transition-shadow hover:shadow">
     {(title || description) && (
-      <div className="px-6 py-4 border-b border-gray-100">
-        {title && <h3 className="text-sm font-semibold text-gray-800">{title}</h3>}
+      <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+        {title && <h3 className="text-sm font-bold text-gray-900">{title}</h3>}
         {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
       </div>
     )}
-    <div className="p-6 space-y-5">{children}</div>
-    {footer && <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">{footer}</div>}
+    <div className="p-6 space-y-6">{children}</div>
+    {footer && <div className="px-6 py-3.5 bg-gray-50/70 border-t border-gray-100 flex justify-end">{footer}</div>}
   </div>
 );
 
@@ -80,7 +80,7 @@ const SaveButton = ({ onClick, saving, disabled, label = "Save changes" }) => (
   <button
     onClick={onClick}
     disabled={saving || disabled}
-    className="inline-flex items-center gap-2 bg-[#132242] hover:bg-[#0d1830] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+    className="inline-flex items-center gap-2 bg-[#132242] hover:bg-[#071b3a] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all shadow-sm"
   >
     {saving && <Loader2 size={14} className="animate-spin" />}
     {saving ? "Saving..." : label}
@@ -103,20 +103,20 @@ const JsonField = ({ label, hint, value, onChange, placeholder }) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <label className="block text-xs font-semibold text-gray-700 tracking-wide uppercase">{label}</label>
+        <label className="block text-xs font-bold text-gray-700 tracking-wider uppercase">{label}</label>
         {status === "valid" && (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
             <CheckCircle2 size={12} /> Valid JSON
           </span>
         )}
         {status === "invalid" && (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-red-500">
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">
             <AlertCircle size={12} /> Invalid JSON
           </span>
         )}
       </div>
       <textarea
-        className="textarea font-mono text-xs w-full"
+        className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-xs font-mono text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all shadow-sm"
         rows={7}
         value={text}
         onChange={(e) => onChange(e.target.value)}
@@ -177,8 +177,6 @@ const SEO = () => {
     }
   };
 
-
-
   const saveAiFiles = async () => {
     try {
       setSaving(true);
@@ -197,53 +195,58 @@ const SEO = () => {
     return (
       <div className="min-h-screen bg-gray-50/50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-gray-400">
-          <Loader2 size={22} className="animate-spin" />
-          <p className="text-sm">Loading SEO dashboard…</p>
+          <Loader2 size={22} className="animate-spin text-blue-600" />
+          <p className="text-sm font-medium">Loading SEO dashboard…</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-gray-50/50 pb-16">
       {/* Page header */}
-      <div className="border-b border-gray-200 bg-white px-6 pt-6 pb-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">SEO Dashboard</h1>
-            <p className="text-sm text-gray-500 mt-1 max-w-xl">
-              Manage global metadata, structured data, sitemaps, redirects, and AI search visibility from one place.
-            </p>
+      <div className="border-b border-gray-200/80 bg-white px-6 py-6 shadow-sm">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-sm flex-shrink-0">
+              <Search size={20} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">SEO Dashboard</h1>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Manage global metadata, structured data, sitemaps, redirects, and AI search visibility.
+              </p>
+            </div>
           </div>
           {!canWrite && (
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full">
-              <Shield size={12} /> Read-only access
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3.5 py-1.5 rounded-full shadow-sm">
+              <Shield size={13} /> Read-only mode
             </span>
           )}
         </div>
       </div>
 
-      <div className="px-6 py-6 max-w-[1400px] mx-auto">
+      <div className="px-6 py-6 max-w-7xl mx-auto">
         <div className="flex gap-6 items-start">
-          {/* Sidebar navigation */}
-          <aside className="w-56 shrink-0 hidden md:block sticky top-6">
-            <nav className="space-y-5">
+          {/* Sidebar navigation card */}
+          <aside className="w-64 shrink-0 hidden md:block sticky top-6">
+            <div className="bg-white rounded-xl border border-gray-200/80 p-4 shadow-sm space-y-5">
               {TAB_GROUPS.map((group) => (
                 <div key={group}>
-                  <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-1.5">
+                  <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
                     {group}
                   </p>
-                  <div className="space-y-0.5">
+                  <div className="space-y-1">
                     {TABS.filter((t) => t.group === group).map(({ id, label, icon: Icon }) => {
                       const isActive = activeTab === id;
                       return (
                         <button
                           key={id}
                           onClick={() => setActiveTab(id)}
-                          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                             isActive
-                              ? "bg-[#132242] text-white"
-                              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                              ? "bg-[#132242] text-white shadow-sm"
+                              : "text-gray-600 hover:bg-gray-100/80 hover:text-gray-900"
                           }`}
                         >
                           <Icon size={15} className={isActive ? "text-white" : "text-gray-400"} />
@@ -254,13 +257,13 @@ const SEO = () => {
                   </div>
                 </div>
               ))}
-            </nav>
+            </div>
           </aside>
 
           {/* Mobile tab select */}
           <div className="md:hidden w-full mb-2">
             <select
-              className="input w-full"
+              className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 shadow-sm"
               value={activeTab}
               onChange={(e) => setActiveTab(e.target.value)}
             >
@@ -274,10 +277,12 @@ const SEO = () => {
 
           {/* Content */}
           <main className="flex-1 min-w-0">
-            {activeTab !== "dashboard" && (
-              <div className="flex items-center gap-2 mb-4">
-                {activeMeta && <activeMeta.icon size={16} className="text-gray-400" />}
-                <h2 className="text-sm font-semibold text-gray-500">{activeMeta?.label}</h2>
+            {activeTab !== "dashboard" && activeMeta && (
+              <div className="flex items-center gap-2.5 pb-3 mb-5 border-b border-gray-200/80">
+                <div className="w-7 h-7 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 flex-shrink-0">
+                  <activeMeta.icon size={15} />
+                </div>
+                <h2 className="text-base font-bold text-gray-900">{activeMeta.label}</h2>
               </div>
             )}
 
@@ -295,18 +300,18 @@ const SEO = () => {
                 >
                   <Field label="Site title" hint="Shown in browser tabs and as a fallback page title.">
                     <input
-                      className="input w-full"
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all shadow-sm"
                       value={settings.site_title || ""}
                       onChange={(e) => updateSetting("site_title", e.target.value)}
-                      placeholder="Acme Inc. — Enterprise Software"
+                      placeholder="Auxosys — Enterprise Digital Solutions"
                     />
                   </Field>
                   <Field label="Canonical URL" hint="The preferred, indexable domain for this site.">
                     <input
-                      className="input w-full font-mono text-sm"
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-mono text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all shadow-sm"
                       value={settings.canonical_url || ""}
                       onChange={(e) => updateSetting("canonical_url", e.target.value)}
-                      placeholder="https://www.example.com"
+                      placeholder="https://www.auxosys.com"
                     />
                   </Field>
                 </SectionCard>
@@ -324,30 +329,30 @@ const SEO = () => {
                 >
                   <Field label="Default title template" hint="Use %s as a placeholder for the page-specific title.">
                     <input
-                      className="input w-full"
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all shadow-sm"
                       value={settings.default_title_template || ""}
                       onChange={(e) => updateSetting("default_title_template", e.target.value)}
-                      placeholder="%s | Acme Inc."
+                      placeholder="%s | Auxosys"
                     />
                   </Field>
                   <Field label="Meta description">
                     <textarea
-                      className="textarea w-full"
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all shadow-sm resize-y"
                       rows={3}
                       value={settings.meta_description || ""}
                       onChange={(e) => updateSetting("meta_description", e.target.value)}
                       placeholder="A concise, compelling summary of the page for search results."
                     />
-                    <div className="flex justify-end mt-1">
+                    <div className="flex justify-end mt-1.5">
                       <CharCount value={settings.meta_description || ""} max={160} />
                     </div>
                   </Field>
                   <Field label="Keywords" hint="Comma-separated. Low ranking impact, still used by some tools.">
                     <input
-                      className="input w-full"
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all shadow-sm"
                       value={settings.keywords || ""}
                       onChange={(e) => updateSetting("keywords", e.target.value)}
-                      placeholder="enterprise software, saas, automation"
+                      placeholder="enterprise software, custom web development, digital transformation"
                     />
                   </Field>
                 </SectionCard>
