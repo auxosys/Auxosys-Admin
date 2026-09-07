@@ -258,10 +258,7 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
       <div className="px-6 md:px-8 py-5 bg-white flex-1 overflow-y-auto min-h-0 flex flex-col">
         <div>
           {message.body_html && !isPlaceholderHtml ? (
-            <div
-              className="prose prose-slate max-w-none text-[15px] leading-relaxed text-slate-800"
-              dangerouslySetInnerHTML={{ __html: message.body_html }}
-            />
+            <IsolatedEmailBody html={message.body_html} bodyText={bodyContent || message.body_text} />
           ) : (
             <div className="font-sans whitespace-pre-wrap text-[15px] text-slate-800 leading-relaxed">
               {bodyContent || message.body_text || 'No message content available.'}
@@ -320,5 +317,85 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
         </div>
       </div>
     </div>
+  );
+}
+
+function IsolatedEmailBody({ html, bodyText }) {
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const adjustHeight = () => {
+      try {
+        if (iframe.contentWindow && iframe.contentWindow.document) {
+          const doc = iframe.contentWindow.document;
+          const bodyH = doc.body ? doc.body.scrollHeight : 0;
+          const elemH = doc.documentElement ? doc.documentElement.scrollHeight : 0;
+          const height = Math.max(bodyH, elemH, 180);
+          iframe.style.height = `${height + 24}px`;
+        }
+      } catch (err) {}
+    };
+
+    iframe.addEventListener('load', adjustHeight);
+    const t1 = setTimeout(adjustHeight, 150);
+    const t2 = setTimeout(adjustHeight, 600);
+    const t3 = setTimeout(adjustHeight, 1500);
+
+    return () => {
+      iframe.removeEventListener('load', adjustHeight);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [html, bodyText]);
+
+  if (!html) {
+    return (
+      <div className="font-sans whitespace-pre-wrap text-[15px] text-slate-800 leading-relaxed">
+        {bodyText || 'No message content available.'}
+      </div>
+    );
+  }
+
+  const fullDocument = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          html, body {
+            margin: 0;
+            padding: 8px 4px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 14.5px;
+            line-height: 1.6;
+            color: #1e293b;
+            background-color: transparent;
+            word-break: break-word;
+            overflow-wrap: break-word;
+          }
+          img { max-width: 100% !important; height: auto !important; }
+          a { color: #2563eb; }
+        </style>
+      </head>
+      <body>
+        ${html}
+      </body>
+    </html>
+  `;
+
+  return (
+    <iframe
+      ref={iframeRef}
+      srcDoc={fullDocument}
+      title="Email Content"
+      className="w-full border-0 min-h-[200px]"
+      sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+      style={{ width: '100%', border: 'none', background: 'transparent' }}
+    />
   );
 }
