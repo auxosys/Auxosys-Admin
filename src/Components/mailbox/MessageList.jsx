@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, RefreshCw, Star } from 'lucide-react';
+import { Search, RefreshCw, Star, X } from 'lucide-react';
 import logoAvatar from '../../assets/logo-avatar.png';
 
 export default function MessageList({ messages = [], loading, activeMessageId, onSelect, onSelectMessage, onStar, search, onSearchChange, onRefresh }) {
@@ -51,8 +51,10 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
         .msg-list { width: 360px; flex-shrink: 0; border-right: 1px solid #E2E8F0; display: flex; flex-direction: column; background: #FFFFFF; }
         .ml-search-row { padding: 14px 16px; border-bottom: 1px solid #E2E8F0; display: flex; gap: 8px; align-items: center; }
         .ml-search-wrap { flex: 1; position: relative; display: flex; align-items: center; }
-        .ml-search-wrap input { width: 100%; border: 1px solid #CBD5E1; border-radius: 8px; padding: 8px 12px 8px 32px; font-size: 13px; outline: none; }
-        .ml-search-icon { position: absolute; left: 10px; color: #94A3B8; }
+        .ml-search-wrap input { width: 100%; border: 1px solid #CBD5E1; border-radius: 8px; padding: 8px 30px 8px 32px; font-size: 13px; outline: none; }
+        .ml-search-icon { position: absolute; left: 10px; color: #94A3B8; pointer-events: none; }
+        .ml-clear-btn { position: absolute; right: 8px; background: none; border: none; color: #94A3B8; cursor: pointer; padding: 2px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.15s; }
+        .ml-clear-btn:hover { background: #E2E8F0; color: #0F172A; }
         .ml-refresh { border: 1px solid #CBD5E1; background: #FFFFFF; border-radius: 8px; padding: 8px; color: #475569; cursor: pointer; transition: background 0.15s; }
         .ml-refresh:hover { background: #F1F5F9; }
         .ml-scroll { flex: 1; overflow-y: auto; }
@@ -77,7 +79,21 @@ export default function MessageList({ messages = [], loading, activeMessageId, o
       <div className="ml-search-row">
         <div className="ml-search-wrap">
           <Search size={15} className="ml-search-icon" />
-          <input placeholder="Search inbox & replies…" value={search || ''} onChange={(e) => onSearchChange?.(e.target.value)} />
+          <input
+            placeholder="Search inbox & replies…"
+            value={search || ''}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+          />
+          {search && (
+            <button
+              className="ml-clear-btn"
+              onClick={() => onSearchChange?.('')}
+              title="Clear search"
+              type="button"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
         <button className="ml-refresh" onClick={onRefresh} title="Refresh Messages">
           <RefreshCw size={15} />
