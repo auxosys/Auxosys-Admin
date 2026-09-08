@@ -2,13 +2,41 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   X, Minus, Maximize2, Minimize2, Paperclip, Send,
   Bold, Italic, Underline, Strikethrough, List, ListOrdered,
-  Link2, Trash2, Type
+  Link2, Trash2, Type, Palette
 } from 'lucide-react';
 import { listSenderEmails, sendDirectEmail, sendMessage, saveDraft, deleteDraft } from '../../api/mailboxApi';
 import { toast } from 'react-toastify';
 
 /* ─── tiny helper ─── */
 const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+const TEXT_COLORS = [
+  { name: 'Black', hex: '#000000' },
+  { name: 'Dark Gray', hex: '#4b5563' },
+  { name: 'Red', hex: '#dc2626' },
+  { name: 'Crimson', hex: '#991b1b' },
+  { name: 'Orange', hex: '#ea580c' },
+  { name: 'Amber', hex: '#d97706' },
+  { name: 'Green', hex: '#16a34a' },
+  { name: 'Teal', hex: '#0d9488' },
+  { name: 'Blue', hex: '#2563eb' },
+  { name: 'Navy', hex: '#1e3a8a' },
+  { name: 'Purple', hex: '#9333ea' },
+  { name: 'Pink', hex: '#db2777' },
+];
+
+const BG_COLORS = [
+  { name: 'None', hex: 'transparent' },
+  { name: 'Yellow', hex: '#fef08a' },
+  { name: 'Light Green', hex: '#bbf7d0' },
+  { name: 'Light Cyan', hex: '#cffafe' },
+  { name: 'Light Blue', hex: '#bfdbfe' },
+  { name: 'Light Lavender', hex: '#e9d5ff' },
+  { name: 'Light Pink', hex: '#fbcfe8' },
+  { name: 'Light Peach', hex: '#fed7aa' },
+  { name: 'Light Red', hex: '#fecaca' },
+  { name: 'Soft Gray', hex: '#f1f5f9' },
+];
 
 /* ─── Recipient Tag Input ─── */
 function RecipientInput({ label, emails, onChange, autoFocus = false }) {
@@ -61,14 +89,17 @@ function RecipientInput({ label, emails, onChange, autoFocus = false }) {
 }
 
 /* ─── Toolbar Button ─── */
-function ToolBtn({ icon: Icon, title, onClick, active }) {
+function ToolBtn({ id, icon: Icon, title, onClick, active }) {
   return (
     <button
+      id={id}
+      type="button"
+      className={`compose-tool-btn ${active ? 'active' : ''}`}
       title={title}
       onMouseDown={e => { e.preventDefault(); onClick(); }}
       style={{ ...styles.toolBtn, ...(active ? styles.toolBtnActive : {}) }}
     >
-      <Icon size={14} />
+      <Icon size={15} strokeWidth={active ? 2.9 : 2} />
     </button>
   );
 }
@@ -101,8 +132,25 @@ export default function ComposeModal({
   const [sending, setSending] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [activeColorTab, setActiveColorTab] = useState('text'); // 'text' | 'bg'
   const editorRef = useRef(null);
   const fileRef = useRef(null);
+  const savedRangeRef = useRef(null);
+  const colorPickerRef = useRef(null);
+
+  useEffect(() => {
+    if (!showColorPicker) return;
+    const handleOutsideClick = (e) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(e.target)) {
+        const paletteBtn = document.getElementById('compose-palette-tool-btn');
+        if (paletteBtn && paletteBtn.contains(e.target)) return;
+        setShowColorPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showColorPicker]);
 
   // resolve mode from composeState (legacy prop support)
   const resolvedMode = composeState?.mode || mode;
@@ -169,11 +217,100 @@ export default function ComposeModal({
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkUrl, setLinkUrl] = useState('https://');
   const [linkText, setLinkText] = useState('');
-  const savedRangeRef = useRef(null);
+  const [activeFormats, setActiveFormats] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    strikeThrough: false,
+    insertUnorderedList: false,
+    insertOrderedList: false,
+  });
+
+  const checkActiveFormats = () => {
+    try {
+      setActiveFormats({
+        bold: !!document.queryCommandState('bold'),
+        italic: !!document.queryCommandState('italic'),
+        underline: !!document.queryCommandState('underline'),
+        strikeThrough: !!document.queryCommandState('strikeThrough'),
+        insertUnorderedList: !!document.queryCommandState('insertUnorderedList'),
+        insertOrderedList: !!document.queryCommandState('insertOrderedList'),
+      });
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      if (editorRef.current && (document.activeElement === editorRef.current || editorRef.current.contains(document.activeElement))) {
+        checkActiveFormats();
+      }
+    };
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => document.removeEventListener('selectionchange', handleSelectionChange);
+  }, []);
+
+  const updateSavedRange = () => {
+    if (window.getSelection && window.getSelection().rangeCount > 0) {
+      const sel = window.getSelection();
+      if (editorRef.current && (editorRef.current.contains(sel.anchorNode) || editorRef.current === sel.anchorNode)) {
+        savedRangeRef.current = sel.getRangeAt(0).cloneRange();
+        checkActiveFormats();
+      }
+    }
+  };
+
+  const restoreSelection = () => {
+    editorRef.current?.focus();
+    const sel = window.getSelection ? window.getSelection() : null;
+    if (sel && sel.rangeCount > 0 && editorRef.current && (editorRef.current.contains(sel.anchorNode) || editorRef.current === sel.anchorNode)) {
+      return;
+    }
+    if (savedRangeRef.current && sel) {
+      sel.removeAllRanges();
+      sel.addRange(savedRangeRef.current);
+    } else if (editorRef.current) {
+      placeCaretAtStart(editorRef.current);
+    }
+  };
 
   const execCmd = (cmd, val = null) => {
-    editorRef.current?.focus();
+    restoreSelection();
+    try { document.execCommand('styleWithCSS', false, true); } catch (e) {}
     document.execCommand(cmd, false, val);
+    updateSavedRange();
+    checkActiveFormats();
+  };
+
+  const handleOpenColorPicker = () => {
+    updateSavedRange();
+    setShowColorPicker(prev => !prev);
+  };
+
+  const handleApplyTextColor = (color) => {
+    restoreSelection();
+    try { document.execCommand('styleWithCSS', false, true); } catch (e) {}
+    document.execCommand('foreColor', false, color);
+    updateSavedRange();
+  };
+
+  const handleApplyBgColor = (color) => {
+    restoreSelection();
+    try { document.execCommand('styleWithCSS', false, true); } catch (e) {}
+    if (color === 'transparent') {
+      try { document.execCommand('hiliteColor', false, 'transparent'); } catch (e) {}
+      try { document.execCommand('backColor', false, 'transparent'); } catch (e) {}
+    } else {
+      let applied = false;
+      try {
+        applied = document.execCommand('hiliteColor', false, color);
+      } catch (e) {}
+      if (!applied) {
+        try {
+          document.execCommand('backColor', false, color);
+        } catch (e) {}
+      }
+    }
+    updateSavedRange();
   };
 
   const handleOpenLinkModal = () => {
@@ -396,10 +533,14 @@ export default function ComposeModal({
               ref={editorRef}
               contentEditable
               suppressContentEditableWarning
+              onKeyUp={updateSavedRange}
+              onMouseUp={updateSavedRange}
+              onSelect={updateSavedRange}
+              onInput={updateSavedRange}
               style={{
                 ...styles.body,
-                minHeight: expanded ? '300px' : '150px',
-                maxHeight: expanded ? 'calc(90vh - 240px)' : 'calc(100vh - 300px)',
+                minHeight: expanded ? '380px' : '220px',
+                maxHeight: expanded ? 'calc(92vh - 200px)' : 'calc(100vh - 260px)',
                 overflowY: 'auto'
               }}
               data-placeholder="Compose your message…"
@@ -420,16 +561,187 @@ export default function ComposeModal({
 
             {/* ── FORMATTING TOOLBAR ── */}
             <div style={styles.toolbar}>
-              <ToolBtn icon={Bold} title="Bold" onClick={() => execCmd('bold')} />
-              <ToolBtn icon={Italic} title="Italic" onClick={() => execCmd('italic')} />
-              <ToolBtn icon={Underline} title="Underline" onClick={() => execCmd('underline')} />
-              <ToolBtn icon={Strikethrough} title="Strikethrough" onClick={() => execCmd('strikeThrough')} />
+              <ToolBtn
+                icon={Bold}
+                title="Bold"
+                active={activeFormats.bold}
+                onClick={() => execCmd('bold')}
+              />
+              <ToolBtn
+                icon={Italic}
+                title="Italic"
+                active={activeFormats.italic}
+                onClick={() => execCmd('italic')}
+              />
+              <ToolBtn
+                icon={Underline}
+                title="Underline"
+                active={activeFormats.underline}
+                onClick={() => execCmd('underline')}
+              />
+              <ToolBtn
+                icon={Strikethrough}
+                title="Strikethrough"
+                active={activeFormats.strikeThrough}
+                onClick={() => execCmd('strikeThrough')}
+              />
               <div style={styles.toolSep} />
-              <ToolBtn icon={List} title="Bullet List" onClick={() => execCmd('insertUnorderedList')} />
-              <ToolBtn icon={ListOrdered} title="Numbered List" onClick={() => execCmd('insertOrderedList')} />
-              <ToolBtn icon={Link2} title="Insert Link" onClick={handleOpenLinkModal} active={showLinkModal} />
+              
+              <div style={{ position: 'relative', display: 'inline-flex' }}>
+                <ToolBtn
+                  id="compose-palette-tool-btn"
+                  icon={Palette}
+                  title="Text & Highlight Color"
+                  onClick={handleOpenColorPicker}
+                  active={showColorPicker}
+                />
+                
+                {/* ── COLOR PICKER POPUP (UPPERSIDE FLOATING POPOVER) ── */}
+                {showColorPicker && (
+                  <div ref={colorPickerRef} style={styles.colorPickerContainer}>
+                    <div style={styles.colorPickerHeader}>
+                      <div style={styles.tabPillGroup}>
+                        <button
+                          type="button"
+                          style={{
+                            ...styles.colorTabBtn,
+                            ...(activeColorTab === 'text' ? styles.colorTabActive : {})
+                          }}
+                          onClick={() => setActiveColorTab('text')}
+                        >
+                          Text Color
+                        </button>
+                        <button
+                          type="button"
+                          style={{
+                            ...styles.colorTabBtn,
+                            ...(activeColorTab === 'bg' ? styles.colorTabActive : {})
+                          }}
+                          onClick={() => setActiveColorTab('bg')}
+                        >
+                          Highlight
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        title="Close"
+                        style={styles.colorPickerCloseBtn}
+                        onClick={() => setShowColorPicker(false)}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+
+                    {activeColorTab === 'text' ? (
+                      <div style={styles.colorGridSection}>
+                        <div style={styles.colorGrid}>
+                          {TEXT_COLORS.map(c => (
+                            <button
+                              key={c.hex}
+                              title={c.name}
+                              style={{ ...styles.colorSwatch, background: c.hex }}
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                handleApplyTextColor(c.hex);
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <div style={styles.customColorRow}>
+                          <label style={{ fontSize: 11.5, color: '#475569', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                            <span>Custom:</span>
+                            <input
+                              type="color"
+                              style={{ width: 22, height: 22, border: 'none', cursor: 'pointer', background: 'none', padding: 0 }}
+                              onChange={(e) => handleApplyTextColor(e.target.value)}
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            style={styles.clearColorBtn}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleApplyTextColor('#000000');
+                            }}
+                          >
+                            Reset Black
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={styles.colorGridSection}>
+                        <div style={styles.colorGrid}>
+                          {BG_COLORS.map(c => (
+                            <button
+                              key={c.hex}
+                              title={c.name}
+                              style={{
+                                ...styles.colorSwatch,
+                                background: c.hex === 'transparent' ? '#ffffff' : c.hex,
+                                border: c.hex === 'transparent' ? '2px dashed #cbd5e1' : '1px solid rgba(0,0,0,0.15)'
+                              }}
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                handleApplyBgColor(c.hex);
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <div style={styles.customColorRow}>
+                          <label style={{ fontSize: 11.5, color: '#475569', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                            <span>Custom:</span>
+                            <input
+                              type="color"
+                              style={{ width: 22, height: 22, border: 'none', cursor: 'pointer', background: 'none', padding: 0 }}
+                              onChange={(e) => handleApplyBgColor(e.target.value)}
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            style={styles.clearColorBtn}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleApplyBgColor('transparent');
+                            }}
+                          >
+                            Clear Highlight
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div style={styles.toolSep} />
-              <ToolBtn icon={Type} title="Remove Formatting" onClick={() => execCmd('removeFormat')} />
+              <ToolBtn
+                icon={List}
+                title="Bullet List"
+                active={activeFormats.insertUnorderedList}
+                onClick={() => execCmd('insertUnorderedList')}
+              />
+              <ToolBtn
+                icon={ListOrdered}
+                title="Numbered List"
+                active={activeFormats.insertOrderedList}
+                onClick={() => execCmd('insertOrderedList')}
+              />
+              <ToolBtn
+                icon={Link2}
+                title="Insert Link"
+                active={showLinkModal}
+                onClick={handleOpenLinkModal}
+              />
+              <div style={styles.toolSep} />
+              <ToolBtn
+                icon={Type}
+                title="Remove Formatting"
+                onClick={() => {
+                  execCmd('removeFormat');
+                  handleApplyTextColor('#000000');
+                  handleApplyBgColor('transparent');
+                }}
+              />
             </div>
 
             {/* ── CUSTOM LINK POPUP DIALOG ── */}
@@ -524,6 +836,29 @@ export default function ComposeModal({
           color: #94a3b8;
           pointer-events: none;
         }
+        .compose-tool-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          border: none;
+          color: #475569;
+          cursor: pointer;
+          border-radius: 6px;
+          width: 30px;
+          height: 30px;
+          transition: all 0.12s ease;
+          padding: 0;
+        }
+        .compose-tool-btn:hover {
+          background: #f1f5f9;
+          color: #1e293b;
+        }
+        .compose-tool-btn.active {
+          background: #eff6ff !important;
+          color: #1d4ed8 !important;
+          box-shadow: inset 0 0 0 1px #bfdbfe !important;
+        }
       `}</style>
     </div>
   );
@@ -576,9 +911,10 @@ const styles = {
     border: '1px solid #e2e8f0',
     borderBottom: 'none',
     borderRadius: '12px 12px 0 0',
-    width: '560px',
+    width: '680px',
     maxWidth: '95vw',
-    maxHeight: 'calc(100vh - 60px)',
+    minHeight: '540px',
+    maxHeight: 'calc(100vh - 20px)',
     boxShadow: '0 -8px 40px -8px rgba(15,23,42,0.28)',
     display: 'flex',
     flexDirection: 'column',
@@ -590,7 +926,7 @@ const styles = {
     border: '1px solid #e2e8f0',
     borderBottom: 'none',
     borderRadius: '12px 12px 0 0',
-    width: '560px',
+    width: '680px',
     maxWidth: '95vw',
     boxShadow: '0 -8px 40px -8px rgba(15,23,42,0.28)',
     display: 'flex',
@@ -776,13 +1112,14 @@ const styles = {
   /* body */
   body: {
     flex: 1,
-    padding: '12px 16px',
-    fontSize: 13.5,
+    padding: '14px 18px',
+    fontSize: 14,
     color: '#1e293b',
     lineHeight: 1.65,
     outline: 'none',
     overflowY: 'auto',
     fontFamily: 'Inter, system-ui, sans-serif',
+    minHeight: '260px',
   },
 
   /* attachments */
@@ -833,16 +1170,17 @@ const styles = {
     justifyContent: 'center',
     background: 'none',
     border: 'none',
-    color: '#64748b',
+    color: '#475569',
     cursor: 'pointer',
-    borderRadius: 5,
-    width: 28,
-    height: 28,
-    transition: 'all 0.1s',
+    borderRadius: 6,
+    width: 30,
+    height: 30,
+    transition: 'all 0.12s ease',
   },
   toolBtnActive: {
     background: '#eff6ff',
-    color: '#2563eb',
+    color: '#1d4ed8',
+    boxShadow: 'inset 0 0 0 1px #bfdbfe',
   },
   toolSep: {
     width: 1,
@@ -1010,5 +1348,109 @@ const styles = {
     fontWeight: 700,
     cursor: 'pointer',
     boxShadow: '0 2px 6px rgba(37,99,235,0.25)',
+  },
+
+  /* color picker popup (upperside floating popover) */
+  colorPickerContainer: {
+    position: 'absolute',
+    bottom: 'calc(100% + 8px)',
+    left: '-10px',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
+    boxShadow: '0 12px 30px -4px rgba(15,23,42,0.2), 0 4px 12px rgba(15,23,42,0.08), 0 0 0 1px rgba(15,23,42,0.04)',
+    padding: '12px 14px',
+    width: 258,
+    boxSizing: 'border-box',
+    zIndex: 100,
+  },
+  colorPickerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 8,
+    marginBottom: 10,
+    borderBottom: '1px solid #f1f5f9',
+  },
+  tabPillGroup: {
+    display: 'flex',
+    background: '#f1f5f9',
+    padding: '3px',
+    borderRadius: 8,
+    gap: 3,
+  },
+  colorTabBtn: {
+    background: 'transparent',
+    border: 'none',
+    fontSize: 11.5,
+    fontWeight: 500,
+    color: '#64748b',
+    padding: '4px 10px',
+    borderRadius: 6,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.15s ease',
+  },
+  colorTabActive: {
+    background: '#ffffff',
+    color: '#1d4ed8',
+    fontWeight: 700,
+    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+  },
+  colorPickerCloseBtn: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    color: '#94a3b8',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 4,
+    borderRadius: 6,
+    transition: 'all 0.15s',
+  },
+  colorGridSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+  },
+  colorGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(6, 1fr)',
+    gap: 6,
+  },
+  colorSwatch: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    border: '1px solid rgba(0,0,0,0.12)',
+    cursor: 'pointer',
+    padding: 0,
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'transform 0.1s, box-shadow 0.1s',
+  },
+  customColorRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 8,
+    borderTop: '1px solid #f1f5f9',
+  },
+  clearColorBtn: {
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
+    fontSize: 11,
+    fontWeight: 600,
+    color: '#64748b',
+    padding: '3px 8px',
+    borderRadius: 5,
+    cursor: 'pointer',
+    transition: 'all 0.15s',
   },
 };
