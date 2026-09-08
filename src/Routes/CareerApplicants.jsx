@@ -741,7 +741,6 @@ const CareerApplicants = () => {
                     type="button"
                     onClick={() => {
                       if (!selectedApplicant?.email) return;
-                      const candidateName = `${selectedApplicant.firstName || ""} ${selectedApplicant.lastName || ""}`.trim();
                       const role = selectedApplicant.jobTitle || jobTitle || "Role";
                       navigate("/outreach", {
                         state: {
