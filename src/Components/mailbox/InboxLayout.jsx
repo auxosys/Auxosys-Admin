@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   BarChart3, Mail, Users, Zap, Activity, Inbox,
   PenSquare, ChevronDown, AlertTriangle, X
@@ -29,6 +30,9 @@ const TABS = [
 
 export default function InboxLayout() {
   const { profile } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const isSuperAdmin = profile && (
     profile.role === 'Superadmin' ||
     profile.email === 'admin@auxosys.com' ||
@@ -44,6 +48,20 @@ export default function InboxLayout() {
   const [activeMessageId, setActiveMessageId] = useState(null);
   const [search, setSearch] = useState('');
   const [compose, setCompose] = useState(null);
+
+  // Auto-open compose modal if redirected with state from candidate page
+  useEffect(() => {
+    if (location.state?.openCompose || location.state?.composeState) {
+      const composeData = location.state.composeState || {
+        mode: 'new',
+        to: location.state.to ? [location.state.to] : [],
+        subject: location.state.subject || '',
+      };
+      setActiveTab('inbox');
+      setCompose(composeData);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, location.pathname, navigate]);
 
   const loadMailboxes = useCallback(async () => {
     try {

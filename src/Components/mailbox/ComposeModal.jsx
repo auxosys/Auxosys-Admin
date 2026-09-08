@@ -86,12 +86,17 @@ export default function ComposeModal({
   const [sendersLoading, setSendersLoading] = useState(true);
   const [sendersError, setSendersError] = useState(null);
   const [selectedSenderId, setSelectedSenderId] = useState('');
-  const [to, setTo] = useState([]);
+  const [to, setTo] = useState(() => {
+    if (composeState?.to) {
+      return Array.isArray(composeState.to) ? composeState.to : [composeState.to];
+    }
+    return [];
+  });
   const [cc, setCc] = useState([]);
   const [bcc, setBcc] = useState([]);
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
-  const [subject, setSubject] = useState('');
+  const [subject, setSubject] = useState(composeState?.subject || '');
   const [files, setFiles] = useState([]);
   const [sending, setSending] = useState(false);
   const [minimized, setMinimized] = useState(false);

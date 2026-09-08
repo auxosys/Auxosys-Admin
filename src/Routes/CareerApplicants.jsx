@@ -737,13 +737,28 @@ const CareerApplicants = () => {
                       Save Changes
                     </button>
                   )}
-                  <a
-                    href={`mailto:${selectedApplicant.email}`}
-                    className="w-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!selectedApplicant?.email) return;
+                      const candidateName = `${selectedApplicant.firstName || ""} ${selectedApplicant.lastName || ""}`.trim();
+                      const role = selectedApplicant.jobTitle || jobTitle || "Role";
+                      navigate("/outreach", {
+                        state: {
+                          openCompose: true,
+                          composeState: {
+                            mode: "new",
+                            to: [selectedApplicant.email],
+                            subject: `Regarding your job application for ${role} at Auxosys`,
+                          },
+                        },
+                      });
+                    }}
+                    className="w-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Mail size={18} />
                     Contact Candidate
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
