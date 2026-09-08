@@ -5,7 +5,14 @@ import { apiClient } from "../../helper/apiClient";
 import { toast } from "react-toastify";
 import RichTextEditor from "../../Components/RichTextEditor";
 import LiveDetailedPreview from "./LiveDetailedPreview";
-import { FULL_TIME_CLAUSES, INTERNSHIP_CLAUSES } from "./defaultClauses";
+import { FULL_TIME_CLAUSES, INTERNSHIP_CLAUSES, buildCompensationClauseContent } from "./defaultClauses";
+
+const updateCompensationInClauses = (currentClauses, offerType, ctcAmount, currency) => {
+  const newContent = buildCompensationClauseContent(offerType, ctcAmount, currency);
+  return (currentClauses || []).map(c => 
+    c.id === "compensation" ? { ...c, content: newContent } : c
+  );
+};
 
 const DEFAULT_VALUES = {
   offerType: "Full-Time", // or "Internship"
@@ -252,7 +259,16 @@ function OfferLetterForm({
   const [values, setValues] = useState({ ...DEFAULT_VALUES, ...initialValues });
 
   const update = (key) => (val) => {
-    const next = { ...values, [key]: val };
+    let next = { ...values, [key]: val };
+    if (key === "ctcAmount" || key === "currency") {
+      const updatedClauses = updateCompensationInClauses(
+        next.clauses, 
+        next.offerType, 
+        key === "ctcAmount" ? val : next.ctcAmount, 
+        key === "currency" ? val : next.currency
+      );
+      next = { ...next, clauses: updatedClauses };
+    }
     setValues(next);
     onChange(next);
   };
@@ -261,11 +277,22 @@ function OfferLetterForm({
 
   const handleTypeChange = (e) => {
     const type = e.target.value;
-    const nextClauses = type === "Full-Time" 
+    const baseClauses = type === "Full-Time" 
       ? FULL_TIME_CLAUSES.map(c => ({ ...c })) 
       : INTERNSHIP_CLAUSES.map(c => ({ ...c }));
     
-    const next = { ...values, offerType: type, clauses: nextClauses };
+    const updatedClauses = updateCompensationInClauses(baseClauses, type, values.ctcAmount, values.currency);
+    
+    const defaultOfferDetails = type === "Internship"
+      ? `<ul><li>Position: {{job.title}}</li><li>Department: {{job.department}}</li><li>Start Date: {{job.joining_date}}</li><li>Work Location: {{job.work_mode}}</li><li>Stipend: {{compensation.annual_ctc}} {{compensation.currency}} / month</li><li>Reporting To: {{job.reporting_manager}}</li></ul>`
+      : `<ul><li>Position: {{job.title}}</li><li>Department: {{job.department}}</li><li>Start Date: {{job.joining_date}}</li><li>Work Location: {{job.work_mode}}</li><li>Compensation: {{compensation.annual_ctc}} {{compensation.currency}} annual CTC</li><li>Reporting To: {{job.reporting_manager}}</li></ul>`;
+
+    const next = { 
+      ...values, 
+      offerType: type, 
+      clauses: updatedClauses,
+      offerDetails: defaultOfferDetails
+    };
     setValues(next);
     onChange(next);
   };
