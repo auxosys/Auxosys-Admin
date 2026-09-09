@@ -12,6 +12,7 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
 
   const [message, setMessage] = useState(selectedMessage || null);
   const [loading, setLoading] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const detailsRef = useRef(null);
 
@@ -32,6 +33,7 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
     if (!selectedMessage) {
       setLoading(true);
     }
+    setLoadingDetails(true);
 
     getMessage(currentMailboxId, currentMessageId)
       .then((d) => {
@@ -41,8 +43,12 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
         }
       })
       .catch((err) => console.error('Failed to load message details:', err))
-      .finally(() => setLoading(false));
-  }, [currentMailboxId, currentMessageId, selectedMessage]);
+      .finally(() => {
+        setLoading(false);
+        setLoadingDetails(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentMailboxId, currentMessageId]);
 
   // Click outside to close details popover
   useEffect(() => {
@@ -260,7 +266,14 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
       {/* ── 2. EMAIL BODY CONTENT & ACTIONS (SCROLLABLE SECTION) ── */}
       <div className="px-6 md:px-8 py-5 bg-white flex-1 overflow-y-auto min-h-0 flex flex-col">
         <div>
-          {message.body_html && !isPlaceholderHtml ? (
+          {loadingDetails && !message.body_html ? (
+            <div className="py-12 flex items-center justify-center text-slate-400 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <span>Loading email body…</span>
+              </div>
+            </div>
+          ) : message.body_html && !isPlaceholderHtml ? (
             <IsolatedEmailBody html={message.body_html} bodyText={bodyContent || message.body_text} />
           ) : (
             <div className="font-sans whitespace-pre-wrap text-[15px] text-slate-800 leading-relaxed">

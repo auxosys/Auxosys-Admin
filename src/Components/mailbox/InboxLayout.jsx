@@ -137,7 +137,7 @@ export default function InboxLayout() {
     loadMessages(false);
     const interval = setInterval(() => {
       loadMessages(true);
-    }, 10000);
+    }, 45000);
     return () => clearInterval(interval);
   }, [activeTab, activeMailboxId, activeFolder, loadMessages]);
 
