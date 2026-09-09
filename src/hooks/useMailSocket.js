@@ -19,22 +19,29 @@ export function useMailSocket(mailboxId, onNewMail) {
 
   useEffect(() => {
     const socket = io(SOCKET_URL, {
-      transports: ['websocket'],
+      transports: ['polling', 'websocket'],
       reconnectionAttempts: 5,
       reconnectionDelay: 3000,
       timeout: 8000,
+      autoConnect: true,
     });
     socketRef.current = socket;
 
     socket.on('connect', () => setConnected(true));
     socket.on('disconnect', () => setConnected(false));
     socket.on('connect_error', () => {
-      // silently handle — socket server may not be running
+      // silently handle — socket server may not be running or connecting
       setConnected(false);
     });
 
     return () => {
-      socket.disconnect();
+      try {
+        if (socket.connected) {
+          socket.disconnect();
+        } else {
+          socket.close();
+        }
+      } catch (e) {}
     };
   }, []);
 
