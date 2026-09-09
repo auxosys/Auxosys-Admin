@@ -394,7 +394,7 @@ function IsolatedEmailBody({ html, bodyText }) {
       srcDoc={fullDocument}
       title="Email Content"
       className="w-full border-0 min-h-[200px]"
-      sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+      sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
       style={{ width: '100%', border: 'none', background: 'transparent' }}
     />
   );
