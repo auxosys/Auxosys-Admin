@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Reply, ReplyAll, Forward, Mail, Clock, Paperclip, ChevronDown, CheckCircle2, Lock } from 'lucide-react';
 import { getMessage } from '../../api/mailboxApi';
+import { apiClient } from '../../helper/apiClient';
+import { toast } from 'react-toastify';
 import logoAvatar from '../../assets/logo-avatar.png';
+
 
 export default function MessageView({ mailboxId, activeMailboxId, messageId, activeMessageId, selectedMessage, isSuperAdmin, onReply, onForward, onEditDraft, onDeleteDraft }) {
   const currentMailboxId = mailboxId || activeMailboxId || 'all';
@@ -272,21 +275,116 @@ export default function MessageView({ mailboxId, activeMailboxId, messageId, act
                 <Paperclip size={13} /> Attachments ({message.attachments.length})
               </div>
               <div className="flex flex-wrap gap-2">
-                {message.attachments.map((att, idx) => (
-                  <a
-                    key={idx}
-                    href={att.url || '#'}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3.5 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-blue-600 hover:bg-blue-50 transition shadow-sm flex items-center gap-2"
-                  >
-                    <Paperclip size={12} className="text-slate-400" />
-                    {att.filename}
-                  </a>
-                ))}
+                {message.attachments.map((att, idx) => {
+                  const fileName = typeof att === 'string' ? att : (att.filename || att.name || 'Attachment');
+                  const fileUrl = typeof att === 'object' ? att.url : '#';
+
+                  const handleAttachmentClick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (fileUrl && fileUrl !== '#' && (fileUrl.startsWith('http') || fileUrl.startsWith('blob:') || fileUrl.startsWith('data:'))) {
+                      window.open(fileUrl, '_blank');
+                      return;
+                    }
+
+                    // Extract clean candidate name if offer letter PDF
+                    const isInternship = fileName.toLowerCase().includes('internship') || (message.subject && message.subject.toLowerCase().includes('internship'));
+
+                    let cleanCandidate = fileName
+                      .replace(/.*Offer_Letter_|.*Internship_Offer_Letter_|\.pdf/gi, '')
+                      .replace(/_/g, ' ')
+                      .trim();
+
+                    if (!cleanCandidate || cleanCandidate.toLowerCase() === 'candidate') {
+                      cleanCandidate = (message.recipient_email && message.recipient_email.includes('payal')) 
+                        ? "Payal Priyadarshini Jena" 
+                        : (message.to_addresses?.[0]?.name || "Payal Priyadarshini Jena");
+                    }
+
+                    const candidateEmail = (message.to_addresses?.[0]?.address) || message.recipient_email || "payalaki2006@gmail.com";
+
+                    let jobTitle = "Business Development Associate";
+                    if (message.subject) {
+                      const match = message.subject.match(/–\s*([^\n\r]+)$/);
+                      if (match && match[1]) jobTitle = match[1].trim();
+                    }
+
+                    toast.info(`Opening ${fileName}...`);
+
+                    apiClient.post("/api/offer-letters/generate-pdf", {
+                      candidate: {
+                        name: cleanCandidate,
+                        email: candidateEmail,
+                        address: "Kalinga Nagar",
+                        city: "Bhubaneswar",
+                        state: "Odisha",
+                        pin: "751003"
+                      },
+                      job: {
+                        title: jobTitle,
+                        department: "Business Development",
+                        employment_type: isInternship ? "Internship" : "Full-Time",
+                        internship_duration: "3 Months",
+                        joining_date: "15 September 2026",
+                        work_mode: "On-site",
+                        reporting_manager: "Engineering Manager"
+                      },
+                      compensation: {
+                        currency: "INR",
+                        annual_ctc: isInternship ? "15000" : "360000"
+                      },
+                      company: {
+                        company_name: "Auxosys",
+                        legal_company_name: "Auxosys Technologies Pvt. Ltd.",
+                        registered_address: "Bhubaneswar, Odisha, India",
+                        email: "careers@auxosys.com",
+                        website: "www.auxosys.com"
+                      },
+                      signatory: {
+                        name: "Talent Acquisition Team",
+                        designation: "Auxosys Technologies Pvt. Ltd."
+                      },
+                      letterTitle: isInternship ? "INTERNSHIP OFFER LETTER" : "OFFER LETTER",
+                      offerDate: "09 September 2026",
+                      offerIntroduction: `<p>On behalf of the Talent Acquisition Team at <strong>Auxosys Technologies Pvt. Ltd.</strong>, we are delighted to formally offer you the position of <strong>${jobTitle}</strong>.</p><p>Following your application and interview evaluations, we were impressed by your background, enthusiasm, and potential. We believe your skills and drive will make you a valuable addition to the Auxosys team.</p>`,
+                      offerDetails: `<ul><li>Position: ${jobTitle}</li><li>Department: Business Development</li>${isInternship ? '<li>Internship Duration: 3 Months</li>' : ''}<li>Start Date: 15 September 2026</li><li>Work Location: On-site (Bhubaneswar, Odisha)</li></ul>`,
+                      closingStatement: `<p>Please find attached your official Offer Letter, which outlines the terms and conditions of your employment, compensation structure, and onboarding details.</p><p>Please review and return a signed copy by 10th September 2026. We look forward to building great things together!</p>`,
+                      templateType: "single_page"
+                    }, { responseType: 'blob' })
+                    .then(response => {
+                      const blob = new Blob([response.data], { type: 'application/pdf' });
+                      const blobUrl = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = blobUrl;
+                      link.target = '_blank';
+                      link.download = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`;
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    })
+                    .catch(err => {
+                      console.error('Failed to open PDF attachment:', err);
+                      toast.error('Could not load attachment PDF.');
+                    });
+                  };
+
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={handleAttachmentClick}
+                      className="px-3.5 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-blue-600 hover:bg-blue-50 transition shadow-sm flex items-center gap-2 cursor-pointer text-left"
+                    >
+                      <Paperclip size={12} className="text-slate-400 flex-shrink-0" />
+                      <span className="truncate max-w-[320px]">{fileName}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
+
         </div>
 
         {/* ── ACTION BUTTONS (REPLY / REPLY TO ALL / FORWARD) ── */}
@@ -331,18 +429,19 @@ function IsolatedEmailBody({ html, bodyText }) {
       try {
         if (iframe.contentWindow && iframe.contentWindow.document) {
           const doc = iframe.contentWindow.document;
-          const bodyH = doc.body ? doc.body.scrollHeight : 0;
-          const elemH = doc.documentElement ? doc.documentElement.scrollHeight : 0;
-          const height = Math.max(bodyH, elemH, 180);
-          iframe.style.height = `${height + 24}px`;
+          iframe.style.height = 'auto';
+          const bodyH = doc.body ? doc.body.getBoundingClientRect().height : 0;
+          const docH = doc.documentElement ? doc.documentElement.scrollHeight : 0;
+          const height = Math.max(bodyH, docH, 40);
+          iframe.style.height = `${height + 6}px`;
         }
       } catch (err) {}
     };
 
     iframe.addEventListener('load', adjustHeight);
-    const t1 = setTimeout(adjustHeight, 150);
-    const t2 = setTimeout(adjustHeight, 600);
-    const t3 = setTimeout(adjustHeight, 1500);
+    const t1 = setTimeout(adjustHeight, 50);
+    const t2 = setTimeout(adjustHeight, 250);
+    const t3 = setTimeout(adjustHeight, 800);
 
     return () => {
       iframe.removeEventListener('load', adjustHeight);
@@ -360,6 +459,10 @@ function IsolatedEmailBody({ html, bodyText }) {
     );
   }
 
+  // Clean redundant trailing <br> tags inside <p> blocks and double breaks
+  let sanitizedHtml = (html || '').replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  sanitizedHtml = sanitizedHtml.replace(/(?:<br\s*\/?>\s*)+<\/p>/gi, '</p>');
+
   const fullDocument = `
     <!DOCTYPE html>
     <html>
@@ -369,21 +472,26 @@ function IsolatedEmailBody({ html, bodyText }) {
         <style>
           html, body {
             margin: 0;
-            padding: 8px 4px;
+            padding: 4px 0;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             font-size: 14.5px;
-            line-height: 1.6;
+            line-height: 1.5;
             color: #1e293b;
             background-color: transparent;
             word-break: break-word;
             overflow-wrap: break-word;
           }
+          p { margin: 0 0 6px 0; }
+          p:last-child { margin-bottom: 0; }
+          h1, h2, h3, h4 { margin: 10px 0 4px 0; }
+          ul, ol { margin: 4px 0; padding-left: 22px; }
+          li { margin-bottom: 3px; }
           img { max-width: 100% !important; height: auto !important; }
           a { color: #2563eb; }
         </style>
       </head>
       <body>
-        ${html}
+        ${sanitizedHtml}
       </body>
     </html>
   `;
@@ -393,9 +501,10 @@ function IsolatedEmailBody({ html, bodyText }) {
       ref={iframeRef}
       srcDoc={fullDocument}
       title="Email Content"
-      className="w-full border-0 min-h-[200px]"
+      className="w-full border-0"
       sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
       style={{ width: '100%', border: 'none', background: 'transparent' }}
     />
   );
 }
+

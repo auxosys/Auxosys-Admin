@@ -43,7 +43,9 @@ const AdminLogin = () => {
         throw new Error("Invalid email or password");
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Invalid email or password");
+      const rawMsg = err.response?.data?.message || err.message || "Invalid email or password";
+      const displayMsg = typeof rawMsg === "object" ? (rawMsg.message || JSON.stringify(rawMsg)) : String(rawMsg);
+      setError(displayMsg);
     } finally {
       setLoading(false);
     }
