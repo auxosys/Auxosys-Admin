@@ -7,6 +7,7 @@ const replaceVars = (text, data) => {
     'job.title': data.jobTitle,
     'company.legal_company_name': data.legalCompanyName,
     'job.department': data.jobDepartment,
+    'job.internship_duration': data.internshipDuration,
     'job.joining_date': data.joiningDate,
     'job.work_mode': data.workMode,
     'compensation.annual_ctc': data.ctcAmount,
@@ -32,6 +33,7 @@ const replaceVars = (text, data) => {
     .replace(/\{\{job\.title\}\}/g, data.jobTitle || "")
     .replace(/\{\{company\.legal_company_name\}\}/g, data.legalCompanyName || "")
     .replace(/\{\{job\.department\}\}/g, data.jobDepartment || "")
+    .replace(/\{\{job\.internship_duration\}\}/g, data.internshipDuration || "")
     .replace(/\{\{job\.joining_date\}\}/g, data.joiningDate || "")
     .replace(/\{\{job\.work_mode\}\}/g, data.workMode || "")
     .replace(/\{\{compensation\.annual_ctc\}\}/g, data.ctcAmount || "")

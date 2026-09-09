@@ -29,6 +29,7 @@ const DEFAULT_VALUES = {
   candidateState: "Odisha",
   candidatePin: "751003",
 
+  internshipDuration: "3 Months",
   jobTitle: "Software Developer",
   jobDepartment: "Engineering",
   offerDate: "20 August 2026",
@@ -284,7 +285,7 @@ function OfferLetterForm({
     const updatedClauses = updateCompensationInClauses(baseClauses, type, values.ctcAmount, values.currency);
     
     const defaultOfferDetails = type === "Internship"
-      ? `<ul><li>Position: {{job.title}}</li><li>Department: {{job.department}}</li><li>Start Date: {{job.joining_date}}</li><li>Work Location: {{job.work_mode}}</li><li>Stipend: {{compensation.annual_ctc}} {{compensation.currency}} / month</li><li>Reporting To: {{job.reporting_manager}}</li></ul>`
+      ? `<ul><li>Position: {{job.title}}</li><li>Department: {{job.department}}</li><li>Internship Duration: {{job.internship_duration}}</li><li>Start Date: {{job.joining_date}}</li><li>Work Location: {{job.work_mode}}</li><li>Stipend: {{compensation.annual_ctc}} {{compensation.currency}} / month</li><li>Reporting To: {{job.reporting_manager}}</li></ul>`
       : `<ul><li>Position: {{job.title}}</li><li>Department: {{job.department}}</li><li>Start Date: {{job.joining_date}}</li><li>Work Location: {{job.work_mode}}</li><li>Compensation: {{compensation.annual_ctc}} {{compensation.currency}} annual CTC</li><li>Reporting To: {{job.reporting_manager}}</li></ul>`;
 
     const next = { 
@@ -403,6 +404,11 @@ function OfferLetterForm({
           <Field label="Department (optional)">
             <input className={inputClass} value={values.jobDepartment} onChange={updateEvt("jobDepartment")} />
           </Field>
+          {values.offerType === "Internship" && (
+            <Field label="Internship duration">
+              <input className={inputClass} value={values.internshipDuration} onChange={updateEvt("internshipDuration")} placeholder="e.g. 3 Months, 6 Months" />
+            </Field>
+          )}
           <div className="grid grid-cols-2 gap-2.5">
             <Field label="Letter date">
               <input className={inputClass} value={values.offerDate} onChange={updateEvt("offerDate")} />
@@ -559,6 +565,7 @@ const GenerateDetailedOffer = () => {
           title: formState.jobTitle, 
           department: formState.jobDepartment, 
           employment_type: formState.offerType, 
+          internship_duration: formState.internshipDuration || "3 Months",
           work_mode: formState.workMode, 
           joining_date: formState.joiningDate,
           reporting_manager: formState.reportingManager

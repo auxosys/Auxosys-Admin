@@ -23,6 +23,7 @@ const DEFAULT_VALUES = {
   candidateState: "Odisha",
   candidatePin: "751003",
 
+  internshipDuration: "3 Months",
   jobTitle: "Software Developer",
   jobDepartment: "Engineering",
   offerDate: "20 August 2026",
@@ -453,6 +454,7 @@ const GenerateOffer = () => {
           title: formState.jobTitle, 
           department: formState.jobDepartment, 
           employment_type: "Full-Time", 
+          internship_duration: formState.internshipDuration || "3 Months",
           work_mode: formState.workMode, 
           joining_date: formState.joiningDate,
           reporting_manager: formState.reportingManager
